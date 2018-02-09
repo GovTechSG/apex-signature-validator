@@ -1,0 +1,51 @@
+.pass {
+    color: green;
+}
+.fail {
+    color: red;
+}
+.immutable {
+    color:green;
+}
+.point-cursor{
+    cursor: pointer;
+}
+.uri-preview{
+    font-size: 16px;
+}
+.heading{
+    font-size: 22px;
+    margin-bottom: 15px;
+}
+
+.test-send-success{
+    background-color: lightgreen;
+}
+.test-send-fail{
+    background-color: lightsalmon;
+}
+.test-send{
+    background-color: #ededed;
+}
+.inline {
+    display:inline;
+}
+.missing-basestring-char{
+    background-color: #ff7762
+}
+.incorrect-basestring-char{
+    /*background-color: #FFFF00;*/
+    background-color: #ffef96;
+}
+.extra-basestring-char{
+    text-decoration : line-through;
+    color: #ff7762;
+
+}
+pre, .wrap {
+    white-space: pre-wrap;       /* css-3 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
