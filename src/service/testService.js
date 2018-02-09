@@ -1,6 +1,3 @@
-/**
- * Created by kunsheng on 4/5/2017.
- */
 import KJUR from 'jsrsasign';
 function foo($http, UtilityService) {
     return {
@@ -95,9 +92,7 @@ function foo($http, UtilityService) {
                     method: method,
                     url: url
                 })
-            }
-            else
-            {
+            } else {
                 return $http({
                     method: method,
                     url: url,

@@ -2,22 +2,23 @@
 <html lang="en" ng-app="app">
 <head>
     <meta charset="UTF-8">
+    <title><%= htmlWebpackPlugin.options.title %></title>
 </head>
 <body>
 <header class="bs-docs-nav navbar-static-top" id="top" style="background:#ededed">
     <div class="container-fluid" ng-controller="navbarController">
 
-        <script type="text/ng-template" id="myModalContent.html">
+        <script type="text/ng-template" id="jsonInputModal.html">
             <div class="modal-header">
                 <h3 class="modal-title">Parameters Setup</h3>
             </div>
             <div class="modal-body">
                 additionalParams
-                Select json file to load: <input type="file" on-read-file="parseInputFile($fileContents)"
-                                                 class="btn btn-default" style="display:inline-block">
+                Select json file to load:
+                <input type="file" on-read-file="parseInputFile($fileContents)"
+                       class="btn btn-default" style="display:inline-block">
                 <br/> <br/>
-                <textarea rows="20" cols="65" class="form-control" ng-model="jsonString"
-                          ng-keydown="handleTabKey($event)"></textarea>
+                <textarea rows="20" cols="65" class="form-control" ng-model="jsonString" ng-keydown="handleTabKey($event)"></textarea>
 
             </div>
             <div class="modal-footer">

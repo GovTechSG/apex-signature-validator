@@ -1,6 +1,3 @@
-/**
- * Created by kunsheng on 27/4/2017.
- */
 import KJUR from 'jsrsasign';
 
 mainCtrlFunc.$inject = [

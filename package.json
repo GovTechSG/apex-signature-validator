@@ -1,5 +1,5 @@
 {
-  "name": "sherlock-test-client-ui",
+  "name": "apex-signature-validator",
   "version": "0.1.0",
   "description": "APEX micro service and dev tool for testing level 0 - 2 requests",
   "scripts": {
@@ -7,7 +7,6 @@
     "devserver": "webpack-dev-server --open",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
   "license": "ISC",
   "dependencies": {
     "angular": "^1.6.4",
@@ -36,6 +35,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://www.ida-gds.com/stash/scm/apex/sherlock.git"
+    "url": "https://github.com/GovTechSG/apex-signature-validator.git"
   }
 }

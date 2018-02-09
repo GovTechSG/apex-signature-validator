@@ -1,19 +1,16 @@
-/**
- * Created by tankunsheng on 25/5/17.
- */
 function foo($scope, $uibModalInstance, items) {
 
-    $scope.jsonString = JSON.stringify(items,null,"\t")
+    $scope.jsonString = JSON.stringify(items, null, "\t");
 
-    $scope.downloadJSON = function()
-    {
+    $scope.downloadJSON = function() {
         // var paramJson = JSON.stringify(paramsToSave);
         var blob = new Blob([$scope.jsonString], {type: "application/json;charset=utf-8;"});
         var downloadLink = angular.element('<a></a>');
         downloadLink.attr('href', window.URL.createObjectURL(blob));
         downloadLink.attr('download', 'saved-inputs.json');
         downloadLink[0].click();
-    }
+    };
+
     $scope.set = function () {
         $uibModalInstance.close($scope.jsonString);
     };
@@ -31,16 +28,14 @@ function foo($scope, $uibModalInstance, items) {
             angular.element(e.target).val($scope.jsonString);
             e.target.selectionStart = e.target.selectionEnd = start + 1;
         }
-    }
+    };
 
     $scope.parseInputFile = function (fileText) {
-
-        $scope.jsonString = JSON.stringify(JSON.parse(fileText),null,"\t")
+        $scope.jsonString = JSON.stringify(JSON.parse(fileText),null,"\t");
 
         //populate values
         var savedObject = JSON.parse(fileText);
         $scope.selectedRequest = savedObject.request;
-        // $scope.input_gateway = savedObject.gateway;
         $scope.selectedGateway = savedObject.gateway;
         $scope.input_uri = savedObject.path;
         $scope.selectedFrom = savedObject.invoke_from;
@@ -50,7 +45,6 @@ function foo($scope, $uibModalInstance, items) {
         $scope.input_timestamp = savedObject.timestamp;
         $scope.input_nonce = savedObject.nonce;
         $scope.additionalParams = savedObject.additional_params;
-        console.log(savedObject)
-    }
+    };
 }
 export default foo;

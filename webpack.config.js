@@ -21,6 +21,7 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
             new ExtractTextPlugin('stylesheets/[name].css'),
             new OptimizeCssAssetsPlugin(),
             new HtmlWebpackPlugin({
+                title: 'Apex Signature Validator',
                 template: 'index.ejs'
             })
         ],
@@ -44,7 +45,8 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
     };
     // Production only
     if (env.production) {
-        config.plugins.push(new webpack.optimize.UglifyJsPlugin())
+        config.plugins.push(new webpack.optimize.UglifyJsPlugin());
     }
+
     return config;
 };
