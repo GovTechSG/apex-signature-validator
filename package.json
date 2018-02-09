@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "APEX micro service and dev tool for testing level 0 - 2 requests",
   "scripts": {
-    "build": "webpack --progress --colors",
+    "build": "webpack --progress --colors --env.production",
     "devserver": "webpack-dev-server --open",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -31,7 +31,7 @@
     "optimize-css-assets-webpack-plugin": "^2.0.0",
     "style-loader": "^0.18.1",
     "url-loader": "^0.5.8",
-    "webpack": "^3.5.4",
+    "webpack": "^3.10.0",
     "webpack-dev-server": "^2.7.1"
   },
   "repository": {
