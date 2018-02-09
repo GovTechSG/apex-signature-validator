@@ -1,4 +1,4 @@
-# Sherlock Frontend Signature Validator
+# APEX Sherlock Frontend Signature Validator
 Sherlock Frontend Signature Validator is an application that assists APEX API consumers in verifying whether signatures 
 are generated correctly in their applications when restful API calls are made to the APEX API Gateway. There are three components
 that are of importance when it comes to formulating the correct authorization header: basestring, signature, authorization header.
