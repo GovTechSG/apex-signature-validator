@@ -7,14 +7,14 @@ that are of importance when it comes to formulating the correct authorization he
     - The string of text (plaintext) that will be ran against HmacSHA256 for level 1 with a shared key to generate a digest OR:
     - The string of text (plaintext) that will be ran against SHA256withRSA algorithm where the generated digest would be 
     encrypted via RSA with the consumers' private key (to be derived from a PEM file).
-    - The composition of the basestring includes: {prefix}_app_id, {prefix}_nonce, {prefix}_signature_method(HmacSHA256 or SHA256withRSA), 
+    - The composition of the basestring includes: {prefix}_app_id (Generated from the API Gateway), {prefix}_nonce, {prefix}_signature_method(HmacSHA256 or SHA256withRSA), 
     {prefix}_timestamp and any additional parameters (additional parameters do not require prefix). All parameters are then ordered by 
     their key names.
     An example of a basestring is as such
 
         ``
-        GET&https://nd-playground.idahive.sg/v1/helloworld/nocors&apex_app_id=playground-1MgpGpTGuRl4CLYu9oEosO9Q&apex_nonce=59242635618&
-        apex_signature_method=SHA256withRSA&apex_timestamp=1501147626306&apex_version=1.0&
+        GET&https://example.com/v1/helloworld/nocors&{prefix}_app_id=appid&{prefix}_nonce=59242635618&
+        {prefix}_signature_method=SHA256withRSA&{prefix}_timestamp=1501147626306&{prefix}_version=1.0&
         firstparam=valueoffirstparam&secondparam=valueofsecondparam
         ``
 
@@ -27,11 +27,11 @@ that are of importance when it comes to formulating the correct authorization he
     An example of a generated authorization header is as follows
 
         ``
-        Authorization: Apex realm="https://nd-playground.idahive.sg/v1/helloworld/nocors",apex_app_id="playground-1MgpGpTGuRl4CLYu9oEosO9Q",
-        apex_nonce="98344891638",apex_signature="p1WxtrYhM5L8RkAwQQ59PoZ2+5Yr05kHtC0Bh+nalnPg7SuL4/TTcmxhRmGYioSyYQHoMpKyryx0QbWaBKZDRVK4nIiznJ9L9X+IUAQ
+        Authorization: Apex realm="https://example.com/v1/helloworld/nocors",{prefix}_app_id=appid,
+        {prefix}_nonce="98344891638",{prefix}_signature="p1WxtrYhM5L8RkAwQQ59PoZ2+5Yr05kHtC0Bh+nalnPg7SuL4/TTcmxhRmGYioSyYQHoMpKyryx0QbWaBKZDRVK4nIiznJ9L9X+IUAQ
         XMWwSdtjOnjMjgZF06EGfyClFbRIGjJDrbwJeuRutji3/qdj9vZMqXRY/hAwnIfTk7IWPUBd9OrQG0PHMDOREl1mAhABk04MOfTAXCMCwx6z70MoIrc0EhQuuygMertnFS4mU0+hxQtgrPjoDZ
-        LPsRgFIkU9iPCKKVAMMc3jAkZq6X8BKImJJB4fXMCv6CfCDwd0PFeY4TG6CFhU7h49XAS+e+sO3HWeCzyXxtinhywIxIw==",apex_signature_method="SHA256withRSA",apex_timestamp=
-        "1501225489066",apex_version="1.0"
+        LPsRgFIkU9iPCKKVAMMc3jAkZq6X8BKImJJB4fXMCv6CfCDwd0PFeY4TG6CFhU7h49XAS+e+sO3HWeCzyXxtinhywIxIw==",{prefix}_signature_method="SHA256withRSA",{prefix}_timestamp=
+        "1501225489066",{prefix}_version="1.0"
         ``
 
 ## Application Structure
