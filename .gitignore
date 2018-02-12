@@ -2,3 +2,5 @@
 node_modules/
 .vscode/
 dist/
+level-1.json
+level-2-valid.json
