@@ -7,32 +7,43 @@ mainCtrlFunc.$inject = [
 function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, ModalService, $sce) {
     const controller = this;
 
-    //load default/saved
-    $scope.init = function () {
+    init();
+
+    $scope.formParams = formParams;
+
+    $scope.additionalParams = [];
+
+    $scope.$on('navbar-modal-set', function (event, args) {
+        set();
+        //update uri preview
+        formParams()
+    });
+
+    $scope.$on('navbar-modal-clicked', function (event, args) {
+        saveInputsToModalService();
+        $rootScope.$broadcast('params-saved')
+    });
+
+    function init() {
         if (ModalService.getParams() !== undefined) {
             set()
         } else {
-            loadDefaultFromConfig(2)
-            $scope.selectedRequest = $scope.options[0]
-            $scope.selectedFrom = $scope.options_zone[0]
+            loadDefaultFromConfig(2);
+            $scope.selectedRequest = $scope.options[0];
+            $scope.selectedFrom = $scope.options_zone[0];
 
-            $scope.selectedProvider = $scope.options_provider[0]
-            $scope.selectedGateway = config.main.defaultGateway
-            $scope.input_authprefix = config.main.defaultAuthPrefix
-            $scope.input_timestamp = 'auto-generated'
-            $scope.input_nonce = 'auto-generated'
+            $scope.selectedProvider = $scope.options_provider[0];
+            $scope.selectedGateway = config.main.defaultGateway;
+            $scope.input_authprefix = config.main.defaultAuthPrefix;
+            $scope.input_timestamp = 'auto-generated';
+            $scope.input_nonce = 'auto-generated';
             $scope.selectedLevel = 0;
         }
     }
-    $scope.$on('navbar-modal-set', function (event, args) {
-        set()
-        //update uri preview
-        $scope.formParams()
-    })
 
     function set() {
         //populate values
-        var savedObject = ModalService.getParams()
+        let savedObject = ModalService.getParams()
         $scope.selectedRequest = savedObject.request
         $scope.selectedGateway = savedObject.gateway
         $scope.input_uri = savedObject.path
@@ -78,10 +89,6 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
         $scope.options_level = config.main.authLevels
     }
 
-    $scope.init();
-
-    $scope.additionalParams = []
-
     $scope.add = function (name, value) {
         $scope.additionalParams.push(
             {
@@ -90,11 +97,11 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
             }
         )
     }
+
     $scope.remove = function (index) {
-
         $scope.additionalParams.splice(index, 1)
-
     }
+
     $scope.checkTestResult = function () {
         if ($scope.test || $scope.testSuccess === undefined)
             return 'test-send';
@@ -120,6 +127,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
             $scope.showLevel1 = false
         }
     }
+
     $scope.nonceGenChange = function () {
         $scope.nonceDisabled = !$scope.nonceDisabled
         if (!$scope.nonceDisabled) {
@@ -128,6 +136,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
             $scope.input_nonce = ''
         }
     }
+
     $scope.timestampGenChange = function () {
         $scope.timestampDisabled = !$scope.timestampDisabled
         if (!$scope.timestampDisabled) {
@@ -137,13 +146,8 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
         }
     }
 
-    $scope.$on('navbar-modal-clicked', function (event, args) {
-        saveInputsToModalService()
-        $rootScope.$broadcast('params-saved')
-    })
-
     function saveInputsToModalService() {
-        var paramsToSave = {
+        let paramsToSave = {
             'level': $scope.selectedLevel,
             'request': $scope.selectedRequest,
             'gateway': $scope.selectedGateway,
@@ -168,13 +172,13 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
 
     $scope.compareBS = function (generatedBS, ownBS) {
         showBaseCompareResults(true);
-        var before = false;
-        var bsResults = "";
-        for (var i = 0; i < generatedBS.length; i++) {
-            var gen = generatedBS[i];
-            var own = ownBS[i]
+        let before = false;
+        let bsResults = "";
+        for (let i = 0; i < generatedBS.length; i++) {
+            let gen = generatedBS[i];
+            let own = ownBS[i]
             if (own === undefined) {
-                var stringToAdd = generatedBS.substr(i, generatedBS.leading);
+                let stringToAdd = generatedBS.substr(i, generatedBS.leading);
                 bsResults += "<span class='missing-basestring-char'>" + stringToAdd + "</span>";
                 break;
             }
@@ -209,9 +213,9 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
     }
 
     function formUris(realmPartialUri) {
-        var gateway = $scope.selectedGateway
-        var mid = config.main.domain
-        var front
+        let gateway = $scope.selectedGateway
+        let mid = config.main.domain
+        let front
         if ($scope.selectedProvider === 'External Gateway') {
             front = 'https://' + gateway
         } else if ($scope.selectedProvider === 'Internal Gateway' && ($scope.selectedFrom === 'WWW' || $scope.selectedFrom === 'Internet Zone')) {
@@ -220,7 +224,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
             if ($scope.selectedFrom === 'SGNet') front = 'http://' + gateway + '-pvt.i'
             else front = 'http://' + gateway + '.i'
         }
-        var uri = front + mid
+        let uri = front + mid
         if ($scope.input_uri !== undefined) {
             uri += $scope.input_uri
             realmPartialUri += $scope.input_uri
@@ -234,9 +238,9 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
     }
 
     function formRealmUri() {
-        var append = config.main.domain
-        var url = 'https://' + $scope.selectedGateway
-        // var url = "https://" + $scope.input_gateway;
+        let append = config.main.domain
+        let url = 'https://' + $scope.selectedGateway
+        // let url = "https://" + $scope.input_gateway;
         if ($scope.selectedFrom === 'Internet Zone') {
             url += '.e'
         } else if ($scope.selectedFrom === 'Intranet Zone') {
@@ -252,10 +256,10 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
         ModalService.setPem($scope.pem)
     }
 
-    $scope.formParams = function () {
-        var realmUri = formRealmUri()
-        var uris = formUris(realmUri)
-        var params = {}
+    function formParams() {
+        let realmUri = formRealmUri()
+        let uris = formUris(realmUri)
+        let params = {}
         params['prefix'] = $scope.input_authprefix.toLowerCase()
         params['request'] = $scope.selectedRequest
         params['uri'] = uris.uri
@@ -267,7 +271,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
         params['version'] = $scope.input_app_ver
         $scope.params = params
 
-        var errorMsg = ''
+        let errorMsg = ''
         if ($scope.selectedLevel === 1 || $scope.selectedLevel === 2) {
             if (params['app_id'] === '' || params['app_id'] === undefined) {
                 errorMsg += config.main.errorMsgs.noAppId + '<br>'
@@ -286,16 +290,14 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
             }
         }
         if (errorMsg !== '') {
-            throw {
+            throw new Error({
                 name: 'Incomplete fields',
                 message: errorMsg
-            }
+            })
         }
 
         $scope.input_basestring = TestService.generateBasestring(params, $scope.additionalParams)
-        // return params
     }
-    $scope.formParams();
 
     function showBaseCompareResults(boolean) {
         $scope.showBaseStringCompareResults = boolean;
@@ -325,11 +327,11 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
             }
         }
 
-        var key
+        let key
         if ($scope.selectedLevel === 1) {
             key = controller.input_appSecret
         } else if ($scope.selectedLevel === 2) {
-            var test = $scope.pem.substring($scope.pem.indexOf(config.sign.beginPrivateRSA),
+            let test = $scope.pem.substring($scope.pem.indexOf(config.sign.beginPrivateRSA),
                 $scope.pem.indexOf(config.sign.endPrivRSA) + config.sign.endPrivRSA.length)
             try {
                 key = KJUR.KEYUTIL.getKey($scope.pem.substring($scope.pem.indexOf(config.sign.beginPrivateRSA),
@@ -338,8 +340,8 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
                 $scope.privateKeyError = true;
             }
         }
-        var sig = TestService.signBasestring($scope.selectedLevel, $scope.input_basestring, key)
-        var authHeader = TestService.genAuthHeader($scope.params, sig);
+        let sig = TestService.signBasestring($scope.selectedLevel, $scope.input_basestring, key)
+        let authHeader = TestService.genAuthHeader($scope.params, sig);
         $scope.testSendAuthHeader = authHeader.substring('Authorization: '.length, authHeader.length - 1)
         $scope.authHeader = authHeader.substring(0, authHeader.length - 1);
         sendTest(send)
