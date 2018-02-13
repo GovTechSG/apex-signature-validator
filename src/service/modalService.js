@@ -1,11 +1,4 @@
-/**
- * Created by tankunsheng on 9/5/17.
- */
 function foo() {
-
-    // service is just a constructor function
-    // that will be called with 'new'
-    // var params = {};
     return {
         setParams: function (params) {
             this.params = params;

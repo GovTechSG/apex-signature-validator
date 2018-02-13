@@ -5,7 +5,7 @@
     <title><%= htmlWebpackPlugin.options.title %></title>
 </head>
 <body>
-<header class="bs-docs-nav navbar-static-top" id="top" style="background:#ededed">
+<header class="bs-docs-nav navbar-static-top" id="top" style="background:#f5f5f5">
     <div class="container-fluid" ng-controller="navbarController as navCtrl">
 
         <script type="text/ng-template" id="jsonInputModal.html">
@@ -99,12 +99,8 @@
                 <div class="col-md-4">
                     <b>Gateway</b>
 
-                    <input autocomplete="off" class="form-control" placeholder="Gateway" ng-model="selectedGateway"
-                           name="inputGateway"
-                           type="input" ng-keyup="formParams()"/>
-                    <div ng-if="noResults" class="fail">
-                        No Results Found!
-                    </div>
+                    <input autocomplete="off" class="form-control" placeholder="e.g. my_apex_gateway" ng-model="selectedGateway"
+                           name="inputGateway" ng-keyup="formParams()" required/>
                     <span ng-show="paramForm.inputGateway.$touched && paramForm.inputGateway.$invalid" class="fail">
                         Input Gateway is required.
                     </span>
@@ -113,7 +109,7 @@
                 <div class="col-md-6">
                     <b>Path</b>
                     <input type="text" ng-model="input_uri" class="form-control" ng-keyup="formParams()"
-                           placeholder="e.g /v1/rest/level2/ig/helloworld"/>
+                           placeholder="e.g. /v1/rest/level2/ig/ping"/>
                 </div>
 
             </div>

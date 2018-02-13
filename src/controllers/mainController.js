@@ -9,6 +9,8 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
 
     init();
 
+    $scope.add = add;
+    $scope.remove = remove;
     $scope.formParams = formParams;
 
     $scope.additionalParams = [];
@@ -26,14 +28,15 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
 
     function init() {
         if (ModalService.getParams() !== undefined) {
-            set()
+            set();
         } else {
+            // Initial load
             loadDefaultFromConfig(2);
             $scope.selectedRequest = $scope.options[0];
             $scope.selectedFrom = $scope.options_zone[0];
 
             $scope.selectedProvider = $scope.options_provider[0];
-            $scope.selectedGateway = config.main.defaultGateway;
+            // $scope.selectedGateway = config.main.defaultGateway;
             $scope.input_authprefix = config.main.defaultAuthPrefix;
             $scope.input_timestamp = 'auto-generated';
             $scope.input_nonce = 'auto-generated';
@@ -43,43 +46,43 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
 
     function set() {
         //populate values
-        let savedObject = ModalService.getParams()
-        $scope.selectedRequest = savedObject.request
-        $scope.selectedGateway = savedObject.gateway
-        $scope.input_uri = savedObject.path
-        $scope.selectedFrom = savedObject.invoke_from
-        $scope.selectedProvider = savedObject.provider_zone
-        $scope.input_authprefix = savedObject.auth_prefix
-        $scope.input_appId = savedObject.app_id
-        $scope.selectedLevel = savedObject.level
-        controller.input_appSecret = savedObject.app_secret
-        loadDefaultFromConfig(savedObject.level)
-        $scope.levelChange()
+        let savedObject = ModalService.getParams();
+        $scope.selectedRequest = savedObject.request;
+        $scope.selectedGateway = savedObject.gateway;
+        $scope.input_uri = savedObject.path;
+        $scope.selectedFrom = savedObject.invoke_from;
+        $scope.selectedProvider = savedObject.provider_zone;
+        $scope.input_authprefix = savedObject.auth_prefix;
+        $scope.input_appId = savedObject.app_id;
+        $scope.selectedLevel = savedObject.level;
+        controller.input_appSecret = savedObject.app_secret;
+        loadDefaultFromConfig(savedObject.level);
+        $scope.levelChange();
 
         if (savedObject.nonce === undefined) {
-            $scope.input_nonce = "auto-generated"
+            $scope.input_nonce = "auto-generated";
             $scope.nonceDisabled = false;
         } else {
-            $scope.input_nonce = savedObject.nonce
+            $scope.input_nonce = savedObject.nonce;
             $scope.nonceDisabled = true;
         }
         if (savedObject.timestamp === undefined) {
-            $scope.input_timestamp = "auto-generated"
+            $scope.input_timestamp = "auto-generated";
             $scope.timestampDisabled = false;
         } else {
-            $scope.input_timestamp = savedObject.timestamp
+            $scope.input_timestamp = savedObject.timestamp;
             $scope.timestampDisabled = true;
         }
-        $scope.additionalParams = savedObject.additional_params
+        $scope.additionalParams = savedObject.additional_params;
         $scope.pem = ModalService.getPem();
         $scope.privSecret = ModalService.getPwd();
     }
 
     function loadDefaultFromConfig(level) {
-        $scope.options = ['GET', 'POST']
-        $scope.options_zone = config.main.callerZone
-        $scope.options_provider = config.main.providerGateway
-        $scope.input_app_ver = config.main.appVer
+        $scope.options = ['GET', 'POST'];
+        $scope.options_zone = config.main.callerZone;
+        $scope.options_provider = config.main.providerGateway;
+        $scope.input_app_ver = config.main.appVer;
         if (level === 1) {
             $scope.input_sigmethod = config.main.sigMethod.level1
         } else {
@@ -89,7 +92,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
         $scope.options_level = config.main.authLevels
     }
 
-    $scope.add = function (name, value) {
+    function add(name, value) {
         $scope.additionalParams.push(
             {
                 name: name,
@@ -98,7 +101,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
         )
     }
 
-    $scope.remove = function (index) {
+    function remove(index) {
         $scope.additionalParams.splice(index, 1)
     }
 
@@ -107,44 +110,44 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
             return 'test-send';
 
         if ($scope.testSuccess)
-            return 'test-send-success'
+            return 'test-send-success';
         else
             return 'test-send-fail'
-    }
+    };
 
     $scope.levelChange = function () {
-        $scope.showTestResults = false
+        $scope.showTestResults = false;
         if ($scope.selectedLevel === 2) {
-            $scope.showLevel2 = true
-            $scope.showLevel1 = true
+            $scope.showLevel2 = true;
+            $scope.showLevel1 = true;
             $scope.input_sigmethod = config.main.sigMethod.level2
         } else if ($scope.selectedLevel === 1) {
-            $scope.showLevel1 = true
-            $scope.showLevel2 = false
+            $scope.showLevel1 = true;
+            $scope.showLevel2 = false;
             $scope.input_sigmethod = config.main.sigMethod.level1
         } else {
-            $scope.showLevel2 = false
-            $scope.showLevel1 = false
+            $scope.showLevel2 = false;
+            $scope.showLevel1 = false;
         }
-    }
+    };
 
     $scope.nonceGenChange = function () {
-        $scope.nonceDisabled = !$scope.nonceDisabled
+        $scope.nonceDisabled = !$scope.nonceDisabled;
         if (!$scope.nonceDisabled) {
             $scope.input_nonce = 'auto-generated'
         } else {
             $scope.input_nonce = ''
         }
-    }
+    };
 
     $scope.timestampGenChange = function () {
-        $scope.timestampDisabled = !$scope.timestampDisabled
+        $scope.timestampDisabled = !$scope.timestampDisabled;
         if (!$scope.timestampDisabled) {
             $scope.input_timestamp = 'auto-generated'
         } else {
             $scope.input_timestamp = ''
         }
-    }
+    };
 
     function saveInputsToModalService() {
         let paramsToSave = {
@@ -159,7 +162,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
             'additional_params': $scope.additionalParams,
             'app_secret': controller.input_appSecret
 
-        }
+        };
         if ($scope.nonceDisabled)
             paramsToSave['nonce'] = $scope.input_nonce
         if ($scope.timestampDisabled)
@@ -213,24 +216,23 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
     }
 
     function formUris(realmPartialUri) {
-        let gateway = $scope.selectedGateway
-        let mid = config.main.domain
-        let front
+        let gateway = $scope.selectedGateway;
+        let mid = config.main.domain;
+        let front;
         if ($scope.selectedProvider === 'External Gateway') {
-            front = 'https://' + gateway
+            front = 'https://' + gateway;
         } else if ($scope.selectedProvider === 'Internal Gateway' && ($scope.selectedFrom === 'WWW' || $scope.selectedFrom === 'Internet Zone')) {
-            front = 'https://' + gateway + '.i'
-        } else {
-            if ($scope.selectedFrom === 'SGNet') front = 'http://' + gateway + '-pvt.i'
-            else front = 'http://' + gateway + '.i'
-        }
-        let uri = front + mid
+            front = 'https://' + gateway + '.i';
+        } else if ($scope.selectedFrom === 'SGNet') {
+            front = 'http://' + gateway + '-pvt.i';
+        } else front = 'http://' + gateway + '.i';
+        let uri = front + mid;
         if ($scope.input_uri !== undefined) {
-            uri += $scope.input_uri
+            uri += $scope.input_uri;
             realmPartialUri += $scope.input_uri
         }
-        $scope.uri = uri
-        $scope.realmUri = realmPartialUri
+        $scope.uri = uri;
+        $scope.realmUri = realmPartialUri;
         return {
             uri: uri,
             realmUri: realmPartialUri
@@ -238,9 +240,8 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
     }
 
     function formRealmUri() {
-        let append = config.main.domain
-        let url = 'https://' + $scope.selectedGateway
-        // let url = "https://" + $scope.input_gateway;
+        let append = config.main.domain;
+        let url = 'https://' + $scope.selectedGateway;
         if ($scope.selectedFrom === 'Internet Zone') {
             url += '.e'
         } else if ($scope.selectedFrom === 'Intranet Zone') {
@@ -252,26 +253,28 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
     }
 
     $scope.parseInputFile = function (fileText) {
-        $scope.pem = fileText
+        $scope.pem = fileText;
         ModalService.setPem($scope.pem)
-    }
+    };
 
     function formParams() {
-        let realmUri = formRealmUri()
-        let uris = formUris(realmUri)
-        let params = {}
-        params['prefix'] = $scope.input_authprefix.toLowerCase()
-        params['request'] = $scope.selectedRequest
-        params['uri'] = uris.uri
-        params['realm'] = uris.realmUri
-        params['app_id'] = $scope.input_appId
-        params['nonce'] = $scope.input_nonce
-        params['signature_method'] = $scope.input_sigmethod
-        params['timestamp'] = $scope.input_timestamp
-        params['version'] = $scope.input_app_ver
-        $scope.params = params
+        let realmUri = formRealmUri();
+        let uris = formUris(realmUri);
+        let params = {};
 
-        let errorMsg = ''
+        params['prefix'] = $scope.input_authprefix.toLowerCase();
+        params['request'] = $scope.selectedRequest;
+        params['uri'] = uris.uri;
+        params['realm'] = uris.realmUri;
+        params['app_id'] = $scope.input_appId;
+        params['nonce'] = $scope.input_nonce;
+        params['signature_method'] = $scope.input_sigmethod;
+        params['timestamp'] = $scope.input_timestamp;
+        params['version'] = $scope.input_app_ver;
+
+        $scope.params = params;
+
+        let errorMsg = '';
         if ($scope.selectedLevel === 1 || $scope.selectedLevel === 2) {
             if (params['app_id'] === '' || params['app_id'] === undefined) {
                 errorMsg += config.main.errorMsgs.noAppId + '<br>'
@@ -290,10 +293,10 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
             }
         }
         if (errorMsg !== '') {
-            throw new Error({
+            throw {
                 name: 'Incomplete fields',
                 message: errorMsg
-            })
+            };
         }
 
         $scope.input_basestring = TestService.generateBasestring(params, $scope.additionalParams)
@@ -307,15 +310,33 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
         $scope.privateKeyError = false;
         showBaseCompareResults(false);
         try {
-            $scope.formParams()
+            formParams();
+            let key;
+            if ($scope.selectedLevel === 1) {
+                key = controller.input_appSecret
+            } else if ($scope.selectedLevel === 2) {
+                let test = $scope.pem.substring($scope.pem.indexOf(config.sign.beginPrivateRSA),
+                    $scope.pem.indexOf(config.sign.endPrivRSA) + config.sign.endPrivRSA.length);
+                try {
+                    key = KJUR.KEYUTIL.getKey($scope.pem.substring($scope.pem.indexOf(config.sign.beginPrivateRSA),
+                        $scope.pem.indexOf(config.sign.endPrivRSA) + config.sign.endPrivRSA.length), $scope.privSecret)
+                } catch (exception) {
+                    $scope.privateKeyError = true;
+                }
+            }
+            let sig = TestService.signBasestring($scope.selectedLevel, $scope.input_basestring, key);
+            let authHeader = TestService.genAuthHeader($scope.params, sig);
+            $scope.testSendAuthHeader = authHeader.substring('Authorization: '.length, authHeader.length - 1);
+            $scope.authHeader = authHeader.substring(0, authHeader.length - 1);
+            sendTest(send);
         } catch (exception) {
             if (!$scope.paramForm.$valid) {
                 Notification({
                     title: exception.name,
                     message: exception.message,
                     delay: config.notificationShowTime
-                }, 'warning')
-                //set all invalid form fields to $touched
+                }, 'warning');
+                // set all invalid form fields to $touched
                 if ($scope.paramForm.$invalid) {
                     angular.forEach($scope.paramForm.$error, function (field) {
                         angular.forEach(field, function (errorField) {
@@ -323,49 +344,29 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
                         })
                     })
                 }
-                return
             }
         }
-
-        let key
-        if ($scope.selectedLevel === 1) {
-            key = controller.input_appSecret
-        } else if ($scope.selectedLevel === 2) {
-            let test = $scope.pem.substring($scope.pem.indexOf(config.sign.beginPrivateRSA),
-                $scope.pem.indexOf(config.sign.endPrivRSA) + config.sign.endPrivRSA.length)
-            try {
-                key = KJUR.KEYUTIL.getKey($scope.pem.substring($scope.pem.indexOf(config.sign.beginPrivateRSA),
-                    $scope.pem.indexOf(config.sign.endPrivRSA) + config.sign.endPrivRSA.length), $scope.privSecret)
-            } catch (exception) {
-                $scope.privateKeyError = true;
-            }
-        }
-        let sig = TestService.signBasestring($scope.selectedLevel, $scope.input_basestring, key)
-        let authHeader = TestService.genAuthHeader($scope.params, sig);
-        $scope.testSendAuthHeader = authHeader.substring('Authorization: '.length, authHeader.length - 1)
-        $scope.authHeader = authHeader.substring(0, authHeader.length - 1);
-        sendTest(send)
-    }
+    };
 
     function sendTest(sendRequest) {
         if ($scope.selectedLevel === 2) {
-            $scope.showBaseString = true
-            $scope.showAuthHeader = true
+            $scope.showBaseString = true;
+            $scope.showAuthHeader = true;
         }
         else if ($scope.selectedLevel === 1) {
-            $scope.showBaseString = true
-            $scope.showAuthHeader = true
+            $scope.showBaseString = true;
+            $scope.showAuthHeader = true;
         }
         else {
-            $scope.showBaseString = false
-            $scope.showAuthHeader = false
+            $scope.showBaseString = false;
+            $scope.showAuthHeader = false;
         }
-        $scope.showTestResults = true
+        $scope.showTestResults = true;
 
         if (!sendRequest) {
-            $scope.testResultData = undefined
-            $scope.testResultStatus = undefined
-            $scope.testResultStatusText = undefined
+            $scope.testResultData = undefined;
+            $scope.testResultStatus = undefined;
+            $scope.testResultStatusText = undefined;
             $scope.testSuccess = undefined;
             $scope.test = true;
             $scope.step3Title = "View Generated Basestring and Signature";
@@ -374,26 +375,24 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
         $scope.step3Title = "Test Request Response";
         $scope.test = false;
         TestService.sendTestRequest($scope.realmUri, $scope.selectedRequest, $scope.testSendAuthHeader,
-            $scope.selectedLevel, $scope.input_appId).then(
-            function (success) {
-                $scope.testSuccess = true
-                $scope.responseData = success.data
-                $scope.testResultData = success.data
-                $scope.testResultStatus = success.status
+            $scope.selectedLevel, $scope.input_appId)
+            .then(success => {
+                $scope.testSuccess = true;
+                $scope.responseData = success.data;
+                $scope.testResultData = success.data;
+                $scope.testResultStatus = success.status;
                 $scope.testResultStatusText = success.statusText
-                // console.log(success)
-            }, function (failed) {
-                $scope.testSuccess = false
-                $scope.responseData = ''
-                $scope.testResultData = failed.data
-                $scope.testResultStatus = failed.status
-                $scope.testResultStatusText = failed.statusText
+            })
+            .catch(failed => {
+                $scope.testSuccess = false;
+                $scope.responseData = '';
+                $scope.testResultData = failed.data;
+                $scope.testResultStatus = failed.status;
+                $scope.testResultStatusText = failed.statusText;
                 if (failed.status === -1) {
-                    $scope.testResultData = "Endpoint url could not be resolved"
-                    return
+                    $scope.testResultData = "Endpoint url could not be resolved";
                 }
-            }
-        )
+            })
     }
 }
 

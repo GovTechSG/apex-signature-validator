@@ -2,10 +2,11 @@
     color: green;
 }
 .fail {
+    font-style: italic;
     color: red;
 }
 .immutable {
-    color:green;
+    color: green;
 }
 .point-cursor{
     cursor: pointer;
