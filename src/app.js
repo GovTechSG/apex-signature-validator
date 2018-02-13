@@ -19,7 +19,7 @@ import utilService from './service/utiityService.js'
 
 import './css/style.css';
 
-var mainModule = angular.module("app", [uirouter, uibootstrap, uinotification, ngsanitize, ngfx, angularanimate])
+const mainModule = angular.module("app", [uirouter, uibootstrap, uinotification, ngsanitize, ngfx, angularanimate])
     .config(["$urlRouterProvider","$httpProvider","$compileProvider",
         function ($urlRouterProvider, $httpProvider, $compileProvider) {
             $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|blob):/);

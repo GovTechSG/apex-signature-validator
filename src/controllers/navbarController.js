@@ -1,4 +1,9 @@
+import apex_logo from '../images/logo_apex.png';
+
 function foo($scope, $rootScope, ModalService, $uibModal) {
+    let controller = this;
+
+    controller.apex_logo = apex_logo; // path to logo file
 
     $scope.signClick = function() {
         $rootScope.$broadcast('navbar-sign-clicked');

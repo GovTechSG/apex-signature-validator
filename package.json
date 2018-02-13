@@ -4,19 +4,20 @@
   "description": "APEX micro service and dev tool for testing level 0 - 2 requests",
   "scripts": {
     "build": "webpack --progress --colors --env.production",
-    "devserver": "webpack-dev-server --open",
+    "devserver": "webpack-dev-server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "license": "ISC",
   "dependencies": {
+    "@uirouter/angularjs": "^1.0.3",
     "angular": "^1.6.4",
     "angular-animate": "^1.6.4",
     "angular-sanitize": "^1.6.4",
     "angular-ui-bootstrap": "^2.5.0",
     "angular-ui-notification": "^0.3.6",
-    "@uirouter/angularjs": "^1.0.3",
     "bootstrap": "^3.3.7",
     "install": "^0.10.1",
+    "jquery": "^3.3.1",
     "jsrsasign": "^7.2.0",
     "ng-fx": "^2.0.4"
   },

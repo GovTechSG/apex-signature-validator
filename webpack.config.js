@@ -2,6 +2,7 @@ const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+
 const path = require('path');
 
 module.exports = (env = {}) => { // set env as empty object if unset from cli
@@ -11,41 +12,62 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
         },
         output: {
             path: path.resolve(__dirname, 'dist'),
-            filename: 'app.bundle.js'
+            filename: '[name].bundle.js'
         },
-        devServer: {
-            contentBase: path.resolve(__dirname, 'dist')
-        },
-        plugins: [
-            new webpack.NoEmitOnErrorsPlugin(),
-            new ExtractTextPlugin('stylesheets/[name].css'),
-            new OptimizeCssAssetsPlugin(),
-            new HtmlWebpackPlugin({
-                title: 'Apex Signature Validator',
-                template: 'index.ejs'
-            })
-        ],
         module: {
-            loaders: [
+            rules: [
                 {
-                    test: /\.(png|svg|jpg|gif|woff|woff2|eot|ttf|otf)$/,
-                    loader: 'url-loader?limit=100000'
+                    test: /\.(eot|otf|svg|ttf|woff|woff2)$/,
+                    use: [
+                        {
+                            loader: 'url-loader',
+                            options: {
+                                limit: 8192 // byte limit to inline files as data URL
+                            }
+                        }
+                    ]
+                },
+                {
+                    test: /\.(png|jpg|gif)$/,
+                    use: [
+                        {
+                            loader: 'file-loader',
+                            options: {
+                                name: '[name].[ext]',
+                                outputPath: 'assets/'
+                            }
+                        }
+                    ]
                 },
                 {
                     test: /\.css$/,
-                    loader: ExtractTextPlugin.extract(
+                    use: ExtractTextPlugin.extract(
                         {
-                            fallback: 'style-loader',
-                            use: 'css-loader'
+                            use: 'css-loader',
+                            fallback: 'style-loader'
                         }
                     )
                 }
             ]
+        },
+        plugins: [
+            new webpack.NoEmitOnErrorsPlugin(),
+            new HtmlWebpackPlugin({
+                title: 'Apex Signature Validator',
+                template: 'index.ejs'
+            }),
+            new ExtractTextPlugin('[name].css'),
+            // new OptimizeCssAssetsPlugin()
+        ],
+
+        devServer: {
+            contentBase: path.resolve(__dirname, 'dist')
         }
     };
     // Production only
     if (env.production) {
-        config.plugins.push(new webpack.optimize.UglifyJsPlugin());
+        config.plugins.push(new webpack.optimize.UglifyJsPlugin()); // minify js
+        config.plugins.push(new OptimizeCssAssetsPlugin()); // minify css
     }
 
     return config;
