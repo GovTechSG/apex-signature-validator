@@ -17,6 +17,25 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
         module: {
             rules: [
                 {
+                    test: /\.js$/,
+                    exclude: path.resolve(__dirname, 'node_modules'),
+                    use: {
+                        loader: 'babel-loader',
+                        options: {
+                            presets: [
+                                [
+                                    'babel-preset-env',
+                                    {
+                                        targets: {
+                                            browsers: ['ie 11']
+                                        }
+                                    }
+                                ]
+                            ]
+                        }
+                    }
+                },
+                {
                     test: /\.(eot|otf|svg|ttf|woff|woff2)$/,
                     use: [
                         {
