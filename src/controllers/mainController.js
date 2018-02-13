@@ -5,7 +5,7 @@ mainCtrlFunc.$inject = [
 ];
 
 function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, ModalService, $sce) {
-    var controller = this;
+    const controller = this;
 
     //load default/saved
     $scope.init = function () {
@@ -29,7 +29,8 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
         //update uri preview
         $scope.formParams()
     })
-    function set () {
+
+    function set() {
         //populate values
         var savedObject = ModalService.getParams()
         $scope.selectedRequest = savedObject.request
@@ -62,20 +63,21 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
         $scope.pem = ModalService.getPem();
         $scope.privSecret = ModalService.getPwd();
     }
-    function loadDefaultFromConfig (level) {
+
+    function loadDefaultFromConfig(level) {
         $scope.options = ['GET', 'POST']
         $scope.options_zone = config.main.callerZone
         $scope.options_provider = config.main.providerGateway
         $scope.input_app_ver = config.main.appVer
-        if(level===1)
-        {
+        if (level === 1) {
             $scope.input_sigmethod = config.main.sigMethod.level1
-        }else {
+        } else {
             $scope.input_sigmethod = config.main.sigMethod.level2
         }
 
         $scope.options_level = config.main.authLevels
     }
+
     $scope.init();
 
     $scope.additionalParams = []
@@ -93,12 +95,11 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
         $scope.additionalParams.splice(index, 1)
 
     }
-    $scope.checkTestResult = function()
-    {
-        if($scope.test || $scope.testSuccess === undefined)
+    $scope.checkTestResult = function () {
+        if ($scope.test || $scope.testSuccess === undefined)
             return 'test-send';
 
-        if($scope.testSuccess)
+        if ($scope.testSuccess)
             return 'test-send-success'
         else
             return 'test-send-fail'
@@ -140,7 +141,8 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
         saveInputsToModalService()
         $rootScope.$broadcast('params-saved')
     })
-    function saveInputsToModalService () {
+
+    function saveInputsToModalService() {
         var paramsToSave = {
             'level': $scope.selectedLevel,
             'request': $scope.selectedRequest,
@@ -151,7 +153,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
             'auth_prefix': $scope.input_authprefix,
             'app_id': $scope.input_appId,
             'additional_params': $scope.additionalParams,
-            'app_secret' : controller.input_appSecret
+            'app_secret': controller.input_appSecret
 
         }
         if ($scope.nonceDisabled)
@@ -163,40 +165,36 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
         ModalService.setPem($scope.pem)
         ModalService.setPwd($scope.privSecret)
     }
-    $scope.compareBS = function(generatedBS, ownBS)
-    {
+
+    $scope.compareBS = function (generatedBS, ownBS) {
         showBaseCompareResults(true);
         var before = false;
         var bsResults = "";
-        for(var i =0;i<generatedBS.length; i++)
-        {
+        for (var i = 0; i < generatedBS.length; i++) {
             var gen = generatedBS[i];
             var own = ownBS[i]
-            if(own === undefined) {
+            if (own === undefined) {
                 var stringToAdd = generatedBS.substr(i, generatedBS.leading);
-                bsResults+="<span class='missing-basestring-char'>"+stringToAdd+"</span>";
+                bsResults += "<span class='missing-basestring-char'>" + stringToAdd + "</span>";
                 break;
             }
-            if(gen !== own && !before)
-            {
-                own = "<span class='incorrect-basestring-char''>" +own;
+            if (gen !== own && !before) {
+                own = "<span class='incorrect-basestring-char''>" + own;
                 before = true;
             }
-            else if(gen === own && before)
-            {
-                own = "</span>"+own;
+            else if (gen === own && before) {
+                own = "</span>" + own;
                 before = false;
             }
-            bsResults +=own;
+            bsResults += own;
         }
-        if(ownBS.length>generatedBS.length)
-        {
-            if(before)
-                bsResults+="</span>";
-            bsResults += "<span class = 'extra-basestring-char'>"+ ownBS.substr(generatedBS.length)+"</span>";
+        if (ownBS.length > generatedBS.length) {
+            if (before)
+                bsResults += "</span>";
+            bsResults += "<span class = 'extra-basestring-char'>" + ownBS.substr(generatedBS.length) + "</span>";
         }
-        $scope.bsResults= $sce.trustAsHtml(bsResults);
-        if(generatedBS === ownBS)
+        $scope.bsResults = $sce.trustAsHtml(bsResults);
+        if (generatedBS === ownBS)
             Notification({
                 title: "",
                 message: "Basestrings are the same",
@@ -209,7 +207,8 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
                 delay: config.notificationShowTime
             }, 'error')
     }
-    function formUris (realmPartialUri) {
+
+    function formUris(realmPartialUri) {
         var gateway = $scope.selectedGateway
         var mid = config.main.domain
         var front
@@ -234,7 +233,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
         }
     }
 
-    function formRealmUri () {
+    function formRealmUri() {
         var append = config.main.domain
         var url = 'https://' + $scope.selectedGateway
         // var url = "https://" + $scope.input_gateway;
@@ -271,19 +270,19 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
         var errorMsg = ''
         if ($scope.selectedLevel === 1 || $scope.selectedLevel === 2) {
             if (params['app_id'] === '' || params['app_id'] === undefined) {
-                errorMsg += config.main.errorMsgs.noAppId+'<br>'
+                errorMsg += config.main.errorMsgs.noAppId + '<br>'
             }
         }
         if ($scope.selectedLevel === 1 || $scope.selectedLevel === 2) {
             if (params['timestamp'] === '' || params['timestamp'] === undefined) {
-                errorMsg += config.main.errorMsgs.timestampInvalid+'<br>'
+                errorMsg += config.main.errorMsgs.timestampInvalid + '<br>'
             } else if (!$scope.timestampDisabled) {
                 params['timestamp'] = (new Date).getTime()
             }
             if (params['nonce'] === '' || params['nonce'] === undefined) {
-                errorMsg += config.main.errorMsgs.nonceInvalid+'<br>'
+                errorMsg += config.main.errorMsgs.nonceInvalid + '<br>'
             } else if (!$scope.nonceDisabled) {
-                params['nonce'] =  Math.floor(Math.random() * 100000000000)
+                params['nonce'] = Math.floor(Math.random() * 100000000000)
             }
         }
         if (errorMsg !== '') {
@@ -327,16 +326,15 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
         }
 
         var key
-        if($scope.selectedLevel === 1) {
+        if ($scope.selectedLevel === 1) {
             key = controller.input_appSecret
-        } else if ($scope.selectedLevel===2) {
+        } else if ($scope.selectedLevel === 2) {
             var test = $scope.pem.substring($scope.pem.indexOf(config.sign.beginPrivateRSA),
                 $scope.pem.indexOf(config.sign.endPrivRSA) + config.sign.endPrivRSA.length)
-            try{
+            try {
                 key = KJUR.KEYUTIL.getKey($scope.pem.substring($scope.pem.indexOf(config.sign.beginPrivateRSA),
                     $scope.pem.indexOf(config.sign.endPrivRSA) + config.sign.endPrivRSA.length), $scope.privSecret)
-            }catch(exception)
-            {
+            } catch (exception) {
                 $scope.privateKeyError = true;
             }
         }
@@ -362,7 +360,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
         }
         $scope.showTestResults = true
 
-        if(!sendRequest) {
+        if (!sendRequest) {
             $scope.testResultData = undefined
             $scope.testResultStatus = undefined
             $scope.testResultStatusText = undefined
@@ -388,8 +386,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
                 $scope.testResultData = failed.data
                 $scope.testResultStatus = failed.status
                 $scope.testResultStatusText = failed.statusText
-                if(failed.status === -1)
-                {
+                if (failed.status === -1) {
                     $scope.testResultData = "Endpoint url could not be resolved"
                     return
                 }

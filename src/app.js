@@ -12,7 +12,7 @@ import 'angular-ui-notification/dist/angular-ui-notification.css';
 import mainController from './controllers/mainController.js';
 import paramsModalController from './controllers/paramsModalController.js';
 import navbarController from './controllers/navbarController.js';
-import config from './service/constants.js';
+import config from './service/config.js';
 import testService from './service/testService.js';
 import modalService from './service/modalService.js';
 import utilService from './service/utiityService.js'

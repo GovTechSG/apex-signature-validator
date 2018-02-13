@@ -84,7 +84,7 @@ Application code resides within the src folder, separated into the controllers a
 The controllers are hooked onto the index.html page through ng-controller attributes. The modal template also resides
  within index.html.
 ### service
-- constants.js stores constant variables
+- config.js stores constant variables
 - modalService.js is a singleton that stores parameters inputs to be fetched and share across both mainController and paramsModalController.
 - testService.js functions that handle the process of generating basestring, signing basestring, creating auth header with the generated signature and sending the
 test requests
