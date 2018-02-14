@@ -27,7 +27,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
     });
 
     function init() {
-        if (ModalService.getParams() !== undefined) {
+        if (ModalService.getParams() != null) {
             set();
         } else {
             // Initial load
@@ -59,14 +59,14 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
         loadDefaultFromConfig(savedObject.level);
         $scope.levelChange();
 
-        if (savedObject.nonce === undefined) {
+        if (savedObject.nonce == null) {
             $scope.input_nonce = "auto-generated";
             $scope.nonceDisabled = false;
         } else {
             $scope.input_nonce = savedObject.nonce;
             $scope.nonceDisabled = true;
         }
-        if (savedObject.timestamp === undefined) {
+        if (savedObject.timestamp == null) {
             $scope.input_timestamp = "auto-generated";
             $scope.timestampDisabled = false;
         } else {
@@ -106,7 +106,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
     }
 
     $scope.checkTestResult = function () {
-        if ($scope.test || $scope.testSuccess === undefined)
+        if ($scope.test || $scope.testSuccess == null)
             return 'test-send';
 
         if ($scope.testSuccess)
@@ -180,7 +180,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
         for (let i = 0; i < generatedBS.length; i++) {
             let gen = generatedBS[i];
             let own = ownBS[i]
-            if (own === undefined) {
+            if (own == null) {
                 let stringToAdd = generatedBS.substr(i, generatedBS.leading);
                 bsResults += "<span class='missing-basestring-char'>" + stringToAdd + "</span>";
                 break;
@@ -216,7 +216,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
     }
 
     function formUris(realmPartialUri) {
-        let gateway = $scope.selectedGateway;
+        let gateway = $scope.selectedGateway || '';
         let mid = config.main.domain;
         let front;
         if ($scope.selectedProvider === 'External Gateway') {
@@ -227,7 +227,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
             front = 'http://' + gateway + '-pvt.i';
         } else front = 'http://' + gateway + '.i';
         let uri = front + mid;
-        if ($scope.input_uri !== undefined) {
+        if ($scope.input_uri != null) {
             uri += $scope.input_uri;
             realmPartialUri += $scope.input_uri
         }
@@ -241,7 +241,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
 
     function formRealmUri() {
         let append = config.main.domain;
-        let url = 'https://' + $scope.selectedGateway;
+        let url = 'https://' + ($scope.selectedGateway || '');
         if ($scope.selectedFrom === 'Internet Zone') {
             url += '.e'
         } else if ($scope.selectedFrom === 'Intranet Zone') {
@@ -262,7 +262,9 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
         let uris = formUris(realmUri);
         let params = {};
 
-        params['prefix'] = $scope.input_authprefix.toLowerCase();
+        let authPrefix = $scope.input_authprefix || '';
+
+        params['prefix'] = authPrefix.toLowerCase();
         params['request'] = $scope.selectedRequest;
         params['uri'] = uris.uri;
         params['realm'] = uris.realmUri;
@@ -275,18 +277,27 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
         $scope.params = params;
 
         let errorMsg = '';
+
+        if ($scope.selectedGateway === '' || $scope.selectedGateway == null) {
+            errorMsg += config.main.errorMsgs.noSelectedGateway + '<br>';
+        }
+
         if ($scope.selectedLevel === 1 || $scope.selectedLevel === 2) {
-            if (params['app_id'] === '' || params['app_id'] === undefined) {
+            if (params['app_id'] === '' || params['app_id'] == null) {
                 errorMsg += config.main.errorMsgs.noAppId + '<br>'
             }
-        }
-        if ($scope.selectedLevel === 1 || $scope.selectedLevel === 2) {
-            if (params['timestamp'] === '' || params['timestamp'] === undefined) {
+
+            if ($scope.app_secret === '' || $scope.app_secret == null) {
+                errorMsg += config.main.errorMsgs.noAppSecret + '<br>'
+            }
+
+            if (params['timestamp'] === '' || params['timestamp'] == null) {
                 errorMsg += config.main.errorMsgs.timestampInvalid + '<br>'
             } else if (!$scope.timestampDisabled) {
                 params['timestamp'] = (new Date).getTime()
             }
-            if (params['nonce'] === '' || params['nonce'] === undefined) {
+
+            if (params['nonce'] === '' || params['nonce'] == null) {
                 errorMsg += config.main.errorMsgs.nonceInvalid + '<br>'
             } else if (!$scope.nonceDisabled) {
                 params['nonce'] = Math.floor(Math.random() * 100000000000)
@@ -315,11 +326,18 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
             if ($scope.selectedLevel === 1) {
                 key = controller.input_appSecret
             } else if ($scope.selectedLevel === 2) {
-                let test = $scope.pem.substring($scope.pem.indexOf(config.sign.beginPrivateRSA),
-                    $scope.pem.indexOf(config.sign.endPrivRSA) + config.sign.endPrivRSA.length);
+                // let test = $scope.pem.substring(
+                //     $scope.pem.indexOf(config.sign.beginPrivateRSA),
+                //     $scope.pem.indexOf(config.sign.endPrivRSA) + config.sign.endPrivRSA.length
+                // );
                 try {
-                    key = KJUR.KEYUTIL.getKey($scope.pem.substring($scope.pem.indexOf(config.sign.beginPrivateRSA),
-                        $scope.pem.indexOf(config.sign.endPrivRSA) + config.sign.endPrivRSA.length), $scope.privSecret)
+                    key = KJUR.KEYUTIL.getKey(
+                        $scope.pem.substring(
+                            $scope.pem.indexOf(config.sign.beginPrivateRSA),
+                            $scope.pem.indexOf(config.sign.endPrivRSA) + config.sign.endPrivRSA.length
+                        ),
+                        $scope.privSecret
+                    )
                 } catch (exception) {
                     $scope.privateKeyError = true;
                 }

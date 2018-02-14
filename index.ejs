@@ -82,7 +82,6 @@
                 <div class="col-md-6">
                     <b>Provider Zone</b>
                     <label class="radio-inline" ng-repeat="single in options_provider">
-                        <!--<input type="radio" name="to" ng-model="selectedProvider" value="">Internal Gateway-->
                         <input type="radio" name="to" ng-model="$parent.selectedProvider" value="{{single}}"
                                ng-change="formParams()">{{single}}
                     </label>
@@ -201,9 +200,12 @@
                         </div>
 
                         <div class="col-md-4" ng-if="!showLevel2">
-                            <b>Secret Password</b>
-                            <input type="text" ng-model="mainCtrl.input_appSecret" class="form-control" required
-                                   name="appSecret">
+                            <b>Application Secret</b>
+                            <input type="text" ng-model="mainCtrl.input_appSecret" required ng-keyup="formParams()"
+                                   class="form-control" name="appSecret">
+                            <span ng-show="paramForm.appSecret.$touched && paramForm.appSecret.$invalid" class="fail">
+                                App Secret is required.
+                            </span>
                         </div>
                     </div>
 
@@ -299,6 +301,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="row" style='text-align:center'>
                 <button type="button" class="btn btn-lg btn-default" ng-click="signAndTest(true)">
                     <span class="glyphicon glyphicon-transfer"></span> Send Test Request
