@@ -129,15 +129,16 @@
 
             </div>
 
-            <div ng-if="showLevel2 || showLevel1">
-
+            <div>
                 <h4>Uri Preview</h4>
                 <div class="well uri-preview">
-                    <b>Signing Uri: </b>{{uri}}
-                    <br>
-                    <b>Realm Uri: </b>{{realmUri}}
+                    <b>Endpoint: </b>{{uri}}
+                    <div ng-if="showLevel2 || showLevel1">
+                        <b>Signing Uri: </b>{{uri}}
+                        <br>
+                        <b>Realm Uri: </b>{{realmUri}}
+                    </div>
                 </div>
-
             </div>
 
 
@@ -178,7 +179,7 @@
                 </div>
             </div>
 
-            <h4>Required Parameters</h4>
+            <h4 ng-if="showLevel1 || showLevel2">Required Parameters</h4>
             <div class="row">
                 <div class="col-md-12">
                     <div class="row fx-zoom-normal fx-speed-500" ng-if="showLevel1">
@@ -314,6 +315,8 @@
             </div>
         </form>
 
+        {{ showTestResults }}
+
         <div ng-if="showTestResults">
             <div class="heading">
                 <span class="label label-primary point-cursor">3</span>
@@ -321,8 +324,13 @@
                 {{$parent.step3Title}}
             </div>
 
+            <div ng-if="sendingTestRequest" class="spinner">
+                <div class="bounce1"></div>
+                <div class="bounce2"></div>
+                <div class="bounce3"></div>
+            </div>
 
-            <div class="jumbotron" ng-class="checkTestResult()">
+            <div ng-if="!sendingTestRequest" class="jumbotron" ng-class="checkTestResult()">
                 <div ng-if="showBaseString">
 
                     <div class="row">
@@ -358,7 +366,8 @@
                     <textarea rows="10" ng-model="$parent.authHeader" disable class="form-control immutable"
                               disabled></textarea>
                 </div>
-                <div style="text-align: center">
+
+                <div style="text-align: center" ng-if="!sendingTestRequest">
                     <span ng-if="testResultStatus!==undefined"><b>Response:</b></span>
                     <span ng-cloak ng-bind="testResultStatus"></span><br/>
                     <span ng-if="testResultStatusText!==undefined"><b>Status:</b></span>

@@ -1,4 +1,4 @@
-var config = {
+export default {
     main: {
         appVer: '1.0',
         // sigMethod: 'SHA256withRSA',
@@ -7,13 +7,13 @@ var config = {
             level2: 'SHA256withRSA'
         },
         callerZone: ['WWW', 'Internet Zone', 'Intranet Zone', 'SGNet'],
-        providerGateway: ['Internal Gateway', 'External Gateway'],
+        providerGateway: ['External Gateway', 'Internal Gateway'],
         authLevels: [0, 1, 2],
         defaultGateway: "apex_example_gateway",
+        defaultUri: "/apex/example/path",
         defaultAuthPrefix: "Apex",
         notificationShowTime : 5000,
-        domain: ".api.gov.sg"
-        ,
+        domain: ".api.gov.sg",
         errorMsgs :{
             noSelectedGateway: "Gateway must be specified",
             noAppId : "Application Id must be specified",
@@ -32,6 +32,4 @@ var config = {
     test: {
         levels: [0, 1, 2]
     }
-};
-
-export default config;
+}

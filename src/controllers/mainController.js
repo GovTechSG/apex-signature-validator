@@ -9,9 +9,12 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
 
     init();
 
+    $scope.sendingTestRequest = false;
+
     $scope.add = add;
     $scope.remove = remove;
     $scope.formParams = formParams;
+    $scope.signAndTest = signAndTest;
 
     $scope.additionalParams = [];
 
@@ -31,12 +34,14 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
             set();
         } else {
             // Initial load
+
+            // $scope.selectedGateway = config.main.defaultGateway;
+            // $scope.input_uri = config.main.defaultUri;
+
             loadDefaultFromConfig(2);
             $scope.selectedRequest = $scope.options[0];
             $scope.selectedFrom = $scope.options_zone[0];
-
             $scope.selectedProvider = $scope.options_provider[0];
-            // $scope.selectedGateway = config.main.defaultGateway;
             $scope.input_authprefix = config.main.defaultAuthPrefix;
             $scope.input_timestamp = 'auto-generated';
             $scope.input_nonce = 'auto-generated';
@@ -78,7 +83,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
         $scope.privSecret = ModalService.getPwd();
     }
 
-    function loadDefaultFromConfig(level) {
+    function  loadDefaultFromConfig(level) {
         $scope.options = ['GET', 'POST'];
         $scope.options_zone = config.main.callerZone;
         $scope.options_provider = config.main.providerGateway;
@@ -228,8 +233,12 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
         } else front = 'http://' + gateway + '.i';
         let uri = front + mid;
         if ($scope.input_uri != null) {
-            uri += $scope.input_uri;
-            realmPartialUri += $scope.input_uri
+            let userPath = $scope.input_uri;
+            if (!userPath.startsWith('/')) {
+                userPath = '/' + userPath;
+            }
+            uri += userPath;
+            realmPartialUri += userPath;
         }
         $scope.uri = uri;
         $scope.realmUri = realmPartialUri;
@@ -287,7 +296,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
                 errorMsg += config.main.errorMsgs.noAppId + '<br>'
             }
 
-            if ($scope.app_secret === '' || $scope.app_secret == null) {
+            if (controller.input_appSecret === '' || controller.input_appSecret == null) {
                 errorMsg += config.main.errorMsgs.noAppSecret + '<br>'
             }
 
@@ -317,7 +326,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
         $scope.showBaseStringCompareResults = boolean;
     }
 
-    $scope.signAndTest = function (send) {
+    function signAndTest(send) {
         $scope.privateKeyError = false;
         showBaseCompareResults(false);
         try {
@@ -326,10 +335,6 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
             if ($scope.selectedLevel === 1) {
                 key = controller.input_appSecret
             } else if ($scope.selectedLevel === 2) {
-                // let test = $scope.pem.substring(
-                //     $scope.pem.indexOf(config.sign.beginPrivateRSA),
-                //     $scope.pem.indexOf(config.sign.endPrivRSA) + config.sign.endPrivRSA.length
-                // );
                 try {
                     key = KJUR.KEYUTIL.getKey(
                         $scope.pem.substring(
@@ -364,21 +369,21 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
                 }
             }
         }
-    };
+    }
 
     function sendTest(sendRequest) {
+        console.log('sendTest');
         if ($scope.selectedLevel === 2) {
             $scope.showBaseString = true;
             $scope.showAuthHeader = true;
-        }
-        else if ($scope.selectedLevel === 1) {
+        } else if ($scope.selectedLevel === 1) {
             $scope.showBaseString = true;
             $scope.showAuthHeader = true;
-        }
-        else {
+        } else {
             $scope.showBaseString = false;
             $scope.showAuthHeader = false;
         }
+
         $scope.showTestResults = true;
 
         if (!sendRequest) {
@@ -390,9 +395,12 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
             $scope.step3Title = "View Generated Basestring and Signature";
             return;
         }
+
         $scope.step3Title = "Test Request Response";
         $scope.test = false;
-        TestService.sendTestRequest($scope.realmUri, $scope.selectedRequest, $scope.testSendAuthHeader,
+
+        $scope.sendingTestRequest = true;
+        return TestService.sendTestRequest($scope.realmUri, $scope.selectedRequest, $scope.testSendAuthHeader,
             $scope.selectedLevel, $scope.input_appId)
             .then(success => {
                 $scope.testSuccess = true;
@@ -410,6 +418,9 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
                 if (failed.status === -1) {
                     $scope.testResultData = "Endpoint url could not be resolved";
                 }
+            })
+            .finally(() => {
+                $scope.sendingTestRequest = false;
             })
     }
 }
