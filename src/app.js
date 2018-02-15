@@ -20,33 +20,33 @@ import utilService from './service/utiityService.js'
 import './css/style.css';
 
 const mainModule = angular.module("app", [uirouter, uibootstrap, uinotification, ngsanitize, ngfx, angularanimate])
-    .config(["$urlRouterProvider","$httpProvider","$compileProvider",
+    .config(["$urlRouterProvider", "$httpProvider", "$compileProvider",
         function ($urlRouterProvider, $httpProvider, $compileProvider) {
             $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|blob):/);
             $urlRouterProvider.otherwise("/");
         }])
     .constant('config', config)
     .controller('mainController', mainController)
-    .controller('jsonInputModalController', ["$scope","$uibModalInstance", "items", paramsModalController])
-    .controller('navbarController', ["$scope","$rootScope","ModalService","$uibModal", navbarController])
-    .factory('ModalService',[modalService])
-    .factory('TestService', ["$http", "UtilityService",testService])
-    .factory('UtilityService',[utilService]);
+    .controller('jsonInputModalController', ["$scope", "$uibModalInstance", "items", paramsModalController])
+    .controller('navbarController', ["$scope", "$rootScope", "ModalService", "$uibModal", navbarController])
+    .factory('ModalService', [modalService])
+    .factory('TestService', ["$http", "UtilityService", testService])
+    .factory('UtilityService', [utilService]);
 
 mainModule.directive('onReadFile', ['$parse',
-    function($parse){
+    function ($parse) {
         return {
             restrict: 'A',
             scope: false,
-            link: function(scope, ele, attrs) {
+            link: function (scope, ele, attrs) {
 
-                var fn = $parse(attrs.onReadFile);
-                ele.on('change', function(onChangeEvent){
-                    var reader = new FileReader();
+                let fn = $parse(attrs.onReadFile);
+                ele.on('change', function (onChangeEvent) {
+                    let reader = new FileReader();
 
-                    reader.onload = function(onLoadEvent) {
-                        scope.$apply(function(){
-                            fn(scope, {$fileContents: onLoadEvent.target.result} )
+                    reader.onload = function (onLoadEvent) {
+                        scope.$apply(function () {
+                            fn(scope, {$fileContents: onLoadEvent.target.result})
                         })
                     };
                     reader.readAsText((onChangeEvent.srcElement || onChangeEvent.target).files[0]);

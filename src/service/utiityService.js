@@ -9,18 +9,18 @@ function utilSvc() {
             let arr1 = [];
             for (let n = 0, l = str.length; n < l; n++) {
                 let hex = Number(str.charCodeAt(n)).toString(16);
-                arr1.push(hex)
+                arr1.push(hex);
             }
-            return arr1.join('')
+            return arr1.join('');
         },
         sortJSON: function (json) {
             let newJSON = {};
             let keys = Object.keys(json);
             keys.sort();
-            for (let key in keys) {
-                newJSON[keys[key]] = json[keys[key]]
+            for (let key of keys) {
+                newJSON[key] = json[key];
             }
-            return newJSON
+            return newJSON;
         }
     }
 }
