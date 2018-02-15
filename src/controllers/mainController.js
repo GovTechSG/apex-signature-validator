@@ -372,7 +372,6 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
     }
 
     function sendTest(sendRequest) {
-        console.log('sendTest');
         if ($scope.selectedLevel === 2) {
             $scope.showBaseString = true;
             $scope.showAuthHeader = true;

@@ -76,7 +76,9 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
                 template: 'index.ejs'
             }),
             new ExtractTextPlugin('[name].css'),
-            // new OptimizeCssAssetsPlugin()
+            new webpack.DefinePlugin({
+                'process.env.NODE_ENV': JSON.stringify('development')
+            })
         ],
 
         devServer: {
@@ -87,6 +89,9 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
     if (env.production) {
         config.plugins.push(new webpack.optimize.UglifyJsPlugin()); // minify js
         config.plugins.push(new OptimizeCssAssetsPlugin()); // minify css
+        new webpack.DefinePlugin({
+            'process.env.NODE_ENV': JSON.stringify('production')
+        })
     }
 
     return config;
