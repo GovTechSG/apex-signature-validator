@@ -76,7 +76,6 @@ function foo($http, UtilityService) {
                     authHeader += keys[i] + '="' + sortedParams[keys[i]] + '",'
                 }
                 else {
-                    // authHeader += keys[i] + '="' + sortedParams[keys[i]] + '",'
                     authHeader += keys[i] + '="' + sortedParams["realm"] + '",'
                 }
             }
@@ -104,5 +103,6 @@ function foo($http, UtilityService) {
 
         }
     }
-};
+}
+
 export default foo;

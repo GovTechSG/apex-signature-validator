@@ -285,6 +285,11 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
 
         $scope.params = params;
 
+        $scope.input_basestring = TestService.generateBasestring(params, $scope.additionalParams)
+    }
+
+    function validateParams() {
+        let params = $scope.params;
         let errorMsg = '';
 
         if ($scope.selectedGateway === '' || $scope.selectedGateway == null) {
@@ -318,8 +323,6 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
                 message: errorMsg
             };
         }
-
-        $scope.input_basestring = TestService.generateBasestring(params, $scope.additionalParams)
     }
 
     function showBaseCompareResults(boolean) {
@@ -331,6 +334,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
         showBaseCompareResults(false);
         try {
             formParams();
+            validateParams();
             let key;
             if ($scope.selectedLevel === 1) {
                 key = controller.input_appSecret
