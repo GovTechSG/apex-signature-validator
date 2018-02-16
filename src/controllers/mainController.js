@@ -1,8 +1,6 @@
 import KJUR from 'jsrsasign';
 
-mainCtrlFunc.$inject = [
-    "$scope", "$rootScope", "config", "Notification", "TestService", "ModalService", "$sce"
-];
+mainCtrlFunc.$inject = ["$scope", "$rootScope", "config", "Notification", "TestService", "ModalService", "$sce"];
 
 function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, ModalService, $sce) {
     const controller = this;
@@ -83,7 +81,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
         $scope.privSecret = ModalService.getPwd();
     }
 
-    function  loadDefaultFromConfig(level) {
+    function loadDefaultFromConfig(level) {
         $scope.options = ['GET', 'POST'];
         $scope.options_zone = config.main.callerZone;
         $scope.options_provider = config.main.providerGateway;
@@ -179,6 +177,9 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
     }
 
     $scope.compareBS = function (generatedBS, ownBS) {
+        if (ownBS == null) {
+            ownBS = '';
+        }
         showBaseCompareResults(true);
         let before = false;
         let bsResults = "";
@@ -266,6 +267,29 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
         ModalService.setPem($scope.pem)
     };
 
+    function formFullParams(params, additionalParams) {
+        let fullParams = {};
+        let keys = Object.keys(params);
+        for (let key of keys) {
+            if (!['prefix', 'uri', 'realm', 'request'].includes(key)) {
+                let prefixKey = params.prefix + '_' + key;
+                fullParams[prefixKey] = params[key]; 
+            } else {
+                fullParams[key] = params[key];
+            }
+        }
+
+        //add additional parameters into params object
+        for (let i = 0; i < additionalParams.length; i++) {
+            if (!(additionalParams[i].name == null || additionalParams[i].name === '') &&
+                !(additionalParams[i].value == null || additionalParams[i].value === '')) {
+                fullParams[additionalParams[i].name] = additionalParams[i].value
+            }
+        }
+
+        return fullParams;
+    }
+
     function formParams() {
         let realmUri = formRealmUri();
         let uris = formUris(realmUri);
@@ -278,14 +302,15 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
         params['uri'] = uris.uri;
         params['realm'] = uris.realmUri;
         params['app_id'] = $scope.input_appId;
-        params['nonce'] = $scope.input_nonce;
         params['signature_method'] = $scope.input_sigmethod;
-        params['timestamp'] = $scope.input_timestamp;
         params['version'] = $scope.input_app_ver;
 
-        $scope.params = params;
+        params.timestamp = $scope.input_timestamp === 'auto-generated' ? (new Date).getTime() : $scope.input_timestamp;
+        params.nonce = $scope.input_nonce === 'auto-generated' ? Math.floor(Math.random() * 100000000000) : $scope.input_nonce;
 
-        $scope.input_basestring = TestService.generateBasestring(params, $scope.additionalParams)
+        $scope.params = formFullParams(params, $scope.additionalParams);
+
+        $scope.input_basestring = TestService.generateBasestring($scope.params);
     }
 
     function validateParams() {
@@ -296,27 +321,30 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
             errorMsg += config.main.errorMsgs.noSelectedGateway + '<br>';
         }
 
-        if ($scope.selectedLevel === 1 || $scope.selectedLevel === 2) {
-            if (params['app_id'] === '' || params['app_id'] == null) {
-                errorMsg += config.main.errorMsgs.noAppId + '<br>'
-            }
-
+        if ($scope.selectedLevel === 1) {
             if (controller.input_appSecret === '' || controller.input_appSecret == null) {
                 errorMsg += config.main.errorMsgs.noAppSecret + '<br>'
             }
+        }
 
-            if (params['timestamp'] === '' || params['timestamp'] == null) {
-                errorMsg += config.main.errorMsgs.timestampInvalid + '<br>'
-            } else if (!$scope.timestampDisabled) {
-                params['timestamp'] = (new Date).getTime()
+        if ($scope.selectedLevel === 1 || $scope.selectedLevel === 2) {
+            if ($scope.input_authprefix === '' || $scope.input_authprefix == null) {
+                errorMsg += config.main.errorMsgs.noAuthPrefix + '<br>';
             }
 
-            if (params['nonce'] === '' || params['nonce'] == null) {
+            if (params[params.prefix + '_app_id'] === '' || params[params.prefix + '_app_id'] == null) {
+                errorMsg += config.main.errorMsgs.noAppId + '<br>'
+            }
+
+            if (params[params.prefix + '_timestamp'] === '' || params[params.prefix + '_timestamp'] == null) {
+                errorMsg += config.main.errorMsgs.timestampInvalid + '<br>'
+            }
+
+            if (params[params.prefix + '_nonce'] === '' || params[params.prefix + '_nonce'] == null) {
                 errorMsg += config.main.errorMsgs.nonceInvalid + '<br>'
-            } else if (!$scope.nonceDisabled) {
-                params['nonce'] = Math.floor(Math.random() * 100000000000)
             }
         }
+
         if (errorMsg !== '') {
             throw {
                 name: 'Incomplete fields',

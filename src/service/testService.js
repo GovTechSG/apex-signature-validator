@@ -2,34 +2,14 @@ import KJUR from 'jsrsasign';
 
 function foo($http, UtilityService) {
     return {
-        generateBasestring: function (params, additionalParams) {
-            let keys = Object.keys(params);
-            for (let i = 0; i < keys.length; i++) {
-                //add prefix only to attributes that are not prefix, uri, realm, request as these do not need the prefix
-                if (keys[i] === 'prefix' || keys[i] === 'uri' || keys[i] === 'realm' || keys[i] === 'request')
-                    continue;
-                //construct the new key (prefix + keyname) into params object, then delete the old key
-                params[params.prefix + '_' + keys[i]] = params[keys[i]];
-                delete params[keys[i]];
-            }
-            //add additional parameters into params object
-            for (let i = 0; i < additionalParams.length; i++) {
-                if (!(additionalParams[i].name == null || additionalParams[i].name === '') &&
-                    !(additionalParams[i].value == null || additionalParams[i].value === '')) {
-                    params[additionalParams[i].name] = additionalParams[i].value
-                }
-            }
-            //sort params base on key names
+        generateBasestring: function (params) {
             let sortedParams = UtilityService.sortJSON(params);
             let sortedKeys = Object.keys(sortedParams);
-            let baseString = params.request + '&' + params.uri;
-            //form the base string
-            for (let i = 0; i < sortedKeys.length; i++) {
-                if (sortedKeys[i] === 'prefix' || sortedKeys[i] === 'uri' || sortedKeys[i] === 'realm' ||
-                    sortedKeys[i] === 'request') {
-                    continue
+            let baseString = sortedParams.request + '&' + sortedParams.uri;
+            for (let key of sortedKeys) {
+                if (!['prefix', 'uri', 'realm', 'request'].includes(key)) {
+                    baseString += '&' + key + '=' + sortedParams[key];
                 }
-                baseString += '&' + sortedKeys[i] + '=' + sortedParams[sortedKeys[i]]
             }
             return baseString
         },
