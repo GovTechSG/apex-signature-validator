@@ -1,3 +1,4 @@
+import "babel-polyfill";
 import angular from 'angular';
 import uirouter from '@uirouter/angularjs';
 import uinotification from 'angular-ui-notification';
