@@ -6,7 +6,7 @@ that are of importance when it comes to formulating the correct authorization he
 - Basestring
     - The string of text (plaintext) that will be ran against HmacSHA256 for level 1 with a shared key to generate a digest OR:
     - The string of text (plaintext) that will be ran against SHA256withRSA algorithm where the generated digest would be 
-    encrypted via RSA with the consumers' private key (to be derived from a PEM file).
+    encrypted via RSA with the consumers' private key (to be derived from a PEM formatted private key).
     - The composition of the basestring includes: {prefix}_app_id (Generated from the API Gateway), {prefix}_nonce, {prefix}_signature_method(HmacSHA256 or SHA256withRSA), 
     {prefix}_timestamp and any additional parameters (additional parameters do not require prefix). All parameters are then ordered by 
     their key names.
@@ -34,20 +34,33 @@ that are of importance when it comes to formulating the correct authorization he
         "1501225489066",{prefix}_version="1.0"
         ``
 
+## Building Apex Signature Validator
+From the root directory:
+
+1. `npm install`
+2. `npm run build`
+
+The minified production build will be bundled by webpack into the `dist` folder.
+
+## Developing Apex Signature Validator
+
+From the root directory:
+
+1. `npm install`
+2. `npm run devserver`
+
+This spins up a [Webpack Dev Server](https://github.com/webpack/webpack-dev-server) instance that supports live reloading when changes are detected in the code base.
+
 ## Application Structure
 ```
-- frontend
-    - public
-        - html
-        - javascript
-        - stylesheets
-    - src
-        - controllers
-        - css
-        - service
-        - app.js 
-        - package.json
-        - webpack.config.js
+- src
+    - controllers
+    - css
+    - service
+    - app.js 
+    - package.json
+    - webpack.config.js
+- index.ejs
 ```
 
 ### package.json
@@ -59,18 +72,9 @@ https://webpack.github.io/docs/cli.html for more information on Webpack cli comm
 Specify the entry the point app.js and the output of the bundled files. Plugins and module loaders are used to uglify and 
 bundle css as Webpack does not come with css bundling capabilities by default.
 
-### public directory
-Bundled js and css file will be outputted by Webpack into javascript and stylesheets folder respectively. The html folder 
-holds index.html that is the stand alone web page application that holds Webpack uglified javascripts and css in tags. 
-
 ### app.js
 The main angular module of the application and the entry point for Webpack. Controllers, factories and services are imported 
 by Webpack with variable names and injected.
-
-### npm run build
-Run 'npm run build' in src folder to trigger the npm build script that will output the bundled js and css file into public
-directory. The resulting scripts would then need to be be transferred into the script and style tags of the index.html file 
-in order for the application operable standing alone.
 
 ## Code Base
 ### controllers
@@ -94,8 +98,13 @@ test requests
 The JSRSASIGN library is the opensource free pure JavaScript cryptographic library used by the application to perform all digest and RSA related 
 operations. Refer to http://kjur.github.io/jsrsasign/ for more information including the api documentation.
 
-## CORS Issue
-In order for cross origin requests to be ignored on browser clients, web browsers such as chrome would have to be launched in a non-conventional manner.
+## CORS issue when sending test requests
+When sending test requests to Apex's gateways, the signature validator needs to make cross-origin requests. For security reasons, browsers restrict cross-origin HTTP requests initiated from scripts.
+
+If you are getting a response code of -1 when sendin a test response, your browser could be rejecting your cross-origin request.
+
+In order for cross-origin requests to be ignored on browser clients, web browsers such as chrome would have to be launched in a non-conventional manner.
+
 To simplify this process, two scripts are included in the public -> html directory namely 'mac startup.command' and 'windows startup.bat' to automatically
-open the application in a new chrome window that has disabled web security. This allows browsers to accept pre flight requests' responses that are not from
-the same origin so that the actual request can be sent out following that.
+open the application in a new chrome window that has disabled web security. This lets browsers accept pre flight requests' responses that are not from
+the same origin and allow the actual request to be sent.
