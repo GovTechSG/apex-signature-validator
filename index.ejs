@@ -132,7 +132,7 @@
             <div>
                 <h4>Uri Preview</h4>
                 <div class="well uri-preview">
-                    <b>Endpoint: </b>{{uri}}
+                    <b>Endpoint: </b>{{realmUri}}
                     <div ng-if="showLevel2 || showLevel1">
                         <b>Signing Uri: </b>{{uri}}
                         <br>
@@ -293,7 +293,7 @@
                     </div>
                     <div class="col-md-12">
                         <b>Secret for Private Key</b>
-                        <input type="text" class="form-control" ng-model="$parent.privSecret">
+                        <input type="password" class="form-control" ng-model="$parent.privSecret">
                         <span ng-if="privateKeyError"
                               class="fail">Please verify that both pem string and secret are correct</span>
                         <br>

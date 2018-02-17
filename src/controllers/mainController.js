@@ -321,10 +321,14 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
             errorMsg += config.main.errorMsgs.noSelectedGateway + '<br>';
         }
 
-        if ($scope.selectedLevel === 1) {
-            if (controller.input_appSecret === '' || controller.input_appSecret == null) {
-                errorMsg += config.main.errorMsgs.noAppSecret + '<br>'
-            }
+        if ($scope.selectedLevel === 1 && 
+            (controller.input_appSecret === '' || controller.input_appSecret == null)) {
+            errorMsg += config.main.errorMsgs.noAppSecret + '<br>' 
+        }
+
+        if ($scope.selectedLevel === 2 &&
+            ($scope.pem == null || $scope.pem === '')) {
+            errorMsg += config.main.errorMsgs.noPemProvided;
         }
 
         if ($scope.selectedLevel === 1 || $scope.selectedLevel === 2) {
@@ -377,6 +381,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
                     )
                 } catch (exception) {
                     $scope.privateKeyError = true;
+                    throw exception;
                 }
             }
             let sig = TestService.signBasestring($scope.selectedLevel, $scope.input_basestring, key);
@@ -432,7 +437,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
 
         $scope.sendingTestRequest = true;
         return TestService.sendTestRequest($scope.realmUri, $scope.selectedRequest, $scope.testSendAuthHeader,
-            $scope.selectedLevel, $scope.input_appId)
+            $scope.selectedLevel)
             .then(success => {
                 $scope.testSuccess = true;
                 $scope.responseData = success.data;
@@ -447,7 +452,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
                 $scope.testResultStatus = failed.status;
                 $scope.testResultStatusText = failed.statusText;
                 if (failed.status === -1) {
-                    $scope.testResultData = "Endpoint url could not be resolved";
+                    $scope.testResultData = config.main.errorMsgs.httpReqError;
                 }
             })
             .finally(() => {
