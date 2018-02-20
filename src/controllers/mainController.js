@@ -1,4 +1,7 @@
 import KJUR from 'jsrsasign';
+import nonce from 'nonce';
+
+const generateNonce = nonce();
 
 mainCtrlFunc.$inject = ["$scope", "$rootScope", "config", "Notification", "TestService", "ModalService", "$sce"];
 
@@ -306,7 +309,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
         params['version'] = $scope.input_app_ver;
 
         params.timestamp = $scope.input_timestamp === 'auto-generated' ? (new Date).getTime() : $scope.input_timestamp;
-        params.nonce = $scope.input_nonce === 'auto-generated' ? Math.floor(Math.random() * 100000000000) : $scope.input_nonce;
+        params.nonce = $scope.input_nonce === 'auto-generated' ? generateNonce() : $scope.input_nonce;
 
         $scope.params = formFullParams(params, $scope.additionalParams);
 
