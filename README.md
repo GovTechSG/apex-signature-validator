@@ -71,6 +71,12 @@ For macOS , run the following
 ./browser-scripts/launch.command
 ```
 
+A browser will be automatically launched as shown below :
+
+![homepage.png](https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/homepage.png)
+
+Navigate to **localhost:8080** if required.
+
 For Windows , move to the release directory and type the name of the batch file. Alternatively, double-click on it
 ```
 launch.bat
