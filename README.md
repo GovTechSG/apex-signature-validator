@@ -1,69 +1,90 @@
 # APEX Signature Validator
 The Apex Signature Validator is an AngularJS application that assists APEX API consumers in verifying whether signatures 
-are generated correctly in their applications when restful API calls are made to the APEX API Gateway. 
+are generated correctly in their applications when making restful API calls to the APEX API Gateway. 
 
 ## Running Apex Signature Validator
-Download the latest release archive and run `index.html` directly in your browser.
+Download and extract the latest [release](https://github.com/GovTechSG/apex-signature-validator/releases) and run `index.html` directly in your browser.
 
 **Note**
 
-1. To be able to use the *Send Test Request* function, use the scripts found in the `browser-scripts` directory to open Apex Signature Validator in Google Chrome. See [Sending test requests with the signature validator](#sending-test-requests-with-the-signature-validator) for more details
-2. Signature validtor has been tested on Chrome, Firefox and Internet Explorer 11.
+1. To to use the *Send Test Request* function, use the OS-appropriate script found in the `browser-scripts` directory to open Google Chrome with web security disabled. See [Sending test requests with the signature validator](#sending-test-requests-with-the-signature-validator) for more details.
+2. Apex Signature Validator has been tested on Google Chrome, Firefox and Internet Explorer 11.
 
 ## Apex signatures explained
 
 There are three components
 that are of importance when it comes to formulating the correct authorization header: basestring, signature, authorization header.
 
-- Basestring
-    - The string of text (plaintext) that will be ran against HmacSHA256 for level 1 with a shared key to generate a digest OR:
-    - The string of text (plaintext) that will be ran against SHA256withRSA algorithm where the generated digest would be 
-    encrypted via RSA with the consumers' private key (to be derived from a PEM formatted private key).
-    - The composition of the basestring includes: {prefix}_app_id (Generated from the API Gateway), {prefix}_nonce, {prefix}_signature_method(HmacSHA256 or SHA256withRSA), 
-    {prefix}_timestamp and any additional parameters (additional parameters do not require prefix). All parameters are then ordered by 
-    their key names.
-    An example of a basestring is as such
+### Basestring
+Either:
 
-        ``
-        GET&https://example.com/v1/helloworld/nocors&{prefix}_app_id=appid&{prefix}_nonce=59242635618&
-        {prefix}_signature_method=SHA256withRSA&{prefix}_timestamp=1501147626306&{prefix}_version=1.0&
-        firstparam=valueoffirstparam&secondparam=valueofsecondparam
-        ``
+    The string of text (plaintext) that will be used for HMAC-SHA256 generation used in level 1 authentication. A shared key is used to generate this digest.
 
-- Signature
-    - A base64 representation of the digest (HmacSHA256 level 1) or ciphertext (SHA256withRSA) derived from the basestring.
+Or:
 
-- Authorization Header 
-    - The request authorization header begins with the prefix, the key 'realm' with the value being the api endpoint followed 
-    by all the parameters keys and values separated by commas. The generated signature is included with its being {prefix}_signature. 
-    An example of a generated authorization header is as follows
+    The string of text (plaintext) that will be used to create a SHA256 with RSA signature using the consumer's PEM-formatted private key.
 
-        ``
-        Authorization: Apex realm="https://example.com/v1/helloworld/nocors",{prefix}_app_id=appid,
-        {prefix}_nonce="98344891638",{prefix}_signature="p1WxtrYhM5L8RkAwQQ59PoZ2+5Yr05kHtC0Bh+nalnPg7SuL4/TTcmxhRmGYioSyYQHoMpKyryx0QbWaBKZDRVK4nIiznJ9L9X+IUAQ
-        XMWwSdtjOnjMjgZF06EGfyClFbRIGjJDrbwJeuRutji3/qdj9vZMqXRY/hAwnIfTk7IWPUBd9OrQG0PHMDOREl1mAhABk04MOfTAXCMCwx6z70MoIrc0EhQuuygMertnFS4mU0+hxQtgrPjoDZ
-        LPsRgFIkU9iPCKKVAMMc3jAkZq6X8BKImJJB4fXMCv6CfCDwd0PFeY4TG6CFhU7h49XAS+e+sO3HWeCzyXxtinhywIxIw==",{prefix}_signature_method="SHA256withRSA",{prefix}_timestamp=
-        "1501225489066",{prefix}_version="1.0"
-        ``
+The composition of the basestring includes: 
+
+1. {prefix}_app_id (Generated from the API Gateway)
+2. {prefix}_nonce
+3. {prefix}_signature_method(HmacSHA256 or SHA256withRSA)
+4. {prefix}_timestamp
+5. Any additional parameters (additional parameters do not require a prefix).
+
+All parameters are then ordered by 
+their key names.
+An example of a basestring is as such:
+
+```
+GET&https://example.com/v1/helloworld/nocors&{prefix}_app_id=appid&{prefix}_nonce=59242635618&
+{prefix}_signature_method=SHA256withRSA&{prefix}_timestamp=1501147626306&{prefix}_version=1.0&
+firstparam=valueoffirstparam&secondparam=valueofsecondparam
+```
+
+### Signature
+A base64 representation of the digest (HMAC-SHA256 for level 1) or ciphertext (SHA256 with RSA for level 2) derived from the basestring.
+
+### Authorization Header 
+The request authorization header begins with the prefix, the key 'realm' with the value being the api endpoint followed by all the parameters keys and values separated by commas. The generated signature is included with its being {prefix}_signature. 
+An example of a generated authorization header is as follows:
+
+```
+Authorization: Apex realm="https://example.com/v1/helloworld/nocors",{prefix}_app_id=appid,
+{prefix}_nonce="98344891638",{prefix}_signature="p1WxtrYhM5L8RkAwQQ59PoZ2+5Yr05kHtC0Bh+nalnPg7SuL4/TTcmxhRmGYioSyYQHoMpKyryx0QbWaBKZDRVK4nIiznJ9L9X+IUAQ
+XMWwSdtjOnjMjgZF06EGfyClFbRIGjJDrbwJeuRutji3/qdj9vZMqXRY/hAwnIfTk7IWPUBd9OrQG0PHMDOREl1mAhABk04MOfTAXCMCwx6z70MoIrc0EhQuuygMertnFS4mU0+hxQtgrPjoDZ
+LPsRgFIkU9iPCKKVAMMc3jAkZq6X8BKImJJB4fXMCv6CfCDwd0PFeY4TG6CFhU7h49XAS+e+sO3HWeCzyXxtinhywIxIw==",{prefix}_signature_method="SHA256withRSA",{prefix}_timestamp=
+"1501225489066",{prefix}_version="1.0"
+```
 
 ## Building Apex Signature Validator
 From the root directory:
 
-1. `npm install`
-2. `npm run build`
+```
+$ npm install
+$ npm run build
+```
 
-The minified **production** build will be bundled by webpack into the `dist` folder under your project root directory.
+The minified **production** build will be compiled by webpack into the `dist` folder under your project root directory.
 
 ## Developing Apex Signature Validator
 
-From the root directory:
+From the project root directory:
 
-1. `npm install`
-2. `npm run devserver`
+```
+$ npm install
+$ npm run devserver
+```
 
-This spins up a [Webpack Dev Server](https://github.com/webpack/webpack-dev-server) instance that supports live reloading when changes are detected in the code base.
+This spins up a [Webpack Dev Server](https://github.com/webpack/webpack-dev-server) instance that serves the signature validator bundle (in memory). This server supports live reloading when changes are detected in the code base.
 
-3. Launch Web Browser
+#### Accessing the development server through a browser
+
+You can then access the development server at `http://localhost:8080` by default. 
+
+#### Executing test requests on the development server
+
+To send test requests using the signature validator in development, you will need to access it using Google Chrome with web security disabled. 
 
 For Windows , move to the release directory and type the name of the batch file. Alternatively, double-click on it
 ```
@@ -138,7 +159,9 @@ In order for cross-origin requests to be ignored on browser clients, web browser
 
 To simplify this process, two scripts are included in the `browser-scripts` directory:
 
-1. `mac startup.command`
-2. `windows startup.bat`
+```
+1. mac startup.command
+2. windows startup.bat
+```
 
 These scripts would automatically open the signature validator in a new Chrome window with web security disabled. The browser would then allow cross-origin requests to be sent from the browser.
