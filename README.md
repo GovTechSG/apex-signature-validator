@@ -1,9 +1,10 @@
 # APEX Signature Validator
-The Apex Signature Validator is an AngularJS application that assists APEX API consumers in verifying whether signatures 
-are generated correctly in their applications when making restful API calls to the APEX API Gateway. 
+The Apex Signature Validator is an AngularJS application that assists APEX API consumers in verifying whether signatures are generated correctly in their applications when making restful API calls to the APEX API Gateway. 
 
 ## Running Apex Signature Validator
 Download and extract the latest [release](https://github.com/GovTechSG/apex-signature-validator/releases) and run `index.html` directly in your browser.
+
+![homepage.png](https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/homepage.png)
 
 **Note**
 
@@ -12,8 +13,7 @@ Download and extract the latest [release](https://github.com/GovTechSG/apex-sign
 
 ## Apex signatures explained
 
-There are three components
-that are of importance when it comes to formulating the correct authorization header: basestring, signature, authorization header.
+There are three components that are of importance when it comes to formulating the correct authorization header: basestring, signature, authorization header.
 
 ### Basestring
 Either:
@@ -32,8 +32,7 @@ The composition of the basestring includes:
 4. {prefix}_timestamp
 5. Any additional parameters (additional parameters do not require a prefix).
 
-All parameters are then ordered by 
-their key names.
+All parameters are ordered by their key names.
 An example of a basestring is as such:
 
 ```
@@ -46,15 +45,11 @@ firstparam=valueoffirstparam&secondparam=valueofsecondparam
 A base64 representation of the digest (HMAC-SHA256 for level 1) or ciphertext (SHA256 with RSA for level 2) derived from the basestring.
 
 ### Authorization Header 
-The request authorization header begins with the prefix, the key 'realm' with the value being the api endpoint followed by all the parameters keys and values separated by commas. The generated signature is included with its being {prefix}_signature. 
+The request authorization header begins with the prefix, the key 'realm' with the value being the api endpoint followed by all the parameters in key-value pairs separated by commas. The generated signature is included as {prefix}_signature. 
 An example of a generated authorization header is as follows:
 
 ```
-Authorization: Apex realm="https://example.com/v1/helloworld/nocors",{prefix}_app_id=appid,
-{prefix}_nonce="98344891638",{prefix}_signature="p1WxtrYhM5L8RkAwQQ59PoZ2+5Yr05kHtC0Bh+nalnPg7SuL4/TTcmxhRmGYioSyYQHoMpKyryx0QbWaBKZDRVK4nIiznJ9L9X+IUAQ
-XMWwSdtjOnjMjgZF06EGfyClFbRIGjJDrbwJeuRutji3/qdj9vZMqXRY/hAwnIfTk7IWPUBd9OrQG0PHMDOREl1mAhABk04MOfTAXCMCwx6z70MoIrc0EhQuuygMertnFS4mU0+hxQtgrPjoDZ
-LPsRgFIkU9iPCKKVAMMc3jAkZq6X8BKImJJB4fXMCv6CfCDwd0PFeY4TG6CFhU7h49XAS+e+sO3HWeCzyXxtinhywIxIw==",{prefix}_signature_method="SHA256withRSA",{prefix}_timestamp=
-"1501225489066",{prefix}_version="1.0"
+Authorization: Apex realm="https://example.com/v1/helloworld/nocors",{prefix}_app_id=appid,{prefix}_nonce="98344891638",{prefix}_signature="p1WxtrYhM5L8RkAwQQ59PoZ2+5Yr05kHtC0Bh+nalnPg7SuL4/TTcmxhRmGYioSyYQHoMpKyryx0QbWaBKZDRVK4nIiznJ9L9X+IUAQXMWwSdtjOnjMjgZF06EGfyClFbRIGjJDrbwJeuRutji3/qdj9vZMqXRY/hAwnIfTk7IWPUBd9OrQG0PHMDOREl1mAhABk04MOfTAXCMCwx6z70MoIrc0EhQuuygMertnFS4mU0+hxQtgrPjoDZLPsRgFIkU9iPCKKVAMMc3jAkZq6X8BKImJJB4fXMCv6CfCDwd0PFeY4TG6CFhU7h49XAS+e+sO3HWeCzyXxtinhywIxIw==",{prefix}_signature_method="SHA256withRSA",{prefix}_timestamp="1501225489066",{prefix}_version="1.0"
 ```
 
 ## Building Apex Signature Validator
@@ -76,32 +71,19 @@ $ npm install
 $ npm run devserver
 ```
 
-This spins up a [Webpack Dev Server](https://github.com/webpack/webpack-dev-server) instance that serves the signature validator bundle (in memory). This server supports live reloading when changes are detected in the code base.
+This spins up a [Webpack Dev Server](https://github.com/webpack/webpack-dev-server) instance that serves the bundled signature validator app (in memory). This server supports live reloading when changes are detected in the code base.
 
-#### Accessing the development server through a browser
+#### Using the development server through a browser
 
-You can then access the development server at `http://localhost:8080` by default. 
+You can then access the development build on your browser at `http://localhost:8080` by default.
 
 #### Executing test requests on the development server
 
-To send test requests using the signature validator in development, you will need to access it using Google Chrome with web security disabled. 
+To send test requests using the signature validator in development, you will need to access it using Google Chrome with web security disabled. See [Sending test requests with the signature validator](#sending-test-requests-with-the-signature-validator) for more details.
 
-For Windows , move to the release directory and type the name of the batch file. Alternatively, double-click on it
-```
-launch.bat
-```
+For Windows, open Google Chrome with web security disabled by opening the `browser-scripts/launch-chrome-windows.lnk` shortcut.
 
-For macOS , run the following
-
-```
-./browser-scripts/launch.command
-```
-
-A browser will be automatically launched as shown below :
-
-![homepage.png](https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/homepage.png)
-
-Navigate to **localhost:8080** if required.
+For macOS, open Google chrome with web security disabled by opening the `browser-scripts/launch-chrome-macos.command` file.
 
 ## Application Structure
 ```
@@ -157,11 +139,13 @@ If you are getting a response code of -1 when sending a test request, your brows
 
 In order for cross-origin requests to be ignored on browser clients, web browsers such as Chrome would have to be launched with web security disabled.
 
-To simplify this process, two scripts are included in the `browser-scripts` directory:
+To simplify this process, Chrome launch scripts are included in the `browser-scripts` directory:
 
 ```
-1. mac startup.command
-2. windows startup.bat
+1. launch-chrome-macos.command
+2. launch-chrome-windows.lnk or launch-chrome-windows.bat
 ```
 
 These scripts would automatically open the signature validator in a new Chrome window with web security disabled. The browser would then allow cross-origin requests to be sent from the browser.
+
+**Only use Google Chrome instances launched from these scripts to use the signature validator, do not access sites on the internet with them.**
