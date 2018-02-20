@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="app">
+
 <head>
     <meta charset="UTF-8">
-    <title><%= htmlWebpackPlugin.options.title %></title>
+    <title>
+        <%= htmlWebpackPlugin.options.title %>
+    </title>
 </head>
-<body>
-<header class="bs-docs-nav navbar-static-top" id="top" style="background:#f5f5f5">
-    <div class="container-fluid" ng-controller="navbarController as navCtrl">
 
-        <script type="text/ng-template" id="jsonInputModal.html">
+<body>
+    <header class="bs-docs-nav navbar-static-top" id="top" style="background:#f5f5f5">
+        <div class="container-fluid" ng-controller="navbarController as navCtrl">
+
+            <script type="text/ng-template" id="jsonInputModal.html">
             <div class="modal-header">
                 <h3 class="modal-title">Parameters Setup</h3>
             </div>
@@ -37,349 +41,337 @@
             </div>
         </script>
 
-        <nav class="navbar" id="bs-navbar">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <img ng-src="{{ navCtrl.apex_logo }}"
-                         alt="APEX Signature Validation Tool"/>
+            <nav class="navbar" id="bs-navbar">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <img ng-src="{{ navCtrl.apex_logo }}" alt="APEX Signature Validation Tool" />
+                    </div>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li ng-click="modalClick()">
+                            <a style="cursor: pointer;">
+                                <span class="glyphicon glyphicon-cog"></span>
+                                Options
+                            </a>
+                        </li>
+                    </ul>
                 </div>
-
-                <ul class="nav navbar-nav navbar-right">
-                    <li ng-click="modalClick()">
-                        <a style="cursor: pointer;">
-                            <span class="glyphicon glyphicon-cog"></span>
-                            Options
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-    </div>
-
-</header>
-<div id="page-wrapper" class="page-wrapper-cls container-fluid"
-     style="padding-left: 40px; padding-right:40px; margin-bottom: 50px">
-    <div ng-controller="mainController as mainCtrl" id="top-area">
-
-        <div class="heading">
-            <span class="label label-primary point-cursor">1</span>
-            Input Request Parameters and Generate Basestring
+            </nav>
         </div>
 
-        <form name="paramForm">
+    </header>
+    <div id="page-wrapper" class="page-wrapper-cls container-fluid" style="padding-left: 40px; padding-right:40px; margin-bottom: 50px">
+        <div ng-controller="mainController as mainCtrl" id="top-area">
 
-            <div class="row">
-
-                <div class="col-md-6">
-                    <b>From</b>
-
-                    <label class="radio-inline" ng-repeat="single in options_zone">
-                        <input type="radio" name="from" ng-model="$parent.selectedFrom" value="{{single}}"
-                               ng-change="formParams()">{{single}}
-                    </label>
-                </div>
-
-                <div class="col-md-6">
-                    <b>Provider Zone</b>
-                    <label class="radio-inline" ng-repeat="single in options_provider">
-                        <input type="radio" name="to" ng-model="$parent.selectedProvider" value="{{single}}"
-                               ng-change="formParams()">{{single}}
-                    </label>
-                </div>
+            <div class="heading">
+                <span class="label label-primary point-cursor">1</span>
+                Input Request Parameters and Generate Basestring
             </div>
-            <br>
-            <div class="row">
-                <div class="col-md-2">
-                    <b>Request</b>
-                    <select ng-options="o as o for o in options" ng-model="selectedRequest"
-                            class="form-control"></select>
-                </div>
 
-                <div class="col-md-4">
-                    <b>Gateway</b>
+            <form name="paramForm">
 
-                    <input autocomplete="off" class="form-control" placeholder="e.g. my_apex_gateway" ng-model="selectedGateway"
-                           name="inputGateway" ng-keyup="formParams()" required/>
-                    <span ng-show="paramForm.inputGateway.$touched && paramForm.inputGateway.$invalid" class="fail">
-                        Input Gateway is required.
-                    </span>
-                </div>
+                <div class="row">
 
-                <div class="col-md-6">
-                    <b>Path</b>
-                    <input type="text" ng-model="input_uri" class="form-control" ng-keyup="formParams()"
-                           placeholder="e.g. /v1/rest/level2/ig/ping"/>
-                </div>
+                    <div class="col-md-6">
+                        <b>From</b>
 
-            </div>
-            <br>
-
-            <div class="row">
-
-                <div class="col-md-12" style="text-align: center">
-                    <h4>Authentication Level</h4>
-                    <div class="btn-group">
-                        <label ng-repeat="single in options_level" class="btn btn-lg btn-default"
-                               ng-model="$parent.selectedLevel"
-                               ng-click="levelChange()" uib-btn-radio="{{single}}">{{single}}
+                        <label class="radio-inline" ng-repeat="single in options_zone">
+                            <input type="radio" name="from" ng-model="$parent.selectedFrom" value="{{single}}" ng-change="formParams()">{{single}}
                         </label>
                     </div>
 
-                </div>
-
-            </div>
-
-            <div>
-                <h4>Uri Preview</h4>
-                <div class="well uri-preview">
-                    <b>Endpoint: </b>{{realmUri}}
-                    <div ng-if="showLevel2 || showLevel1">
-                        <b>Signing Uri: </b>{{uri}}
-                        <br>
-                        <b>Realm Uri: </b>{{realmUri}}
+                    <div class="col-md-6">
+                        <b>Provider Zone</b>
+                        <label class="radio-inline" ng-repeat="single in options_provider">
+                            <input type="radio" name="to" ng-model="$parent.selectedProvider" value="{{single}}" ng-change="formParams()">{{single}}
+                        </label>
                     </div>
                 </div>
-            </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-2">
+                        <b>Request</b>
+                        <select ng-options="o as o for o in options" ng-model="selectedRequest" class="form-control"></select>
+                    </div>
 
+                    <div class="col-md-4">
+                        <b>Gateway</b>
 
-            <hr>
-            <h4>Additional Parameters
-                <span>
-                    <button type="button" class="btn btn-default" ng-click="add('','')">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add
-                    </button>
-                </span>
-            </h4>
-
-            <div>
-
-                <div class="row" ng-repeat="single in additionalParams">
+                        <input autocomplete="off" class="form-control" placeholder="e.g. my_apex_gateway" ng-model="selectedGateway" name="inputGateway"
+                            ng-keyup="formParams()" required/>
+                        <span ng-show="paramForm.inputGateway.$touched && paramForm.inputGateway.$invalid" class="fail">
+                            Input Gateway is required.
+                        </span>
+                    </div>
 
                     <div class="col-md-6">
-                        <b>Name</b>
-                        <input type="text" class="form-control" ng-model="single.name"
-                               uib-tooltip="name of extra parameter" ng-keyup="formParams()" placeholder="name">
+                        <b>Path</b>
+                        <input type="text" ng-model="input_uri" class="form-control" ng-keyup="formParams()" placeholder="e.g. /v1/rest/level2/ig/ping"
+                        />
                     </div>
 
-                    <div class="col-md-5">
-                        <b>Value</b>
-                        <input type="text" class="form-control" ng-model="single.value" ng-keyup="formParams()"
-                               uib-tooltip="value of extra parameter"
-                               placeholder="value"/>
+                </div>
+                <br>
+
+                <div class="row">
+
+                    <div class="col-md-12" style="text-align: center">
+                        <h4>Authentication Level</h4>
+                        <div class="btn-group">
+                            <label ng-repeat="single in options_level" class="btn btn-lg btn-default" ng-model="$parent.selectedLevel" ng-click="levelChange()"
+                                uib-btn-radio="{{single}}">{{single}}
+                            </label>
+                        </div>
+
                     </div>
 
-                    <div class="col-md-1">
-                        <br>
-                        <button type="button" class="btn btn-default" ng-click="remove($index)">
-                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </div>
+
+                <div>
+                    <h4>Uri Preview</h4>
+                    <div class="well uri-preview">
+                        <b>Endpoint: </b>{{realmUri}}
+                        <div ng-if="showLevel2 || showLevel1">
+                            <b>Signing Uri: </b>{{uri}}
+                            <br>
+                            <b>Realm Uri: </b>{{realmUri}}
+                        </div>
+                    </div>
+                </div>
+
+
+                <hr>
+                <h4>Additional Parameters
+                    <span>
+                        <button type="button" class="btn btn-default" ng-click="add('','')">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add
                         </button>
-                    </div>
-
-                </div>
-            </div>
-
-            <h4 ng-if="showLevel1 || showLevel2">Required Parameters</h4>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="row fx-zoom-normal fx-speed-500" ng-if="showLevel1">
-                        <div ng-class="{'col-md-6': showLevel2, 'col-md-4' : !showLevel2}">
-                            <b>Auth Prefix</b>
-                            <input type="text" ng-model="$parent.input_authprefix" class="form-control"
-                                   name="authPrefix" required ng-keyup="formParams()">
-                            <span ng-show="paramForm.authPrefix.$touched && paramForm.authPrefix.$invalid" class="fail">
-                                Auth Prefix is required.
-                            </span>
-                        </div>
-                        <div ng-class="{'col-md-6': showLevel2, 'col-md-4' : !showLevel2}">
-                            <b>Application ID</b>
-                            <input type="text" ng-model="$parent.input_appId" class="form-control" required name="appId"
-                                   ng-keyup="formParams()">
-                            <span ng-show="paramForm.appId.$touched && paramForm.appId.$invalid" class="fail">
-                                App Id is required.
-                            </span>
-                        </div>
-
-                        <div class="col-md-4" ng-if="!showLevel2">
-                            <b>Application Secret</b>
-                            <input type="text" ng-model="mainCtrl.input_appSecret" required ng-keyup="formParams()"
-                                   class="form-control" name="appSecret">
-                            <span ng-show="paramForm.appSecret.$touched && paramForm.appSecret.$invalid" class="fail">
-                                App Secret is required.
-                            </span>
-                        </div>
-                    </div>
-
-                    <br>
-
-                    <div ng-if="showLevel2 || showLevel1" class="fx-zoom-normal fx-speed-500">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <b>Signature Method</b>
-                                <input type="text" class="form-control" ng-model="input_sigmethod" disabled>
-                            </div>
-
-                            <div class="col-md-6">
-                                <b>App Version</b>
-                                <input type="text" class="form-control" ng-model="input_app_ver" disabled>
-                            </div>
-
-                        </div>
-                        <br>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <b>Timestamp </b>
-                                <label style="float:right">
-                                    <small>manual entry:</small>
-                                    <input type="checkbox" ng-model="timestampDisabled" ng-change="timestampGenChange()">
-                                </label><br/>
-
-                                <input type="text" ng-model="$parent.input_timestamp" class="form-control" required
-                                       ng-disabled="!timestampDisabled"
-                                       name="timestamp">
-                                <span ng-show="paramForm.timestamp.$touched && paramForm.timestamp.$invalid"
-                                      class="fail">
-                                   Timestamp is required.
-                                </span>
-                            </div>
-                            <div class="col-md-6">
-                                <b>Nonce</b>
-                                <label style="float:right">
-                                    <small>manual entry:</small>
-                                    <input type="checkbox" ng-model="nonceDisabled" ng-change="nonceGenChange()">
-                                </label>
-
-                                <br>
-
-                                <input type="text" ng-model="$parent.input_nonce" class="form-control" required
-                                       name="nonce" ng-disabled="!nonceDisabled">
-                                <span ng-show="paramForm.nonce.$touched && paramForm.nonce.$invalid" class="fail">
-                                   Nonce is required.
-                                </span>
-                            </div>
-                        </div>
-
-                        <br>
-
-                    </div>
-                </div>
-            </div>
-
-            <hr>
-
-            <!--Step 2-->
-            <div ng-if="showLevel2">
-                <div class="heading">
-                    <span class="label label-primary point-cursor">2</span>
-                    Select/Input Pem File Contents
-                </div>
-
-                <h4>Pem File
-                    <small>
-                        Upload pem file
-                    </small>
+                    </span>
                 </h4>
-                <span class="col-md-12" style='text-align:center'>
-                    <input type="file" on-read-file="parseInputFile($fileContents)" class="btn btn-default" style="display:inline">
-                </span>
+
+                <div>
+
+                    <div class="row" ng-repeat="single in additionalParams">
+
+                        <div class="col-md-6">
+                            <b>Name</b>
+                            <input type="text" class="form-control" ng-model="single.name" uib-tooltip="name of extra parameter" ng-keyup="formParams()"
+                                placeholder="name">
+                        </div>
+
+                        <div class="col-md-5">
+                            <b>Value</b>
+                            <input type="text" class="form-control" ng-model="single.value" ng-keyup="formParams()" uib-tooltip="value of extra parameter"
+                                placeholder="value" />
+                        </div>
+
+                        <div class="col-md-1">
+                            <br>
+                            <button type="button" class="btn btn-default" ng-click="remove($index)">
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <h4 ng-if="showLevel1 || showLevel2">Required Parameters</h4>
                 <div class="row">
                     <div class="col-md-12">
+                        <div class="row fx-zoom-normal fx-speed-500" ng-if="showLevel1">
+                            <div ng-class="{'col-md-6': showLevel2, 'col-md-4' : !showLevel2}">
+                                <b>Auth Prefix</b>
+                                <input type="text" ng-model="$parent.input_authprefix" class="form-control" name="authPrefix" required ng-keyup="formParams()">
+                                <span ng-show="paramForm.authPrefix.$touched && paramForm.authPrefix.$invalid" class="fail">
+                                    Auth Prefix is required.
+                                </span>
+                            </div>
+                            <div ng-class="{'col-md-6': showLevel2, 'col-md-4' : !showLevel2}">
+                                <b>Application ID</b>
+                                <input type="text" ng-model="$parent.input_appId" class="form-control" required name="appId" ng-keyup="formParams()">
+                                <span ng-show="paramForm.appId.$touched && paramForm.appId.$invalid" class="fail">
+                                    App Id is required.
+                                </span>
+                            </div>
+
+                            <div class="col-md-4" ng-if="!showLevel2">
+                                <b>Application Secret</b>
+                                <input type="text" ng-model="mainCtrl.input_appSecret" required ng-keyup="formParams()" class="form-control" name="appSecret">
+                                <span ng-show="paramForm.appSecret.$touched && paramForm.appSecret.$invalid" class="fail">
+                                    App Secret is required.
+                                </span>
+                            </div>
+                        </div>
+
                         <br>
-                        <textarea rows="10" cols="65" class="form-control" ng-model="$parent.pem" name="pem"
-                                  required></textarea>
-                        <br>
-                        <span ng-show="paramForm.pem.$touched && paramForm.pem.$invalid" class="fail">
-                        Pem string is required.
-                        </span>
-                    </div>
-                    <div class="col-md-12">
-                        <b>Secret for Private Key</b>
-                        <input type="password" class="form-control" ng-model="$parent.privSecret">
-                        <span ng-if="privateKeyError"
-                              class="fail">Please verify that both pem string and secret are correct</span>
-                        <br>
+
+                        <div ng-if="showLevel2 || showLevel1" class="fx-zoom-normal fx-speed-500">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Signature Method</b>
+                                    <input type="text" class="form-control" ng-model="input_sigmethod" disabled>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <b>App Version</b>
+                                    <input type="text" class="form-control" ng-model="input_app_ver" disabled>
+                                </div>
+
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Timestamp </b>
+                                    <label style="float:right">
+                                        <small>manual entry:</small>
+                                        <input type="checkbox" ng-model="timestampDisabled" ng-change="timestampGenChange()">
+                                    </label>
+                                    <br/>
+
+                                    <input type="text" ng-model="$parent.input_timestamp" class="form-control" required ng-disabled="!timestampDisabled" name="timestamp">
+                                    <span ng-show="paramForm.timestamp.$touched && paramForm.timestamp.$invalid" class="fail">
+                                        Timestamp is required.
+                                    </span>
+                                </div>
+                                <div class="col-md-6">
+                                    <b>Nonce</b>
+                                    <label style="float:right">
+                                        <small>manual entry:</small>
+                                        <input type="checkbox" ng-model="nonceDisabled" ng-change="nonceGenChange()">
+                                    </label>
+
+                                    <br>
+
+                                    <input type="text" ng-model="$parent.input_nonce" class="form-control" required name="nonce" ng-disabled="!nonceDisabled">
+                                    <span ng-show="paramForm.nonce.$touched && paramForm.nonce.$invalid" class="fail">
+                                        Nonce is required.
+                                    </span>
+                                </div>
+                            </div>
+
+                            <br>
+
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="row" style='text-align:center'>
-                <button type="button" class="btn btn-lg btn-default" ng-click="signAndTest(true)">
-                    <span class="glyphicon glyphicon-transfer"></span> Send Test Request
-                </button>
+                <hr>
 
-                <button type="button" class="btn btn-lg btn-default" ng-click="signAndTest(false)"
-                        ng-if="showLevel2 || showLevel1">
-                    <span class="glyphicon glyphicon-eye-open"></span> Show Basestring and Header
-                </button>
-            </div>
-        </form>
+                <!--Step 2-->
+                <div ng-if="showLevel2">
+                    <div class="heading">
+                        <span class="label label-primary point-cursor">2</span>
+                        Select/Input Pem File Contents
+                    </div>
 
-        <div ng-if="showTestResults">
-            <div class="heading">
-                <span class="label label-primary point-cursor">3</span>
-                <!--Send a Test Request-->
-                {{$parent.step3Title}}
-            </div>
-
-            <div ng-if="sendingTestRequest" class="spinner">
-                <div class="bounce1"></div>
-                <div class="bounce2"></div>
-                <div class="bounce3"></div>
-            </div>
-
-            <div ng-if="!sendingTestRequest" class="jumbotron" ng-class="checkTestResult()">
-                <div ng-if="showBaseString">
-
+                    <h4>Pem File
+                        <small>
+                            Upload pem file
+                        </small>
+                    </h4>
+                    <span class="col-md-12" style='text-align:center'>
+                        <input type="file" on-read-file="parseInputFile($fileContents)" class="btn btn-default" style="display:inline">
+                    </span>
                     <div class="row">
-
                         <div class="col-md-12">
-                            <h4>Generated Basestring:</h4>
-                            <textarea rows="3" disabled class="form-control immutable"
-                                      ng-model="$parent.input_basestring"></textarea>
-                        </div>
-                        <div class="col-md-12">
-                            <h4>Basestring to Compare:</h4>
-
-                            <textarea rows="3" class="form-control"
-                                      ng-model="$parent.input_basestring_tocompare"></textarea>
-                        </div>
-                        <div class="col-md-12 fx-fade-normal" ng-if="showBaseStringCompareResults">
-                            <h4>Comparison Results</h4>
-                            <pre ng-bind-html="bsResults"></pre>
-
+                            <br>
+                            <textarea rows="10" cols="65" class="form-control" ng-model="$parent.pem" name="pem" required></textarea>
+                            <br>
+                            <span ng-show="paramForm.pem.$touched && paramForm.pem.$invalid" class="fail">
+                                Pem string is required.
+                            </span>
                         </div>
                         <div class="col-md-12">
-                        <span style="float:right; margin-top:5px">
-                            <input type="button" value="Compare Basestrings" class="btn btn-default"
-                                   ng-click="compareBS(input_basestring, input_basestring_tocompare)">
-                        </span>
+                            <b>Secret for Private Key</b>
+                            <input type="password" class="form-control" ng-model="$parent.privSecret">
+                            <span ng-if="privateKeyError" class="fail">Please verify that both pem string and secret are correct</span>
+                            <br>
                         </div>
-
                     </div>
                 </div>
 
-                <div ng-if="showAuthHeader">
-                    <h4>Request Auth Header:</h4>
-                    <textarea rows="10" ng-model="$parent.authHeader" disable class="form-control immutable"
-                              disabled></textarea>
+                <div class="row" style='text-align:center'>
+                    <button type="button" class="btn btn-lg btn-default" ng-click="signAndTest(true)">
+                        <span class="glyphicon glyphicon-transfer"></span> Send Test Request
+                    </button>
+
+                    <button type="button" class="btn btn-lg btn-default" ng-click="signAndTest(false)" ng-if="showLevel2 || showLevel1">
+                        <span class="glyphicon glyphicon-eye-open"></span> Show Basestring and Header
+                    </button>
+                </div>
+            </form>
+
+            <div ng-if="showTestResults">
+                <div class="heading">
+                    <span class="label label-primary point-cursor">3</span>
+                    <!--Send a Test Request-->
+                    {{$parent.step3Title}}
                 </div>
 
-                <div style="text-align: center" ng-if="!sendingTestRequest">
-                    <span ng-if="testResultStatus!==undefined"><b>Response:</b></span>
-                    <span ng-cloak ng-bind="testResultStatus"></span><br/>
-                    <span ng-if="testResultStatusText!==undefined"><b>Status:</b></span>
-                    <span ng-cloak ng-bind="testResultStatusText"></span><br/>
-                    <span ng-if="testResultData!==undefined"><b>Data:</b></span>
-                    <span class="wrap" ng-cloak ng-bind="testResultData"></span>
+                <div ng-if="sendingTestRequest" class="spinner">
+                    <div class="bounce1"></div>
+                    <div class="bounce2"></div>
+                    <div class="bounce3"></div>
                 </div>
 
+                <div ng-if="!sendingTestRequest" class="jumbotron" ng-class="checkTestResult()">
+                    <div ng-if="showBaseString">
+
+                        <div class="row">
+
+                            <div class="col-md-12">
+                                <h4>Generated Basestring:</h4>
+                                <textarea rows="3" disabled class="form-control immutable" ng-model="$parent.input_basestring"></textarea>
+                            </div>
+                            <div class="col-md-12">
+                                <h4>Basestring to Compare:</h4>
+
+                                <textarea rows="3" class="form-control" ng-model="$parent.input_basestring_tocompare"></textarea>
+                            </div>
+                            <div class="col-md-12 fx-fade-normal" ng-if="showBaseStringCompareResults">
+                                <h4>Comparison Results</h4>
+                                <pre ng-bind-html="bsResults"></pre>
+
+                            </div>
+                            <div class="col-md-12">
+                                <span style="float:right; margin-top:5px">
+                                    <input type="button" value="Compare Basestrings" class="btn btn-default" ng-click="compareBS(input_basestring, input_basestring_tocompare)">
+                                </span>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div ng-if="showAuthHeader">
+                        <h4>Request Auth Header:</h4>
+                        <textarea rows="10" ng-model="$parent.authHeader" disable class="form-control immutable" disabled></textarea>
+                    </div>
+
+                    <div style="text-align: center" ng-if="!sendingTestRequest">
+                        <span ng-if="testResultStatus!==undefined">
+                            <b>Response:</b>
+                        </span>
+                        <span ng-cloak ng-bind="testResultStatus"></span>
+                        <br/>
+                        <span ng-if="testResultStatusText!==undefined">
+                            <b>Status:</b>
+                        </span>
+                        <span ng-cloak ng-bind="testResultStatusText"></span>
+                        <br/>
+                        <span ng-if="testResultData!==undefined">
+                            <b>Data:</b>
+                        </span>
+                        <span class="wrap" ng-cloak ng-bind="testResultData"></span>
+                    </div>
+
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<div class="footer">
-    <p style="text-align: center;">© Government Technology Agency of Singapore. All Rights Reserved.</p>
-</div>
+    <div class="footer">
+        <p style="text-align: center;">© Government Technology Agency of Singapore. All Rights Reserved.</p>
+    </div>
 
 </body>
 
