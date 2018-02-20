@@ -52,7 +52,7 @@ From the root directory:
 1. `npm install`
 2. `npm run build`
 
-The minified production build will be bundled by webpack into the `dist` folder under your project root directory.
+The minified **production** build will be bundled by webpack into the `dist` folder under your project root directory.
 
 ## Developing Apex Signature Validator
 
@@ -62,6 +62,19 @@ From the root directory:
 2. `npm run devserver`
 
 This spins up a [Webpack Dev Server](https://github.com/webpack/webpack-dev-server) instance that supports live reloading when changes are detected in the code base.
+
+3. Launch Web Browser
+
+For macOS , run the following
+
+```
+./browser-scripts/launch.command
+```
+
+For Windows , move to the release directory and type the name of the batch file. Alternatively, double-click on it
+```
+launch.bat
+```
 
 ## Application Structure
 ```
