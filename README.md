@@ -1,6 +1,18 @@
-# APEX  Frontend Signature Validator
-Apex Frontend Signature Validator is an application that assists APEX API consumers in verifying whether signatures 
-are generated correctly in their applications when restful API calls are made to the APEX API Gateway. There are three components
+# APEX Signature Validator
+The Apex Signature Validator is an AngularJS application that assists APEX API consumers in verifying whether signatures 
+are generated correctly in their applications when restful API calls are made to the APEX API Gateway. 
+
+## Running Apex Signature Validator
+Download the release archive and run `index.html` directly in your browser.
+
+**Note**
+
+1. To be able to use the *Send Test Request* function, use the scripts found in the `browser-scripts` directory to open Apex Signature Validator in Google Chrome. See [Sending test requests with the signature validator](#sending-test-requests-with-the-signature-validator) for more details
+2. Signature validtor has been tested on Chrome, Firefox and Internet Explorer 11.
+
+## Apex signatures explained
+
+There are three components
 that are of importance when it comes to formulating the correct authorization header: basestring, signature, authorization header.
 
 - Basestring
@@ -40,7 +52,7 @@ From the root directory:
 1. `npm install`
 2. `npm run build`
 
-The minified production build will be bundled by webpack into the `dist` folder.
+The minified production build will be bundled by webpack into the `dist` folder under your project root directory.
 
 ## Developing Apex Signature Validator
 
@@ -98,13 +110,16 @@ test requests
 The JSRSASIGN library is the opensource free pure JavaScript cryptographic library used by the application to perform all digest and RSA related 
 operations. Refer to http://kjur.github.io/jsrsasign/ for more information including the api documentation.
 
-## CORS issue when sending test requests
-When sending test requests to Apex's gateways, the signature validator needs to make cross-origin requests. For security reasons, browsers restrict cross-origin HTTP requests initiated from scripts.
+## Sending test requests with the signature validator
+When sending test requests to Apex's gateways, eg. to `api.gov.sg` endpoints, the signature validator's `Send Test Request` function would need to make cross-origin requests. For security reasons, browsers restrict cross-origin HTTP requests initiated using Javascript.
 
-If you are getting a response code of -1 when sendin a test response, your browser could be rejecting your cross-origin request.
+If you are getting a response code of -1 when sending a test request, your browser could be rejecting your cross-origin request.
 
-In order for cross-origin requests to be ignored on browser clients, web browsers such as chrome would have to be launched in a non-conventional manner.
+In order for cross-origin requests to be ignored on browser clients, web browsers such as Chrome would have to be launched with web security disabled.
 
-To simplify this process, two scripts are included in the public -> html directory namely 'mac startup.command' and 'windows startup.bat' to automatically
-open the application in a new chrome window that has disabled web security. This lets browsers accept pre flight requests' responses that are not from
-the same origin and allow the actual request to be sent.
+To simplify this process, two scripts are included in the `browser-scripts` directory:
+
+1. `mac startup.command`
+2. `windows startup.bat`
+
+These scripts would automatically open the signature validator in a new Chrome window with web security disabled. The browser would then allow cross-origin requests to be sent from the browser.
