@@ -3,7 +3,7 @@ The Apex Signature Validator is an AngularJS application that assists APEX API c
 are generated correctly in their applications when restful API calls are made to the APEX API Gateway. 
 
 ## Running Apex Signature Validator
-Download the release archive and run `index.html` directly in your browser.
+Download the latest release archive and run `index.html` directly in your browser.
 
 **Note**
 
