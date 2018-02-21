@@ -15,51 +15,43 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
             filename: '[name].bundle.js'
         },
         module: {
-            rules: [{
-                test: /\.js$/,
-                exclude: path.resolve(__dirname, 'node_modules'),
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: [
-                            [
-                                'babel-preset-env',
-                                {
-                                    targets: {
-                                        browsers: ['ie 11']
+            rules: [
+                {
+                    test: /\.js$/,
+                    exclude: path.resolve(__dirname, 'node_modules'),
+                    use: {
+                        loader: 'babel-loader',
+                        options: {
+                            presets: [
+                                [
+                                    'babel-preset-env',
+                                    {
+                                        targets: {
+                                            browsers: ['ie 11']
+                                        }
                                     }
-                                }
+                                ]
                             ]
-                        ]
+                        }
                     }
+                },
+                {
+                    test: /\.(png|jpg|gif|eot|otf|svg|ttf|woff|woff2)$/,
+                    use: [{
+                        loader: 'url-loader',
+                        options: {
+                            limit: 8192, // byte limit to inline files as data URL
+                            name: 'assets/[name].[ext]' // path to file for file-loader fallback
+                        }
+                    }]
+                },
+                {
+                    test: /\.css$/,
+                    use: ExtractTextPlugin.extract({
+                        use: 'css-loader',
+                        fallback: 'style-loader'
+                    })
                 }
-            },
-            {
-                test: /\.(eot|otf|svg|ttf|woff|woff2)$/,
-                use: [{
-                    loader: 'url-loader',
-                    options: {
-                        limit: 8192 // byte limit to inline files as data URL
-                    }
-                }]
-            },
-            {
-                test: /\.(png|jpg|gif)$/,
-                use: [{
-                    loader: 'file-loader',
-                    options: {
-                        name: '[name].[ext]',
-                        outputPath: 'assets/'
-                    }
-                }]
-            },
-            {
-                test: /\.css$/,
-                use: ExtractTextPlugin.extract({
-                    use: 'css-loader',
-                    fallback: 'style-loader'
-                })
-            }
             ]
         },
         plugins: [

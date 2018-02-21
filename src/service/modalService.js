@@ -1,4 +1,4 @@
-function foo() {
+function modalService() {
     return {
         setParams: function (params) {
             this.params = params;
@@ -27,4 +27,4 @@ function foo() {
         }
     }
 }
-export default foo;
+export default modalService;

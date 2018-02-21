@@ -1,6 +1,6 @@
 import KJUR from 'jsrsasign';
 
-function foo($http, UtilityService) {
+function testService($http, UtilityService) {
     return {
         generateBasestring: function (params) {
             let sortedParams = UtilityService.sortJSON(params);
@@ -85,4 +85,4 @@ function foo($http, UtilityService) {
     }
 }
 
-export default foo;
+export default testService;

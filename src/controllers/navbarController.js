@@ -1,6 +1,6 @@
 import apex_logo from '../images/logo_apex.png';
 
-function foo($scope, $rootScope, ModalService, $uibModal) {
+function navbarController($scope, $rootScope, ModalService, $uibModal) {
     let controller = this;
 
     controller.apex_logo = apex_logo; // path to logo file
@@ -30,10 +30,7 @@ function foo($scope, $rootScope, ModalService, $uibModal) {
         }).result.then(function (jsonString) {
             var jsonObj = JSON.parse(jsonString);
             ModalService.setParams(jsonObj.params);
-            // ModalService.setBS(jsonObj.basestring)
             ModalService.setPem(jsonObj.pem);
-            // ModalService.setSig(jsonObj.signature)
-            // ModalService.setAuth(jsonObj.auth)
             ModalService.setPwd(jsonObj.password);
 
             $rootScope.$broadcast('navbar-modal-set');
@@ -53,4 +50,4 @@ function foo($scope, $rootScope, ModalService, $uibModal) {
     }
 }
 
-export default foo;
+export default navbarController;
