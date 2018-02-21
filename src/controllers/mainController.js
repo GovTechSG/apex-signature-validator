@@ -44,6 +44,8 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
             $scope.selectedFrom = $scope.options_zone[0];
             $scope.selectedProvider = $scope.options_provider[0];
             $scope.input_authprefix = config.main.defaultAuthPrefix;
+            $scope.nonceDisabled = true;
+            $scope.timestampDisabled = true;
             $scope.input_timestamp = 'auto-generated';
             $scope.input_nonce = 'auto-generated';
             $scope.selectedLevel = 0;
@@ -67,17 +69,17 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
 
         if (savedObject.nonce == null) {
             $scope.input_nonce = "auto-generated";
-            $scope.nonceDisabled = false;
+            $scope.nonceDisabled = true;
         } else {
             $scope.input_nonce = savedObject.nonce;
-            $scope.nonceDisabled = true;
+            $scope.nonceDisabled = false;
         }
         if (savedObject.timestamp == null) {
             $scope.input_timestamp = "auto-generated";
-            $scope.timestampDisabled = false;
+            $scope.timestampDisabled = true;
         } else {
             $scope.input_timestamp = savedObject.timestamp;
-            $scope.timestampDisabled = true;
+            $scope.timestampDisabled = false;
         }
         $scope.additionalParams = savedObject.additional_params;
         $scope.pem = ModalService.getPem();
@@ -139,7 +141,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
 
     $scope.nonceGenChange = function () {
         $scope.nonceDisabled = !$scope.nonceDisabled;
-        if (!$scope.nonceDisabled) {
+        if ($scope.nonceDisabled) {
             $scope.input_nonce = 'auto-generated'
         } else {
             $scope.input_nonce = ''
@@ -148,7 +150,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
 
     $scope.timestampGenChange = function () {
         $scope.timestampDisabled = !$scope.timestampDisabled;
-        if (!$scope.timestampDisabled) {
+        if ($scope.timestampDisabled) {
             $scope.input_timestamp = 'auto-generated'
         } else {
             $scope.input_timestamp = ''
@@ -166,13 +168,16 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
             'auth_prefix': $scope.input_authprefix,
             'app_id': $scope.input_appId,
             'additional_params': $scope.additionalParams,
-            'app_secret': controller.input_appSecret
-
         };
-        if ($scope.nonceDisabled)
-            paramsToSave['nonce'] = $scope.input_nonce
-        if ($scope.timestampDisabled)
-            paramsToSave['timestamp'] = $scope.input_timestamp
+        if ($scope.selectedLevel === 1) {
+            paramsToSave.app_secret = controller.input_appSecret;
+        }
+        if (!$scope.nonceDisabled) {
+            paramsToSave['nonce'] = $scope.input_nonce;
+        }
+        if (!$scope.timestampDisabled) {
+            paramsToSave['timestamp'] = $scope.input_timestamp;
+        }
 
         ModalService.setParams(paramsToSave)
         ModalService.setPem($scope.pem)

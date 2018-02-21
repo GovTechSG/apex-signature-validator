@@ -22,7 +22,7 @@
                 <input type="file" on-read-file="parseInputFile($fileContents)"
                        class="btn btn-default" style="display:inline-block">
                 <br/> <br/>
-                <textarea rows="20" cols="65" class="form-control" ng-model="jsonString" ng-keydown="handleTabKey($event)"></textarea>
+                <textarea rows="20" cols="65" class="form-control" ng-model="jsonString" ng-keydown="handleTabKey($event)" style="font-family:monospace"></textarea>
 
             </div>
             <div class="modal-footer">
@@ -39,7 +39,7 @@
                     Cancel
                 </button>
             </div>
-        </script>
+            </script>
 
             <nav class="navbar" id="bs-navbar">
                 <div class="container-fluid">
@@ -223,12 +223,12 @@
                                 <div class="col-md-6">
                                     <b>Timestamp </b>
                                     <label style="float:right">
-                                        <small>manual entry:</small>
+                                        <small>auto-generate:</small>
                                         <input type="checkbox" ng-model="timestampDisabled" ng-change="timestampGenChange()">
                                     </label>
                                     <br/>
 
-                                    <input type="text" ng-model="$parent.input_timestamp" class="form-control" required ng-disabled="!timestampDisabled" name="timestamp">
+                                    <input type="text" ng-model="$parent.input_timestamp" class="form-control" required ng-disabled="timestampDisabled" name="timestamp">
                                     <span ng-show="paramForm.timestamp.$touched && paramForm.timestamp.$invalid" class="fail">
                                         Timestamp is required.
                                     </span>
@@ -236,13 +236,13 @@
                                 <div class="col-md-6">
                                     <b>Nonce</b>
                                     <label style="float:right">
-                                        <small>manual entry:</small>
+                                        <small>auto-generate:</small>
                                         <input type="checkbox" ng-model="nonceDisabled" ng-change="nonceGenChange()">
                                     </label>
 
                                     <br>
 
-                                    <input type="text" ng-model="$parent.input_nonce" class="form-control" required name="nonce" ng-disabled="!nonceDisabled">
+                                    <input type="text" ng-model="$parent.input_nonce" class="form-control" required name="nonce" ng-disabled="nonceDisabled">
                                     <span ng-show="paramForm.nonce.$touched && paramForm.nonce.$invalid" class="fail">
                                         Nonce is required.
                                     </span>

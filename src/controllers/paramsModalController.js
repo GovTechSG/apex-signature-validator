@@ -1,6 +1,6 @@
-function foo($scope, $uibModalInstance, items) {
+function paramsModalController($scope, $uibModalInstance, items) {
 
-    $scope.jsonString = JSON.stringify(items, null, "\t");
+    $scope.jsonString = JSON.stringify(items, null, 2);
 
     $scope.downloadJSON = function () {
         // var paramJson = JSON.stringify(paramsToSave);
@@ -31,7 +31,7 @@ function foo($scope, $uibModalInstance, items) {
     };
 
     $scope.parseInputFile = function (fileText) {
-        $scope.jsonString = JSON.stringify(JSON.parse(fileText), null, "\t");
+        $scope.jsonString = JSON.stringify(JSON.parse(fileText), null, 2);
 
         //populate values
         var savedObject = JSON.parse(fileText);
@@ -47,4 +47,5 @@ function foo($scope, $uibModalInstance, items) {
         $scope.additionalParams = savedObject.additional_params;
     };
 }
-export default foo;
+
+export default paramsModalController;
