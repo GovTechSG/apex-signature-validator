@@ -8,7 +8,7 @@ Download and extract the latest [release](https://github.com/GovTechSG/apex-sign
 
 **Note**
 
-1. To to use the *Send Test Request* function, use one of the provided OS-appropriate scripts to open Google Chrome with web security disabled. This means running Google Chrome with the `--disable-web-security` and `--ignorcertificate-errors` flags. See [Sending test requests with the signature validator](#sending-test-requests-with-the-signature-validator) for more details.
+1. To to use the *Send Test Request* function, use one of the provided OS-appropriate scripts to open Google Chrome with web security disabled. This means running Google Chrome with the `--disable-web-security` and `--ignore-certificate-errors` flags. See [Sending test requests with the signature validator](#sending-test-requests-with-the-signature-validator) for more details.
 
 - `launch-chrome-macos.command`
 - `launch-chrome-windows.bat or launch-chrome-windows.lnk`    
