@@ -2,9 +2,9 @@ function foo($scope, $uibModalInstance, items) {
 
     $scope.jsonString = JSON.stringify(items, null, "\t");
 
-    $scope.downloadJSON = function() {
+    $scope.downloadJSON = function () {
         // var paramJson = JSON.stringify(paramsToSave);
-        var blob = new Blob([$scope.jsonString], {type: "application/json;charset=utf-8;"});
+        var blob = new Blob([$scope.jsonString], { type: "application/json;charset=utf-8;" });
         var downloadLink = angular.element('<a></a>');
         downloadLink.attr('href', window.URL.createObjectURL(blob));
         downloadLink.attr('download', 'saved-inputs.json');
@@ -19,7 +19,7 @@ function foo($scope, $uibModalInstance, items) {
         $uibModalInstance.dismiss('cancel');
     };
 
-    $scope.handleTabKey = function(e) {
+    $scope.handleTabKey = function (e) {
         if (e.which === 9) {
             e.preventDefault();
             var start = e.target.selectionStart;
@@ -31,7 +31,7 @@ function foo($scope, $uibModalInstance, items) {
     };
 
     $scope.parseInputFile = function (fileText) {
-        $scope.jsonString = JSON.stringify(JSON.parse(fileText),null,"\t");
+        $scope.jsonString = JSON.stringify(JSON.parse(fileText), null, "\t");
 
         //populate values
         var savedObject = JSON.parse(fileText);

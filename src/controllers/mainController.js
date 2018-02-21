@@ -276,7 +276,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
         for (let key of keys) {
             if (!['prefix', 'uri', 'realm', 'request'].includes(key)) {
                 let prefixKey = params.prefix + '_' + key;
-                fullParams[prefixKey] = params[key]; 
+                fullParams[prefixKey] = params[key];
             } else {
                 fullParams[key] = params[key];
             }
@@ -324,9 +324,9 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
             errorMsg += config.main.errorMsgs.noSelectedGateway + '<br>';
         }
 
-        if ($scope.selectedLevel === 1 && 
+        if ($scope.selectedLevel === 1 &&
             (controller.input_appSecret === '' || controller.input_appSecret == null)) {
-            errorMsg += config.main.errorMsgs.noAppSecret + '<br>' 
+            errorMsg += config.main.errorMsgs.noAppSecret + '<br>'
         }
 
         if ($scope.selectedLevel === 2 &&

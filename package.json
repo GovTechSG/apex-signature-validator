@@ -1,6 +1,6 @@
 {
   "name": "apex-signature-validator",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "APEX micro service and dev tool for testing level 0 - 2 requests",
   "scripts": {
     "build": "webpack --progress --colors --env.production --optimize-minimize",

@@ -5,22 +5,22 @@ function foo($scope, $rootScope, ModalService, $uibModal) {
 
     controller.apex_logo = apex_logo; // path to logo file
 
-    $scope.signClick = function() {
+    $scope.signClick = function () {
         $rootScope.$broadcast('navbar-sign-clicked');
     };
 
-    $scope.modalClick = function() {
+    $scope.modalClick = function () {
         $rootScope.$broadcast('navbar-modal-clicked');
     };
 
-    $scope.$on('params-saved', function(event) {
+    $scope.$on('params-saved', function (event) {
         $scope.open('lg');
     });
 
     $scope.open = function (size) {
         $uibModal.open({
             animation: true,
-            backdrop:false,
+            backdrop: false,
             templateUrl: 'jsonInputModal.html',
             controller: 'jsonInputModalController',
             size: size,
@@ -37,7 +37,7 @@ function foo($scope, $rootScope, ModalService, $uibModal) {
             ModalService.setPwd(jsonObj.password);
 
             $rootScope.$broadcast('navbar-modal-set');
-        }, function () {});
+        }, function () { });
     };
 
     $scope.toggleAnimation = function () {

@@ -3,7 +3,7 @@ function foo() {
         setParams: function (params) {
             this.params = params;
         },
-        getParams: function() {
+        getParams: function () {
             return this.params;
         },
         setPem: function (pem) {
@@ -13,16 +13,16 @@ function foo() {
         getPem: function () {
             return this.pem;
         },
-        setPwd: function(pwd) {
+        setPwd: function (pwd) {
             this.pwd = pwd;
         },
-        getPwd: function(){
+        getPwd: function () {
             return this.pwd;
         },
-        setRealmUri: function(realmUri) {
+        setRealmUri: function (realmUri) {
             this.realmUri = realmUri;
         },
-        getRealmUri: function() {
+        getRealmUri: function () {
             return this.realmUri;
         }
     }
