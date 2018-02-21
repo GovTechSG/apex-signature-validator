@@ -3,6 +3,28 @@ The Apex Signature Validator is an AngularJS application that assists APEX API c
 
 You can find out more about Apex signature generation from our reference Node.js implementation at https://github.com/GovTechSG/node-apex-api-security.
 
+## Table of contents
+- [APEX Signature Validator](#apex-signature-validator)
+  * [Running Apex Signature Validator](#running-apex-signature-validator)
+  * [Apex signatures explained](#apex-signatures-explained)
+    + [Basestring](#basestring)
+    + [Signature](#signature)
+    + [Authorization Header](#authorization-header)
+  * [Saving and loading request parameters](#saving-and-loading-request-parameters)
+  * [Building Apex Signature Validator](#building-apex-signature-validator)
+  * [Developing Apex Signature Validator](#developing-apex-signature-validator)
+      - [Using the development server through a browser](#using-the-development-server-through-a-browser)
+      - [Executing test requests on the development server](#executing-test-requests-on-the-development-server)
+  * [Application Structure](#application-structure)
+    + [package.json](#packagejson)
+    + [webpack.config.js](#webpackconfigjs)
+    + [app.js](#appjs)
+  * [Code Base](#code-base)
+    + [controllers](#controllers)
+    + [service](#service)
+  * [JSRSASIGN](#jsrsasign)
+  * [Sending test requests with the signature validator](#sending-test-requests-with-the-signature-validator)
+
 ## Running Apex Signature Validator
 Download and extract the latest [release](https://github.com/GovTechSG/apex-signature-validator/releases) and run `index.html` directly in your browser.
 
@@ -57,6 +79,12 @@ An example of a generated authorization header is as follows:
 `
 Authorization: Apex realm="https://example.com/v1/helloworld/nocors",{prefix}_app_id=appid,{prefix}_nonce="98344891638",{prefix}_signature="p1WxtrYhM5L8RkAwQQ59PoZ2+5Yr05kHtC0Bh+nalnPg7SuL4/TTcmxhRmGYioSyYQHoMpKyryx0QbWaBKZDRVK4nIiznJ9L9X+IUAQXMWwSdtjOnjMjgZF06EGfyClFbRIGjJDrbwJeuRutji3/qdj9vZMqXRY/hAwnIfTk7IWPUBd9OrQG0PHMDOREl1mAhABk04MOfTAXCMCwx6z70MoIrc0EhQuuygMertnFS4mU0+hxQtgrPjoDZLPsRgFIkU9iPCKKVAMMc3jAkZq6X8BKImJJB4fXMCv6CfCDwd0PFeY4TG6CFhU7h49XAS+e+sO3HWeCzyXxtinhywIxIw==",{prefix}_signature_method="SHA256withRSA",{prefix}_timestamp="1501225489066",{prefix}_version="1.0"
 `
+
+## Saving and loading request parameters
+
+If you have request parameters that are reused often, you can load and save input request parameters in JSON files using the options menu located on the top right.
+
+![params_loading.png](https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/params_loading.png)
 
 ## Building Apex Signature Validator
 From the root directory:
