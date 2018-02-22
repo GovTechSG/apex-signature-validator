@@ -2,6 +2,7 @@ const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
 
 const path = require('path');
 
@@ -47,10 +48,7 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
                 },
                 {
                     test: /\.css$/,
-                    use: ExtractTextPlugin.extract({
-                        use: 'css-loader',
-                        fallback: 'style-loader'
-                    })
+                    use: ['style-loader', 'css-loader']
                 }
             ]
         },
@@ -58,8 +56,10 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
             new webpack.NoEmitOnErrorsPlugin(),
             new HtmlWebpackPlugin({
                 title: 'Apex Signature Validator',
-                template: 'index.ejs'
+                template: 'index.ejs',
+                inlineSource: '.js$'
             }),
+            new HtmlWebpackInlineSourcePlugin(),
             new ExtractTextPlugin('[name].css')
         ],
 
