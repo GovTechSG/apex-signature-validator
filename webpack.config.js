@@ -1,5 +1,4 @@
 const webpack = require('webpack');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
@@ -59,10 +58,8 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
                 template: 'index.ejs',
                 inlineSource: '.js$'
             }),
-            new HtmlWebpackInlineSourcePlugin(),
-            new ExtractTextPlugin('[name].css')
+            new HtmlWebpackInlineSourcePlugin()        
         ],
-
         devServer: {
             contentBase: path.resolve(__dirname, 'dist')
         }
