@@ -114,7 +114,6 @@
                 <br>
 
                 <div class="row">
-
                     <div class="col-md-12" style="text-align: center">
                         <h4>Authentication Level</h4>
                         <div class="btn-group">
@@ -122,9 +121,7 @@
                                 uib-btn-radio="{{single}}">{{single}}
                             </label>
                         </div>
-
                     </div>
-
                 </div>
 
                 <div>
@@ -338,7 +335,6 @@
                                     <input type="button" value="Compare Basestrings" class="btn btn-default" ng-click="compareBS(input_basestring, input_basestring_tocompare)">
                                 </span>
                             </div>
-
                         </div>
                     </div>
 
@@ -363,10 +359,51 @@
                         </span>
                         <span class="wrap" ng-cloak ng-bind="testResultData"></span>
                     </div>
-
                 </div>
             </div>
-        </div>
+            
+            <div class="row" style='text-align:center'>
+                <button type="button" class="btn btn-lg btn-default" ng-click="toggleJOSE = toggleJOSE ? false : true">
+                    <span class="glyphicon glyphicon-sunglasses"></span> Verify JWT
+                </button>
+            </div>
+    
+            <div ng-if="toggleJOSE">
+                <div class="heading">
+                    <h3>JSON Object Signing and Encryption (JOSE)</h3>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <b>JWT Standard</b>
+                        <select ng-options="o as o for o in jwt_standards" ng-model="selectedJWTStandard" class="form-control"></select>
+                    </div>
+                    <div class="col-md-12">
+                        <h4>Encoded Token</h4>
+                        <textarea rows="3" class="form-control" ng-model="token" placeholder="Paste the encoded JWT here" ></textarea>
+                    </div>
+                    <div class="col-md-12">
+                        <div ng-if='selectedJWTStandard === "JWS"'> 
+                            <h4>Public Certificate/Key</h4>  
+                            <small>To verify against the Token's signature</small>
+                        </div>
+                        <div ng-if='selectedJWTStandard === "JWE"'> 
+                            <h4>Prviate Key</h4>
+                            <small>To decrypt the Token</small>
+                        </div>
+                        <textarea rows="3" class="form-control" ng-model="key" placeholder="Paste the key contents here" ></textarea>
+                    </div>
+                    <div class="col-md-12">
+                        <span style="float:right; margin-top:5px">
+                            <input type="button" value="Decode Token" class="btn btn-default" ng-click="decodeJWT(selectedJWTStandard,token,key)">
+                        </span>
+                    </div>
+                    <div class="col-md-12">
+                        <h4>Decode Output</h4>
+                        <textarea rows="3" class="form-control" ng-model="$parent.input_encoded_jwt" placeholder="Output" ></textarea>
+                    </div>
+                </div>
+            </div>
+        </div><!--End of Main Controller-->
     </div>
 
     <div class="footer">

@@ -16,6 +16,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
     $scope.remove = remove;
     $scope.formParams = formParams;
     $scope.signAndTest = signAndTest;
+    $scope.decodeJWT = decodeJWT;
 
     $scope.additionalParams = [];
 
@@ -40,6 +41,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
             // $scope.input_uri = config.main.defaultUri;
 
             loadDefaultFromConfig(2);
+            $scope.selectedJWTStandard = $scope.jwt_standards[0];
             $scope.selectedRequest = $scope.options[0];
             $scope.selectedFrom = $scope.options_zone[0];
             $scope.selectedProvider = $scope.options_provider[0];
@@ -88,6 +90,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
 
     function loadDefaultFromConfig(level) {
         $scope.options = ['GET', 'POST'];
+        $scope.jwt_standards = ['JWS', 'JWE'];
         $scope.options_zone = config.main.callerZone;
         $scope.options_provider = config.main.providerGateway;
         $scope.input_app_ver = config.main.appVer;
@@ -125,6 +128,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
 
     $scope.levelChange = function () {
         $scope.showTestResults = false;
+        $scope.toggleJOSE = false;
         if ($scope.selectedLevel === 2) {
             $scope.showLevel2 = true;
             $scope.showLevel1 = true;
@@ -414,6 +418,12 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
                 }
             }
         }
+    }
+
+    function decodeJWT(selectedJWTStandard,token,key){
+        console.log(selectedJWTStandard);
+        console.log(token);
+        console.log(key);
     }
 
     function sendTest(sendRequest) {
