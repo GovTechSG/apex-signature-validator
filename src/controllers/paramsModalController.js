@@ -1,3 +1,5 @@
+paramsModalController.$inject = ["$scope", "$uibModalInstance", "items"];
+
 function paramsModalController($scope, $uibModalInstance, items) {
 
     $scope.jsonString = JSON.stringify(items, null, 2);
