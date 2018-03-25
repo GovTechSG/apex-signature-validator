@@ -52,6 +52,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
             $scope.input_nonce = 'auto-generated';
             $scope.selectedLevel = 0;
         }
+        formUris(formRealmUri());
     }
 
     function set() {

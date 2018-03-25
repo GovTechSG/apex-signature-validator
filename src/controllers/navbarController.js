@@ -1,5 +1,7 @@
 import apex_logo from '../images/logo_apex.png';
 
+navbarController.$inject = ["$scope", "$rootScope", "ModalService", "$uibModal"];
+
 function navbarController($scope, $rootScope, ModalService, $uibModal) {
     let controller = this;
 

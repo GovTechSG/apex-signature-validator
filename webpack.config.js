@@ -58,7 +58,7 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
                 template: 'index.ejs',
                 inlineSource: '.js$'
             }),
-            new HtmlWebpackInlineSourcePlugin()        
+            new HtmlWebpackInlineSourcePlugin()
         ],
         devServer: {
             contentBase: path.resolve(__dirname, 'dist')

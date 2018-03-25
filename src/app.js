@@ -28,11 +28,11 @@ const mainModule = angular.module("app", [uirouter, uibootstrap, uinotification,
         }])
     .constant('config', config)
     .controller('mainController', mainController)
-    .controller('jsonInputModalController', ["$scope", "$uibModalInstance", "items", paramsModalController])
-    .controller('navbarController', ["$scope", "$rootScope", "ModalService", "$uibModal", navbarController])
-    .factory('ModalService', [modalService])
-    .factory('TestService', ["$http", "UtilityService", testService])
-    .factory('UtilityService', [utilService]);
+    .controller('jsonInputModalController', paramsModalController)
+    .controller('navbarController', navbarController)
+    .factory('ModalService', modalService)
+    .factory('TestService',  testService)
+    .factory('UtilityService', utilService);
 
 mainModule.directive('onReadFile', ['$parse',
     function ($parse) {
