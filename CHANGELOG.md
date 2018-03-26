@@ -5,9 +5,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.3.0] - 2018-04-01
 ### Updated
-- UI to handle JWT Decoding 
+- UI to handle JWT Verification
 ### Added
-- node-jose dependecy in package.json
+- jose dependecy in package.json
 - JOSE verficiation feature
 
 ## [0.2.5] - 2018-03-24

@@ -17,11 +17,12 @@
     "angular-ui-notification": "^0.3.6",
     "babel-polyfill": "^6.26.0",
     "bootstrap": "^3.3.7",
+    "jose": "^0.3.2",
     "jquery": "^3.3.1",
-    "jsrsasign": "^8.0.6",
+    "jsrsasign": "^8.0.7",
     "ng-fx": "^2.0.4",
-    "node-jose": "^0.11.0",
-    "nonce": "^1.0.4"
+    "nonce": "^1.0.4",
+    "urlsafe-base64": "1.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
