@@ -3,9 +3,9 @@ import nonce from 'nonce';
 
 const generateNonce = nonce();
 
-mainCtrlFunc.$inject = ["$scope", "$rootScope", "config", "Notification", "TestService", "ModalService", "$sce"];
+mainCtrlFunc.$inject = ["$scope", "$rootScope", "config", "Notification", "JWTService","TestService", "ModalService", "$sce"];
 
-function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, ModalService, $sce) {
+function mainCtrlFunc($scope, $rootScope, config, Notification, JWTService, TestService, ModalService, $sce) {
     const controller = this;
 
     init();
@@ -16,7 +16,8 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
     $scope.remove = remove;
     $scope.formParams = formParams;
     $scope.signAndTest = signAndTest;
-    $scope.decodeJWT = decodeJWT;
+    $scope.displayJOSEMenu = displayJOSEMenu;
+    $scope.verifyJOSE = verifyJOSE;
 
     $scope.additionalParams = [];
 
@@ -421,10 +422,21 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
         }
     }
 
-    function decodeJWT(selectedJWTStandard,token,key){
-        console.log(selectedJWTStandard);
-        console.log(token);
-        console.log(key);
+    function displayJOSEMenu(toggleJOSE) {
+        $scope.output = undefined;
+        $scope.jwtStatus = false;
+        $scope.toggleJOSE = toggleJOSE ? false : true
+    }
+
+    function verifyJOSE(jwtStandard,input,key){
+        let response = undefined;
+
+        if(jwtStandard === 'JWS') {
+            response = JWTService.verifyJWS(JSON.parse(input),key);
+        } else {
+            response = JWTService.decryptJWE(JSON.parse(input),key);
+        } 
+        $scope.output = JSON.stringify(response.output);
     }
 
     function sendTest(sendRequest) {
