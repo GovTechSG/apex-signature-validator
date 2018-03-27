@@ -8,14 +8,15 @@ import angularanimate from 'angular-animate';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'angular-ui-notification/dist/angular-ui-notification.css';
 
-import mainController from './controllers/mainController.js';
-import paramsModalController from './controllers/paramsModalController.js';
-import navbarController from './controllers/navbarController.js';
-import config from './service/config.js';
-import jwtService from './service/jwtService.js';
-import testService from './service/testService.js';
-import modalService from './service/modalService.js';
-import utilService from './service/utiityService.js';
+import mainController from './controllers/mainController';
+import paramsModalController from './controllers/paramsModalController';
+import navbarController from './controllers/navbarController';
+import config from './service/config';
+import jwtService from './service/jwtService';
+import testService from './service/testService';
+import modalService from './service/modalService';
+import utilService from './service/utiityService';
+import stateService from './service/stateService';
 
 import './css/style.css';
 
@@ -27,7 +28,8 @@ const mainModule = angular.module("app", [uibootstrap, uinotification, ngfx, ang
     .factory('ModalService', modalService)
     .factory('TestService',  testService)
     .factory('JWTService', jwtService)
-    .factory('UtilityService', utilService);
+    .factory('UtilityService', utilService)
+    .factory('stateService', stateService);
 
 mainModule.directive('onReadFile', ['$parse',
     function ($parse) {
