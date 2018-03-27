@@ -5,10 +5,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.3.0] - 2018-04-01
 ### Updated
-- UI to handle JWT Verification
+- UI to handle verification for JWS and JWE
+- .gitignore for local testing folder
 ### Added
 - jose dependecy in package.json
-- JOSE verficiation feature
+- JOSE Verify and Decrypt feature
 
 ## [0.2.5] - 2018-03-24
 ### Updated

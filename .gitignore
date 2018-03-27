@@ -1,6 +1,11 @@
+# Project related files
+
 .idea/
 node_modules/
 .vscode/
 dist/
 level-1.json
 level-2.json
+
+# Local live testing
+example/test
