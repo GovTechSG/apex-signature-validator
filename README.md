@@ -192,3 +192,23 @@ To simplify this process, Google Chrome launch scripts are included in the `brow
 These scripts would automatically open the signature validator in a new Chrome window with web security disabled. The browser would then allow cross-origin requests to be sent from the browser.
 
 **Only use Google Chrome instances launched from these scripts to use the signature validator, do not access sites on the internet with them.**
+
+## JSON Web Token Verification
+
+Additionally , you can verify a JWS (JSON Web Signature) or decrypt an JWE (JSON Web Encryption) token. 
+
+### Verifying JWS
+
+(https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/jose_jws.png)
+
+- Input : API Response from the Gateway. As of now, we are only supporting it as a JSON format.
+- Public Certificate/Key : Public certificate (string) contents that will be used to verified against the JSON Web Signature. 
+- Output : Data output upon successful verification
+
+### Decrypting JWE
+
+(https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/jose_jwe.png)
+
+- Input : API Response from the Gateway. Same as JWS
+- Private Key : Public Key (string) contents that will be used to decrypt the JWE
+- Output : Data output upon successful decryption
