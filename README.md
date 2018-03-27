@@ -27,6 +27,7 @@ You can find out more about Apex signature generation from our reference Node.js
     + [service](#service)
   * [JSRSASIGN](#jsrsasign)
   * [Sending test requests with the signature validator](#sending-test-requests-with-the-signature-validator)
+  * [JOSE (Javascript Object Signing and Encryption)](#jose)
 
 ## Running Apex Signature Validator
 Download and extract the latest [release](https://github.com/GovTechSG/apex-signature-validator/releases) and run `index.html` directly in your browser.
@@ -193,12 +194,15 @@ These scripts would automatically open the signature validator in a new Chrome w
 
 **Only use Google Chrome instances launched from these scripts to use the signature validator, do not access sites on the internet with them.**
 
-## JSON Web Token Verification
+## JOSE 
 
-Additionally , you can verify a JWS (JSON Web Signature) or decrypt an JWE (JSON Web Encryption) token. 
+JOSE (Javascript Object Signing and Encryption)
+, is an apporach on signing and encryption JSON content. If your API response are packaged in any of the JOSE standard, you can use this client to further verify or decrpyt the corresponding API response.
+
+On the main page, click on *Verify JOSE* button to open up the JOSE menu.
 
 ### Verifying JWS
-
+![jose_jws.png]
 (https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/jose_jws.png)
 
 - Input : API Response from the Gateway. As of now, we are only supporting it as a JSON format.
@@ -206,7 +210,7 @@ Additionally , you can verify a JWS (JSON Web Signature) or decrypt an JWE (JSON
 - Output : Data output upon successful verification
 
 ### Decrypting JWE
-
+![jose_jwe.png]
 (https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/jose_jwe.png)
 
 - Input : API Response from the Gateway. Same as JWS
