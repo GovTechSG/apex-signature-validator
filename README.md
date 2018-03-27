@@ -202,16 +202,14 @@ JOSE (Javascript Object Signing and Encryption)
 On the main page, click on *Verify JOSE* button to open up the JOSE menu.
 
 ### Verifying JWS
-![jose_jws.png]
-(https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/jose_jws.png)
+![jose_jws.png](https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/jose_jws.png)
 
 - Input : API Response from the Gateway. As of now, we are only supporting it as a JSON format.
 - Public Certificate/Key : Public certificate (string) contents that will be used to verified against the JSON Web Signature. 
 - Output : Data output upon successful verification
 
 ### Decrypting JWE
-![jose_jwe.png]
-(https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/jose_jwe.png)
+![jose_jwe.png](https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/jose_jwe.png)
 
 - Input : API Response from the Gateway. Same as JWS
 - Private Key : Public Key (string) contents that will be used to decrypt the JWE
