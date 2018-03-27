@@ -3,9 +3,11 @@ import nonce from 'nonce';
 
 const generateNonce = nonce();
 
-mainCtrlFunc.$inject = ["$scope", "$rootScope", "config", "Notification", "JWTService","TestService", "ModalService", "$sce"];
+mainCtrlFunc.$inject = ["$scope", "$rootScope", "config", "Notification", "JWTService", "TestService", "ModalService", "$sce",
+    "$uibModal"];
 
-function mainCtrlFunc($scope, $rootScope, config, Notification, JWTService, TestService, ModalService, $sce) {
+function mainCtrlFunc($scope, $rootScope, config, Notification, JWTService, TestService, ModalService, $sce,
+    $uibModal) {
     const controller = this;
 
     init();
@@ -20,6 +22,39 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, JWTService, Test
     $scope.verifyJOSE = verifyJOSE;
 
     $scope.additionalParams = [];
+
+    controller.showOptions = showOptions;
+
+    function showOptions() {
+        saveInputsToModalService();
+        $uibModal.open({
+            animation: true,
+            backdrop: false,
+            templateUrl: 'jsonInputModal.html',
+            controller: 'jsonInputModalController',
+            size: 'lg',
+            resolve: {
+                items: getKeyValues()
+            }
+        }).result
+            .then(function (jsonString) {
+                var jsonObj = JSON.parse(jsonString);
+                ModalService.setParams(jsonObj.params);
+                ModalService.setPem(jsonObj.pem);
+                ModalService.setPwd(jsonObj.password);
+
+                set();
+                formParams();
+            })
+            .catch(function () { });
+    }
+
+    function getKeyValues() {
+        return {
+            params: ModalService.getParams(),
+            password: ModalService.getPwd()
+        }
+    }
 
     $scope.$on('navbar-modal-set', function (event, args) {
         set();
@@ -428,14 +463,14 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, JWTService, Test
         $scope.toggleJOSE = toggleJOSE ? false : true
     }
 
-    function verifyJOSE(jwtStandard,input,key){
+    function verifyJOSE(jwtStandard, input, key) {
         let response = undefined;
 
-        if(jwtStandard === 'JWS') {
-            response = JWTService.verifyJWS(JSON.parse(input),key);
+        if (jwtStandard === 'JWS') {
+            response = JWTService.verifyJWS(JSON.parse(input), key);
         } else {
-            response = JWTService.decryptJWE(JSON.parse(input),key);
-        } 
+            response = JWTService.decryptJWE(JSON.parse(input), key);
+        }
         $scope.output = JSON.stringify(response.output);
     }
 
