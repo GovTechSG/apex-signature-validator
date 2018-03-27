@@ -14,9 +14,11 @@ import mainController from './controllers/mainController.js';
 import paramsModalController from './controllers/paramsModalController.js';
 import navbarController from './controllers/navbarController.js';
 import config from './service/config.js';
+import jwtService from './service/jwtService.js';
 import testService from './service/testService.js';
 import modalService from './service/modalService.js';
-import utilService from './service/utiityService.js'
+import utilService from './service/utiityService.js';
+
 
 import './css/style.css';
 
@@ -32,6 +34,7 @@ const mainModule = angular.module("app", [uirouter, uibootstrap, uinotification,
     .controller('navbarController', navbarController)
     .factory('ModalService', modalService)
     .factory('TestService',  testService)
+    .factory('JWTService', jwtService)
     .factory('UtilityService', utilService);
 
 mainModule.directive('onReadFile', ['$parse',

@@ -3,9 +3,9 @@ import nonce from 'nonce';
 
 const generateNonce = nonce();
 
-mainCtrlFunc.$inject = ["$scope", "$rootScope", "config", "Notification", "TestService", "ModalService", "$sce"];
+mainCtrlFunc.$inject = ["$scope", "$rootScope", "config", "Notification", "JWTService","TestService", "ModalService", "$sce"];
 
-function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, ModalService, $sce) {
+function mainCtrlFunc($scope, $rootScope, config, Notification, JWTService, TestService, ModalService, $sce) {
     const controller = this;
 
     init();
@@ -16,6 +16,8 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
     $scope.remove = remove;
     $scope.formParams = formParams;
     $scope.signAndTest = signAndTest;
+    $scope.displayJOSEMenu = displayJOSEMenu;
+    $scope.verifyJOSE = verifyJOSE;
 
     $scope.additionalParams = [];
 
@@ -40,6 +42,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
             // $scope.input_uri = config.main.defaultUri;
 
             loadDefaultFromConfig(2);
+            $scope.selectedJWTStandard = $scope.jwt_standards[0];
             $scope.selectedRequest = $scope.options[0];
             $scope.selectedFrom = $scope.options_zone[0];
             $scope.selectedProvider = $scope.options_provider[0];
@@ -89,6 +92,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
 
     function loadDefaultFromConfig(level) {
         $scope.options = ['GET', 'POST'];
+        $scope.jwt_standards = ['JWS', 'JWE'];
         $scope.options_zone = config.main.callerZone;
         $scope.options_provider = config.main.providerGateway;
         $scope.input_app_ver = config.main.appVer;
@@ -126,6 +130,7 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
 
     $scope.levelChange = function () {
         $scope.showTestResults = false;
+        $scope.toggleJOSE = false;
         if ($scope.selectedLevel === 2) {
             $scope.showLevel2 = true;
             $scope.showLevel1 = true;
@@ -415,6 +420,23 @@ function mainCtrlFunc($scope, $rootScope, config, Notification, TestService, Mod
                 }
             }
         }
+    }
+
+    function displayJOSEMenu(toggleJOSE) {
+        $scope.output = undefined;
+        $scope.jwtStatus = false;
+        $scope.toggleJOSE = toggleJOSE ? false : true
+    }
+
+    function verifyJOSE(jwtStandard,input,key){
+        let response = undefined;
+
+        if(jwtStandard === 'JWS') {
+            response = JWTService.verifyJWS(JSON.parse(input),key);
+        } else {
+            response = JWTService.decryptJWE(JSON.parse(input),key);
+        } 
+        $scope.output = JSON.stringify(response.output);
     }
 
     function sendTest(sendRequest) {
