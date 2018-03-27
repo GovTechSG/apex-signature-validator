@@ -11,37 +11,37 @@ function jwtService() {
                 return {
                     result : isValid,
                     output : JSON.parse(URL.decode(input.payload).toString('utf8'))
-                }
+                };
             }catch(err) {
                 return {
                     status : 'Error',
                     output : 'Failed to verify JWS ' + err
-                }
+                };
             }
         },
         decryptJWE: function (input,privateKey) {
             try {
                 let cipherText = URL.decode(input.ciphertext);
-                let tag = Buffer.from(input.tag, "base64");
+                let tag = Buffer.from(input.tag, 'base64');
                 let aad = Buffer.from(input.protected, 'ascii');
                 let iv = URL.decode(input.iv);
                 let keytoUnwrap = URL.decode(input.encrypted_key);
     
-                let rsa = new JOSE.jwa(input.header.alg);
-                let unwrapped = rsa.unwrapKey(keytoUnwrap, privateKey);
+                let RSA = new JOSE.jwa(input.header.alg);
+                let unwrapped = RSA.unwrapKey(keytoUnwrap, privateKey);
     
-                let aes = new JOSE.jwa(input.header.enc);
-                let plain = aes.decrypt(cipherText, tag, aad, iv, unwrapped);
+                let AES = new JOSE.jwa(input.header.enc);
+                let plain = AES.decrypt(cipherText, tag, aad, iv, unwrapped);
     
                 return {
                     result : true,
                     output : JSON.parse(plain.toString())
-                }
+                };
             }catch(err) {
                 return {
                     status : 'Error',
                     output : 'Failed to decrypt JWE ' + err
-                }
+                };
             }
         }
     }
