@@ -19,6 +19,17 @@
     margin-bottom: 15px;
 }
 
+#main-navbar {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.main-content {
+    padding-left: 40px; 
+    padding-right: 40px; 
+    margin-bottom: 50px;
+}
+
 .test-send-success{
     background-color: lightgreen;
 }

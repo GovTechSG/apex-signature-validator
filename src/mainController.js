@@ -1,8 +1,8 @@
-import apex_logo from '../images/logo_apex.png';
+import apex_logo from './images/logo_apex.png';
 
-navbarController.$inject = ["$scope", "$rootScope", "ModalService", "$uibModal"];
+mainController.$inject = ["$scope", "$rootScope", "ModalService", "$uibModal"];
 
-function navbarController($scope, $rootScope, ModalService, $uibModal) {
+function mainController($scope, $rootScope, ModalService, $uibModal) {
     let controller = this;
 
     controller.apex_logo = apex_logo; // path to logo file
@@ -52,4 +52,4 @@ function navbarController($scope, $rootScope, ModalService, $uibModal) {
     }
 }
 
-export default navbarController;
+export default mainController;

@@ -1,5 +1,6 @@
 import "babel-polyfill";
 import angular from 'angular';
+import uiRouter from '@uirouter/angularjs';
 import uinotification from 'angular-ui-notification';
 import uibootstrap from 'angular-ui-bootstrap';
 import ngfx from 'ng-fx';
@@ -8,28 +9,38 @@ import angularanimate from 'angular-animate';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'angular-ui-notification/dist/angular-ui-notification.css';
 
-import mainController from './controllers/mainController';
-import paramsModalController from './controllers/paramsModalController';
-import navbarController from './controllers/navbarController';
+import mainController from './mainController';
+import signatureValidator from './features/signatureValidator';
 import config from './service/config';
 import jwtService from './service/jwtService';
 import testService from './service/testService';
 import modalService from './service/modalService';
 import utilService from './service/utiityService';
-import stateService from './service/stateService';
 
 import './css/style.css';
 
-const mainModule = angular.module("app", [uibootstrap, uinotification, ngfx, angularanimate])
+const mainModule = angular.module("app", [uibootstrap, uinotification, ngfx, angularanimate, uiRouter])
     .constant('config', config)
     .controller('mainController', mainController)
-    .controller('jsonInputModalController', paramsModalController)
-    .controller('navbarController', navbarController)
     .factory('ModalService', modalService)
     .factory('TestService',  testService)
     .factory('JWTService', jwtService)
     .factory('UtilityService', utilService)
-    .factory('stateService', stateService);
+    .config(function($stateProvider, $urlRouterProvider) {
+        $stateProvider
+            .state({
+                name: 'signatureValidator',
+                url: '/signature-validator',
+                controller: signatureValidator.controller,
+                controllerAs: '$ctrl',
+                template: signatureValidator.template
+            })
+            .state({
+                name: 'joseValidator',
+                url: '/jose-validator'
+            });
+        $urlRouterProvider.otherwise('/signature-validator');
+    });
 
 mainModule.directive('onReadFile', ['$parse',
     function ($parse) {

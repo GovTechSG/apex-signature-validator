@@ -1,3 +1,32 @@
+let paramsModalTemplate = `
+<div class="modal-header">
+    <h3 class="modal-title">Parameters Setup</h3>
+</div>
+<div class="modal-body">
+    additionalParams
+    Select json file to load:
+    <input type="file" on-read-file="parseInputFile($fileContents)"
+        class="btn btn-default" style="display:inline-block">
+    <br/> <br/>
+    <textarea rows="20" cols="65" class="form-control" ng-model="jsonString" ng-keydown="handleTabKey($event)" style="font-family:monospace"></textarea>
+
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="set()">
+        <span class="glyphicon glyphicon-ok"></span>
+        Okay
+    </button>
+    <button class="btn btn-primary" type="button" ng-click="downloadJSON()">
+        <span class="glyphicon glyphicon-save"></span>
+        Save as JSON
+    </button>
+    <button class="btn btn-danger" type="button" ng-click="cancel()">
+        <span class="glyphicon glyphicon-remove"></span>
+        Cancel
+    </button>
+</div>
+`
+
 paramsModalController.$inject = ["$scope", "$uibModalInstance", "items"];
 
 function paramsModalController($scope, $uibModalInstance, items) {
@@ -50,4 +79,7 @@ function paramsModalController($scope, $uibModalInstance, items) {
     };
 }
 
-export default paramsModalController;
+export default {
+    template: paramsModalTemplate,
+    controller: paramsModalController
+}
