@@ -1,11 +1,5 @@
-let template = `
-<div class="row" style='text-align:center'>
-    <button type="button" class="btn btn-lg btn-default" ng-click="displayJOSEMenu(toggleJOSE)">
-        <span class="glyphicon glyphicon-sunglasses"></span> Verify JOSE
-    </button>
-</div>
-
-<div ng-if="toggleJOSE">
+let joseValidatorTemplate = `
+<div class="container-fluid main-content">
     <div class="heading">
         <h3>JSON Object Signing and Encryption (JOSE)</h3>
     </div>
@@ -43,3 +37,27 @@ let template = `
     </div>
 </div>
 `
+
+joseValidatorController.$inject = ['JWTService', 'stateService'];
+
+function joseValidatorController(JWTService, stateService) {
+    let controller = this;
+
+    stateService.state = 'joseValidator';
+
+    function verifyJOSE(jwtStandard, input, key) {
+        let response = undefined;
+
+        if (jwtStandard === 'JWS') {
+            response = JWTService.verifyJWS(JSON.parse(input), key);
+        } else {
+            response = JWTService.decryptJWE(JSON.parse(input), key);
+            $scope.output = JSON.stringify(response.output);
+        }
+    }
+}
+
+export default {
+    template: joseValidatorTemplate,
+    controller: joseValidatorController
+}

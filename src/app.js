@@ -11,6 +11,7 @@ import 'angular-ui-notification/dist/angular-ui-notification.css';
 
 import mainController from './mainController';
 import signatureValidator from './features/signatureValidator';
+import joseValidator from './features/joseValidator';
 import config from './service/config';
 import jwtService from './service/jwtService';
 import testService from './service/testService';
@@ -23,10 +24,10 @@ const mainModule = angular.module("app", [uibootstrap, uinotification, ngfx, ang
     .constant('config', config)
     .controller('mainController', mainController)
     .factory('ModalService', modalService)
-    .factory('TestService',  testService)
+    .factory('TestService', testService)
     .factory('JWTService', jwtService)
     .factory('UtilityService', utilService)
-    .config(function($stateProvider, $urlRouterProvider) {
+    .config(function ($stateProvider, $urlRouterProvider) {
         $stateProvider
             .state({
                 name: 'signatureValidator',
@@ -37,13 +38,14 @@ const mainModule = angular.module("app", [uibootstrap, uinotification, ngfx, ang
             })
             .state({
                 name: 'joseValidator',
-                url: '/jose-validator'
+                url: '/jose-validator',
+                controller: joseValidator.controller,
+                controllerAs: '$ctrl',
+                template: joseValidator.template
             });
         $urlRouterProvider.otherwise('/signature-validator');
-    });
-
-mainModule.directive('onReadFile', ['$parse',
-    function ($parse) {
+    })
+    .directive('onReadFile', ['$parse', function ($parse) {
         return {
             restrict: 'A',
             scope: false,
@@ -55,7 +57,7 @@ mainModule.directive('onReadFile', ['$parse',
 
                     reader.onload = function (onLoadEvent) {
                         scope.$apply(function () {
-                            fn(scope, {$fileContents: onLoadEvent.target.result})
+                            fn(scope, { $fileContents: onLoadEvent.target.result })
                         })
                     };
                     reader.readAsText((onChangeEvent.srcElement || onChangeEvent.target).files[0]);
@@ -63,5 +65,9 @@ mainModule.directive('onReadFile', ['$parse',
                 })
             }
         }
-    }
-]);
+    }])
+    .factory('stateService', function() {
+        return {
+            state: 'signatureValidator'
+        }
+    });

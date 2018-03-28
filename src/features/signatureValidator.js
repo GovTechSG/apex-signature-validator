@@ -311,12 +311,14 @@ let signatureValidatorTemplate = `
 `
 
 signatureValidatorController.$inject = ["$scope", "$rootScope", "config", "Notification", "JWTService", "TestService", "ModalService", "$sce",
-    "$uibModal"];
+    "$uibModal", 'stateService'];
 
 function signatureValidatorController($scope, $rootScope, config, Notification, JWTService, TestService, ModalService, $sce,
-    $uibModal) {
+    $uibModal, stateService) {
 
         const controller = this;
+
+        stateService.state = 'signatureValidator';
         
         init();
     
