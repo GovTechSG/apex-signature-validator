@@ -52,7 +52,6 @@
 .extra-basestring-char{
     text-decoration : line-through;
     color: #ff7762;
-
 }
 pre, .wrap {
     white-space: pre-wrap;       /* css-3 */

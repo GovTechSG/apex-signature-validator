@@ -7,9 +7,10 @@ import paramsModal from './paramsModal';
 let signatureValidatorTemplate = `
 <div class="container-fluid main-content">
 
+<h2>Apex Signature Validator</h2>
+
 <div class="heading">
-    <span class="label label-primary">1</span>
-    Input Request Parameters and Generate Basestring
+    <span class="label label-primary">1</span> Input Request Parameters and Generate Basestring
     <span ng-click="$ctrl.showOptions()" style="float: right;">
         <a href>
             <span class="glyphicon glyphicon-cog"></span> Options</a>
@@ -120,7 +121,10 @@ let signatureValidatorTemplate = `
         </div>
     </div>
 
-    <h4 ng-if="$ctrl.showLevel1 || $ctrl.showLevel2">Required Parameters</h4>
+    <div class="heading" ng-if="$ctrl.showLevel1 || $ctrl.showLevel2">
+        <span class="label label-primary">2</span> Authentication Inputs
+        <h4>Required Parameters</h4>
+    </div>
     <div class="row">
         <div class="col-md-12">
             <div class="row fx-zoom-normal fx-speed-500" ng-if="$ctrl.showLevel1">
@@ -203,11 +207,6 @@ let signatureValidatorTemplate = `
     <hr>
 
     <div ng-if="$ctrl.showLevel2">
-        <div class="heading">
-            <span class="label label-primary">2</span>
-            Select/Input Pem File Contents
-        </div>
-
         <h4>Pem File
             <small>
                 Load pem file
