@@ -309,10 +309,10 @@ let signatureValidatorTemplate = `
 </div>
 `
 
-signatureValidatorController.$inject = ["$scope", "$rootScope", "config", "Notification", "JWTService", "TestService", "ModalService", "$sce",
+signatureValidatorController.$inject = ["$scope", "$rootScope", "config", "Notification", "TestService", "ModalService", "$sce",
     "$uibModal", 'stateService'];
 
-function signatureValidatorController($scope, $rootScope, config, Notification, JWTService, TestService, ModalService, $sce,
+function signatureValidatorController($scope, $rootScope, config, Notification, TestService, ModalService, $sce,
     $uibModal, stateService) {
 
         const controller = this;
@@ -328,8 +328,6 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         $scope.formParams = formParams;
         $scope.levelChange = levelChange;
         $scope.signAndTest = signAndTest;
-        $scope.displayJOSEMenu = displayJOSEMenu;
-        $scope.verifyJOSE = verifyJOSE;
     
         $scope.additionalParams = [];
     
@@ -387,7 +385,6 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
                 // $scope.input_uri = config.main.defaultUri;
     
                 loadDefaultFromConfig(2);
-                $scope.selectedJWTStandard = $scope.jwt_standards[0];
                 $scope.selectedRequest = $scope.options[0];
                 controller.selectedFrom = $scope.options_zone[0];
                 controller.selectedProvider = $scope.options_provider[0];
@@ -437,7 +434,6 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
     
         function loadDefaultFromConfig(level) {
             $scope.options = ['GET', 'POST'];
-            $scope.jwt_standards = ['JWS', 'JWE'];
             $scope.options_zone = config.main.callerZone;
             $scope.options_provider = config.main.providerGateway;
             $scope.input_app_ver = config.main.appVer;
@@ -475,7 +471,6 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
     
         function levelChange() {
             $scope.showTestResults = false;
-            $scope.toggleJOSE = false;
             if (controller.selectedLevel === 2) {
                 controller.showLevel2 = true;
                 controller.showLevel1 = true;
@@ -567,17 +562,17 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             }
             $scope.bsResults = $sce.trustAsHtml(bsResults);
             if (generatedBS === ownBS)
-                Notification({
+                Notification.success({
                     title: "",
                     message: "Basestrings are the same",
                     delay: config.notificationShowTime
-                }, 'success')
+                })
             else
-                Notification({
+                Notification.error({
                     title: "",
                     message: "Basestrings are different",
                     delay: config.notificationShowTime
-                }, 'error')
+                })
         }
     
         function formUris(realmPartialUri) {
@@ -751,11 +746,11 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             } catch (exception) {
                 $scope.showTestResults = false;
                 if (!$scope.paramForm.$valid) {
-                    Notification({
+                    Notification.error({
                         title: exception.name,
                         message: exception.message,
                         delay: config.notificationShowTime
-                    }, 'warning');
+                    });
                     // set all invalid form fields to $touched
                     if ($scope.paramForm.$invalid) {
                         angular.forEach($scope.paramForm.$error, function (field) {
@@ -766,23 +761,6 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
                     }
                 }
             }
-        }
-    
-        function displayJOSEMenu(toggleJOSE) {
-            $scope.output = undefined;
-            $scope.jwtStatus = false;
-            $scope.toggleJOSE = toggleJOSE ? false : true
-        }
-    
-        function verifyJOSE(jwtStandard, input, key) {
-            let response = undefined;
-    
-            if (jwtStandard === 'JWS') {
-                response = JWTService.verifyJWS(JSON.parse(input), key);
-            } else {
-                response = JWTService.decryptJWE(JSON.parse(input), key);
-            }
-            $scope.output = JSON.stringify(response.output);
         }
     
         function sendTest(sendRequest) {
