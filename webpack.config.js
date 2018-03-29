@@ -52,13 +52,7 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
             ]
         },
         plugins: [
-            new webpack.NoEmitOnErrorsPlugin(),
-            new HtmlWebpackPlugin({
-                title: 'Apex Signature Validator',
-                template: 'index.ejs',
-                inlineSource: '.js$'
-            }),
-            new HtmlWebpackInlineSourcePlugin()
+            new webpack.NoEmitOnErrorsPlugin()
         ],
         devServer: {
             contentBase: path.resolve(__dirname, 'dist')
@@ -70,11 +64,21 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
         config.plugins.push(new OptimizeCssAssetsPlugin()); // minify css
         config.plugins.push(new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify('production')
-        }))
+        }));
+        config.plugins.push(new HtmlWebpackPlugin({
+            title: 'Apex Signature Validator',
+            template: 'index.ejs',
+            inlineSource: '.js$'
+        }));
+        config.plugins.push(new HtmlWebpackInlineSourcePlugin());
     } else {
         config.plugins.push(new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify('development')
-        }))
+        }));
+        config.plugins.push(new HtmlWebpackPlugin({
+            title: 'Apex Signature Validator',
+            template: 'index.ejs'
+        }));
     }
     return config;
 };

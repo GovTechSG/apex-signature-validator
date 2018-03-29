@@ -1,4 +1,4 @@
-# APEX Signature Validator
+# APEX Signature and JOSE Validator
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a20b2416cc2547e9ab6b3ef5669d82ec)](https://app.codacy.com/app/robincher/apex-signature-validator?utm_source=github.com&utm_medium=referral&utm_content=GovTechSG/apex-signature-validator&utm_campaign=badger)
 
@@ -27,7 +27,7 @@ You can find out more about Apex signature generation from our reference Node.js
     + [service](#service)
   * [JSRSASIGN](#jsrsasign)
   * [Sending test requests with the signature validator](#sending-test-requests-with-the-signature-validator)
-  * [JOSE (Javascript Object Signing and Encryption)](#jose)
+- [JOSE (Javascript Object Signing and Encryption) Validator](#jose)
 
 ## Running Apex Signature Validator
 Download and extract the latest [release](https://github.com/GovTechSG/apex-signature-validator/releases) and run `index.html` directly in your browser.
@@ -196,21 +196,18 @@ These scripts would automatically open the signature validator in a new Chrome w
 
 ## JOSE 
 
-JOSE (Javascript Object Signing and Encryption)
-, is an apporach on signing and encryption JSON content. If your API response are packaged in any of the JOSE standard, you can use this client to further verify or decrpyt the corresponding API response.
-
-On the main page, click on *Verify JOSE* button to open up the JOSE menu.
+JOSE (Javascript Object Signing and Encryption) is an approach to signing and encrypting JSON content. If your API responses are packaged in any of the JOSE standards, you can use this client to further verify or decrpyt the corresponding API response.
 
 ### Verifying JWS
-![jose_jws.png](https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/jose_jws.png)
+![jose_jws_verified.png](https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/jose_jws_verified.png)
 
-- Input : API Response from the Gateway. As of now, we are only supporting it as a JSON format.
-- Public Certificate/Key : Public certificate (string) contents that will be used to verified against the JSON Web Signature. 
-- Output : Data output upon successful verification
+- Input : JWS API Response from the Gateway. As of now, we are only supporting it in JSON format.
+- Public Certificate/Key : Public certificate that will be used to verify the JSON Web Signature. 
+- Output : Data output upon successful verification.
 
 ### Decrypting JWE
-![jose_jwe.png](https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/jose_jwe.png)
+![jose_jwe_verified.png](https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/jose_jwe_verified.png)
 
-- Input : API Response from the Gateway. Same as JWS
-- Private Key : Public Key (string) contents that will be used to decrypt the JWE
-- Output : Data output upon successful decryption
+- Input : JWE API Response from the Gateway in JSON format.
+- Private Key : Private key that will be used to decrypt the JWE string.
+- Output : Data output upon successful decryption.

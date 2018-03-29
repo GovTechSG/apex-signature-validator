@@ -1,44 +1,51 @@
 import "babel-polyfill";
 import angular from 'angular';
-import uirouter from '@uirouter/angularjs';
+import uiRouter from '@uirouter/angularjs';
 import uinotification from 'angular-ui-notification';
 import uibootstrap from 'angular-ui-bootstrap';
-import ngsanitize from 'angular-sanitize';
 import ngfx from 'ng-fx';
 import angularanimate from 'angular-animate';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import 'angular-ui-notification/dist/angular-ui-notification.css';
 
-import mainController from './controllers/mainController.js';
-import paramsModalController from './controllers/paramsModalController.js';
-import navbarController from './controllers/navbarController.js';
-import config from './service/config.js';
-import jwtService from './service/jwtService.js';
-import testService from './service/testService.js';
-import modalService from './service/modalService.js';
-import utilService from './service/utiityService.js';
-
+import mainController from './mainController';
+import signatureValidator from './features/signatureValidator';
+import joseValidator from './features/joseValidator';
+import config from './service/config';
+import jwtService from './service/jwtService';
+import testService from './service/testService';
+import modalService from './service/modalService';
+import utilService from './service/utiityService';
 
 import './css/style.css';
 
-const mainModule = angular.module("app", [uirouter, uibootstrap, uinotification, ngsanitize, ngfx, angularanimate])
-    .config(["$urlRouterProvider", "$httpProvider", "$compileProvider",
-        function ($urlRouterProvider, $httpProvider, $compileProvider) {
-            $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|blob):/);
-            $urlRouterProvider.otherwise("/");
-        }])
+angular.module("app", [uibootstrap, uinotification, ngfx, angularanimate, uiRouter])
     .constant('config', config)
     .controller('mainController', mainController)
-    .controller('jsonInputModalController', paramsModalController)
-    .controller('navbarController', navbarController)
     .factory('ModalService', modalService)
-    .factory('TestService',  testService)
+    .factory('TestService', testService)
     .factory('JWTService', jwtService)
-    .factory('UtilityService', utilService);
-
-mainModule.directive('onReadFile', ['$parse',
-    function ($parse) {
+    .factory('UtilityService', utilService)
+    .config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
+        $stateProvider
+            .state({
+                name: 'signatureValidator',
+                url: '/signature-validator',
+                controller: signatureValidator.controller,
+                controllerAs: '$ctrl',
+                template: signatureValidator.template
+            })
+            .state({
+                name: 'joseValidator',
+                url: '/jose-validator',
+                controller: joseValidator.controller,
+                controllerAs: '$ctrl',
+                template: joseValidator.template
+            });
+        $urlRouterProvider.otherwise('/signature-validator');
+    }])
+    .directive('onReadFile', ['$parse', function ($parse) {
         return {
             restrict: 'A',
             scope: false,
@@ -50,7 +57,9 @@ mainModule.directive('onReadFile', ['$parse',
 
                     reader.onload = function (onLoadEvent) {
                         scope.$apply(function () {
-                            fn(scope, {$fileContents: onLoadEvent.target.result})
+                            fn(scope, {
+                                $fileContents: onLoadEvent.target.result
+                            })
                         })
                     };
                     reader.readAsText((onChangeEvent.srcElement || onChangeEvent.target).files[0]);
@@ -58,5 +67,9 @@ mainModule.directive('onReadFile', ['$parse',
                 })
             }
         }
-    }
-]);
+    }])
+    .factory('stateService', function () {
+        return {
+            state: 'signatureValidator'
+        }
+    });
