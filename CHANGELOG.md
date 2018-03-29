@@ -3,9 +3,10 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.3.0] - 2018-04-01
+## [0.3.1] - 2018-03-29
 ### Updated
 - UI to handle verification for JWS and JWE
+- State separation between signature validator and JOSE validator
 - .gitignore for local testing folder
 ### Added
 - jose dependecy in package.json
