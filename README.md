@@ -32,7 +32,7 @@ You can find out more about Apex signature generation from our reference Node.js
 ## Running Apex Signature Validator
 Download and extract the latest [release](https://github.com/GovTechSG/apex-signature-validator/releases) and run `index.html` directly in your browser.
 
-![homepage.png](https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/homepage.png)
+![homepage_1.png](https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/homepage_1.png)
 
 A basestring verification tool is provided for L1 and L2 authentication. This allows users to verify that basestrings in their own applications are correctly generated. This tool also highlights differences between its own and user-generated basestrings.
 
