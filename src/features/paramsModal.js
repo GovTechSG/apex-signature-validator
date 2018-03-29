@@ -31,11 +31,11 @@ function paramsModalController($scope, $uibModalInstance, items) {
     $scope.jsonString = JSON.stringify(items, null, 2);
 
     $scope.downloadJSON = function () {
-        // var paramJson = JSON.stringify(paramsToSave);
-        var blob = new Blob([$scope.jsonString], {
+        // let paramJson = JSON.stringify(paramsToSave);
+        let blob = new Blob([$scope.jsonString], {
             type: "application/json;charset=utf-8;"
         });
-        var downloadLink = angular.element('<a></a>');
+        let downloadLink = angular.element('<a></a>');
         downloadLink.attr('href', window.URL.createObjectURL(blob));
         downloadLink.attr('download', 'saved-inputs.json');
         downloadLink[0].click();
@@ -52,8 +52,8 @@ function paramsModalController($scope, $uibModalInstance, items) {
     $scope.handleTabKey = function (e) {
         if (e.which === 9) {
             e.preventDefault();
-            var start = e.target.selectionStart;
-            var end = e.target.selectionEnd;
+            let start = e.target.selectionStart;
+            let end = e.target.selectionEnd;
             $scope.jsonString = $scope.jsonString.substring(0, start) + '\t' + $scope.jsonString.substring(end);
             angular.element(e.target).val($scope.jsonString);
             e.target.selectionStart = e.target.selectionEnd = start + 1;
@@ -64,7 +64,7 @@ function paramsModalController($scope, $uibModalInstance, items) {
         $scope.jsonString = JSON.stringify(JSON.parse(fileText), null, 2);
 
         //populate values
-        var savedObject = JSON.parse(fileText);
+        let savedObject = JSON.parse(fileText);
         $scope.selectedRequest = savedObject.request;
         $scope.selectedGateway = savedObject.gateway;
         $scope.input_uri = savedObject.path;

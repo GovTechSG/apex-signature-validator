@@ -375,7 +375,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
                 }
             }).result
             .then(function (jsonString) {
-                var jsonObj = JSON.parse(jsonString);
+                let jsonObj = JSON.parse(jsonString);
                 ModalService.setParams(jsonObj.params);
                 ModalService.setPem(jsonObj.pem);
                 ModalService.setPwd(jsonObj.password);
@@ -489,8 +489,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             controller.showLevel2 = false;
             controller.showLevel1 = false;
         }
-    };
-
+    }
     function saveInputsToModalService() {
         let paramsToSave = {
             'level': controller.selectedLevel,
@@ -513,8 +512,8 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             paramsToSave['timestamp'] = controller.input_timestamp;
         }
 
-        ModalService.setParams(paramsToSave)
-        ModalService.setPem(controller.pem)
+        ModalService.setParams(paramsToSave);
+        ModalService.setPem(controller.pem);
         ModalService.setPwd($scope.privSecret)
     }
 
@@ -527,7 +526,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         let bsResults = "";
         for (let i = 0; i < generatedBS.length; i++) {
             let gen = generatedBS[i];
-            let own = ownBS[i]
+            let own = ownBS[i];
             if (own == null) {
                 let stringToAdd = generatedBS.substr(i, generatedBS.leading);
                 bsResults += "<span class='missing-basestring-char'>" + stringToAdd + "</span>";
@@ -553,7 +552,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
                 title: "",
                 message: "Basestrings are the same",
                 delay: config.notificationShowTime
-            })
+            });
         else
             Notification.error({
                 title: "",

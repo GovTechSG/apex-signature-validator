@@ -20,7 +20,7 @@ import utilService from './service/utiityService';
 
 import './css/style.css';
 
-const mainModule = angular.module("app", [uibootstrap, uinotification, ngfx, angularanimate, uiRouter])
+angular.module("app", [uibootstrap, uinotification, ngfx, angularanimate, uiRouter])
     .constant('config', config)
     .controller('mainController', mainController)
     .factory('ModalService', modalService)
