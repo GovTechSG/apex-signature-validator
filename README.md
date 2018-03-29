@@ -199,14 +199,14 @@ These scripts would automatically open the signature validator in a new Chrome w
 JOSE (Javascript Object Signing and Encryption) is an approach to signing and encrypting JSON content. If your API responses are packaged in any of the JOSE standards, you can use this client to further verify or decrpyt the corresponding API response.
 
 ### Verifying JWS
-![jose_jws.png](https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/jose_jws_verified.png)
+![jose_jws_verified.png](https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/jose_jws_verified.png)
 
 - Input : JWS API Response from the Gateway. As of now, we are only supporting it in JSON format.
 - Public Certificate/Key : Public certificate that will be used to verify the JSON Web Signature. 
 - Output : Data output upon successful verification.
 
 ### Decrypting JWE
-![jose_jwe.png](https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/jose_jwe_verified.png)
+![jose_jwe_verified.png](https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/jose_jwe_verified.png)
 
 - Input : JWE API Response from the Gateway in JSON format.
 - Private Key : Private key that will be used to decrypt the JWE string.
