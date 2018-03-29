@@ -2,10 +2,12 @@ const webpack = require('webpack');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
-
+const version = require('./package.json').version;
 const path = require('path');
 
 module.exports = (env = {}) => { // set env as empty object if unset from cli
+    console.log('Building version: ' + version);
+
     let config = {
         entry: {
             app: './src/app.js'
@@ -63,7 +65,8 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
         config.plugins.push(new webpack.optimize.UglifyJsPlugin()); // minify js
         config.plugins.push(new OptimizeCssAssetsPlugin()); // minify css
         config.plugins.push(new webpack.DefinePlugin({
-            'process.env.NODE_ENV': JSON.stringify('production')
+            'process.env.NODE_ENV': JSON.stringify('production'),
+            'VERSION': JSON.stringify(version)
         }));
         config.plugins.push(new HtmlWebpackPlugin({
             title: 'Apex Signature Validator',
@@ -73,7 +76,8 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
         config.plugins.push(new HtmlWebpackInlineSourcePlugin());
     } else {
         config.plugins.push(new webpack.DefinePlugin({
-            'process.env.NODE_ENV': JSON.stringify('development')
+            'process.env.NODE_ENV': JSON.stringify('development'),
+            'VERSION': JSON.stringify(version)
         }));
         config.plugins.push(new HtmlWebpackPlugin({
             title: 'Apex Signature Validator',

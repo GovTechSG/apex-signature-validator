@@ -9,28 +9,33 @@
 </head>
 
 <body ng-app="app">
-    <header>
-        <nav class="navbar navbar-default">
-            <div class="container-fluid" id="main-navbar" ng-controller="mainController as mainCtrl">
-                <div class="navbar-header">
-                    <img ng-src="{{ mainCtrl.apexLogo }}" alt="APEX Signature Validation Tool" />
+
+    <div ng-controller="mainController as mainCtrl">
+
+        <header>
+            <nav class="navbar navbar-default">
+                <div class="container-fluid" id="main-navbar">
+                    <div class="navbar-header">
+                        <img ng-src="{{ mainCtrl.apexLogo }}" alt="APEX Signature Validation Tool" />
+                    </div>
+                    <ul class="nav navbar-nav">
+                        <li ng-class="{active: mainCtrl.isStateActive('signatureValidator')}">
+                            <a ui-sref="signatureValidator">Signature Validator</a>
+                        </li>
+                        <li ng-class="{active: mainCtrl.isStateActive('joseValidator')}">
+                            <a ui-sref="joseValidator">JOSE Validator</a>
+                        </li>
+                    </ul>
                 </div>
-                <ul class="nav navbar-nav">
-                    <li ng-class="{active: mainCtrl.isStateActive('signatureValidator')}">
-                        <a ui-sref="signatureValidator">Signature Validator</a>
-                    </li>
-                    <li ng-class="{active: mainCtrl.isStateActive('joseValidator')}">
-                        <a ui-sref="joseValidator">JOSE Validator</a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-    </header>
+            </nav>
+        </header>
 
-    <ui-view></ui-view>
+        <ui-view></ui-view>
 
-    <div class="footer">
-        <p style="text-align: center;">© Government Technology Agency of Singapore. All Rights Reserved.</p>
+        <div class="footer">
+            <p style="text-align: center;">v{{ mainCtrl.version }} © Government Technology Agency of Singapore. All Rights Reserved.</p>
+        </div>
+        
     </div>
 
 </body>

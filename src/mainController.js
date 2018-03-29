@@ -4,6 +4,7 @@ function mainController(stateService) {
     let controller = this;
 
     controller.apexLogo = apexLogo; // path to logo file
+    controller.version = VERSION;
 
     controller.isStateActive = function (stateName) {
         return stateName === stateService.state;
