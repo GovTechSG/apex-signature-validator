@@ -3,13 +3,10 @@ let paramsModalTemplate = `
     <h3 class="modal-title">Parameters Setup</h3>
 </div>
 <div class="modal-body">
-    additionalParams
-    Select json file to load:
-    <input type="file" on-read-file="parseInputFile($fileContents)"
-        class="btn btn-default" style="display:inline-block">
-    <br/> <br/>
-    <textarea rows="20" cols="65" class="form-control" ng-model="jsonString" ng-keydown="handleTabKey($event)" style="font-family:monospace"></textarea>
+    Select json file to load: <input type="file" on-read-file="parseInputFile($fileContents)" style="display:inline-block">
 
+    <textarea rows="20" cols="65" class="form-control code" ng-model="jsonString" ng-keydown="handleTabKey($event)" 
+    style="margin-top: 5px;"></textarea>
 </div>
 <div class="modal-footer">
     <button class="btn btn-primary" type="button" ng-click="set()">

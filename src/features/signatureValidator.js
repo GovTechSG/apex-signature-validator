@@ -12,8 +12,7 @@ let signatureValidatorTemplate = `
 <div class="heading">
     <span class="label label-primary">1</span> Input Request Parameters and Generate Basestring
     <span ng-click="$ctrl.showOptions()" style="float: right;">
-        <a href>
-            <span class="glyphicon glyphicon-cog"></span> Options</a>
+        <a href><span class="glyphicon glyphicon-cog"></span> Load/save From JSON</a>
     </span>
 </div>
 
@@ -209,16 +208,13 @@ let signatureValidatorTemplate = `
     <div ng-if="$ctrl.showLevel2">
         <h4>Pem File
             <small>
-                Load pem file
+                Load pem file: <input type="file" on-read-file="parseInputFile($fileContents)" style="display:inline">
             </small>
         </h4>
-        <span class="col-md-12" style='text-align:center'>
-            <input type="file" on-read-file="parseInputFile($fileContents)" class="btn btn-default" style="display:inline">
-        </span>
         <div class="row">
             <div class="col-md-12">
                 <br>
-                <textarea rows="10" cols="65" class="form-control" ng-model="$ctrl.pem" name="pem" required></textarea>
+                <textarea rows="10" cols="65" class="form-control code" ng-model="$ctrl.pem" name="pem" required></textarea>
                 <br>
                 <span ng-show="paramForm.pem.$touched && paramForm.pem.$invalid" class="fail">
                     Pem string is required.
@@ -263,12 +259,12 @@ let signatureValidatorTemplate = `
 
                 <div class="col-md-12">
                     <h4>Generated Basestring:</h4>
-                    <textarea rows="3" disabled class="form-control immutable" ng-model="input_basestring"></textarea>
+                    <textarea rows="3" disabled class="form-control immutable code" ng-model="input_basestring"></textarea>
                 </div>
                 <div class="col-md-12">
                     <h4>Basestring to Compare:</h4>
 
-                    <textarea rows="3" class="form-control" ng-model="input_basestring_tocompare"></textarea>
+                    <textarea rows="3" class="form-control code" ng-model="input_basestring_tocompare"></textarea>
                 </div>
                 <div class="col-md-12 fx-fade-normal" ng-if="showBaseStringCompareResults">
                     <h4>Comparison Results</h4>
@@ -285,7 +281,7 @@ let signatureValidatorTemplate = `
 
         <div ng-if="showAuthHeader">
             <h4>Request Auth Header:</h4>
-            <textarea rows="10" ng-model="authHeader" disable class="form-control immutable" disabled></textarea>
+            <textarea rows="10" ng-model="authHeader" disable class="form-control immutable code" disabled></textarea>
         </div>
 
         <div style="text-align: center" ng-if="!sendingTestRequest">

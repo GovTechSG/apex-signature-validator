@@ -18,7 +18,7 @@ let joseValidatorTemplate = `
     <div class="col-md-12">
         <h4>Verify JWT</h4>
         <label for="jwt-response">JSON serialized JWT response from APEX</label>
-        <textarea rows="12" class="form-control" ng-model="$ctrl.input" id="jwt-response"
+        <textarea rows="12" class="form-control code" ng-model="$ctrl.input" id="jwt-response"
                   placeholder="Paste API response here">
         </textarea>
     </div>
@@ -34,7 +34,7 @@ let joseValidatorTemplate = `
             Private Key to decrypt JWT
         </label>
         
-        <textarea rows="12" class="form-control" ng-model="$ctrl.key" id="key-content" 
+        <textarea rows="12" class="form-control code" ng-model="$ctrl.key" id="key-content" 
                   placeholder="Paste or load certificate/key contents here">
         </textarea>
     </div>
@@ -51,7 +51,7 @@ let joseValidatorTemplate = `
     <div class="col-md-12">
         <h4>Output</h4>
         <label for="verification-results">Verification results</label>
-        <textarea rows="8" class="form-control" ng-model="$ctrl.output" id="verification-results"
+        <textarea rows="8" class="form-control code" ng-model="$ctrl.output" id="verification-results"
                   placeholder="Parsed Output"></textarea>
     </div>
 </div>
