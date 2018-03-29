@@ -1,7 +1,5 @@
 import apexLogo from './images/logo_apex.png';
 
-mainController.$inject = ['stateService'];
-
 function mainController(stateService) {
     let controller = this;
 
@@ -11,5 +9,7 @@ function mainController(stateService) {
         return stateName === stateService.state;
     }
 }
+
+mainController.$inject = ['stateService'];
 
 export default mainController;

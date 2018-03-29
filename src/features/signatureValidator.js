@@ -306,11 +306,7 @@ let signatureValidatorTemplate = `
         </div>
     </div>
 </div>
-</div>`
-
-signatureValidatorController.$inject = ['$scope', '$rootScope', 'config', 'Notification', 'TestService', 'ModalService', '$sce',
-    '$uibModal', 'stateService'
-];
+</div>`;
 
 function signatureValidatorController($scope, $rootScope, config, Notification, TestService, ModalService, $sce,
     $uibModal, stateService) {
@@ -323,15 +319,48 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
 
     $scope.sendingTestRequest = false;
 
+    $scope.additionalParams = [];
+
     $scope.add = add;
+    $scope.compareBS = compareBS;
     $scope.remove = remove;
     $scope.formParams = formParams;
     controller.levelChange = levelChange;
+    controller.showOptions = showOptions;
     $scope.signAndTest = signAndTest;
 
-    $scope.additionalParams = [];
+    $scope.checkTestResult = function () {
+        if ($scope.test || $scope.testSuccess == null)
+            return 'test-send';
 
-    controller.showOptions = showOptions;
+        if ($scope.testSuccess)
+            return 'test-send-success';
+        else
+            return 'test-send-fail'
+    };
+
+    $scope.nonceGenChange = function () {
+        $scope.nonceDisabled = !$scope.nonceDisabled;
+        if ($scope.nonceDisabled) {
+            controller.input_nonce = 'auto-generated'
+        } else {
+            controller.input_nonce = ''
+        }
+    };
+
+    $scope.timestampGenChange = function () {
+        $scope.timestampDisabled = !$scope.timestampDisabled;
+        if ($scope.timestampDisabled) {
+            controller.input_timestamp = 'auto-generated'
+        } else {
+            controller.input_timestamp = ''
+        }
+    };
+
+    $scope.parseInputFile = function (fileText) {
+        controller.pem = fileText;
+        ModalService.setPem(controller.pem)
+    };
 
     function showOptions() {
         saveInputsToModalService();
@@ -446,16 +475,6 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         $scope.additionalParams.splice(index, 1)
     }
 
-    $scope.checkTestResult = function () {
-        if ($scope.test || $scope.testSuccess == null)
-            return 'test-send';
-
-        if ($scope.testSuccess)
-            return 'test-send-success';
-        else
-            return 'test-send-fail'
-    };
-
     function levelChange() {
         $scope.showTestResults = false;
         if (controller.selectedLevel === 2) {
@@ -469,24 +488,6 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         } else {
             controller.showLevel2 = false;
             controller.showLevel1 = false;
-        }
-    };
-
-    $scope.nonceGenChange = function () {
-        $scope.nonceDisabled = !$scope.nonceDisabled;
-        if ($scope.nonceDisabled) {
-            controller.input_nonce = 'auto-generated'
-        } else {
-            controller.input_nonce = ''
-        }
-    };
-
-    $scope.timestampGenChange = function () {
-        $scope.timestampDisabled = !$scope.timestampDisabled;
-        if ($scope.timestampDisabled) {
-            controller.input_timestamp = 'auto-generated'
-        } else {
-            controller.input_timestamp = ''
         }
     };
 
@@ -517,7 +518,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         ModalService.setPwd($scope.privSecret)
     }
 
-    $scope.compareBS = function (generatedBS, ownBS) {
+    function compareBS(generatedBS, ownBS) {
         if (ownBS == null) {
             ownBS = '';
         }
@@ -601,12 +602,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         }
         return url + append
     }
-
-    $scope.parseInputFile = function (fileText) {
-        controller.pem = fileText;
-        ModalService.setPem(controller.pem)
-    };
-
+    
     function formFullParams(params, additionalParams) {
         let fullParams = {};
         let keys = Object.keys(params);
@@ -801,6 +797,10 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             })
     }
 }
+
+signatureValidatorController.$inject = ['$scope', '$rootScope', 'config', 'Notification', 'TestService', 'ModalService', '$sce',
+    '$uibModal', 'stateService'
+];
 
 export default {
     controller: signatureValidatorController,

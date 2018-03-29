@@ -24,9 +24,7 @@ let paramsModalTemplate = `
         <span class="glyphicon glyphicon-remove"></span>
         Cancel
     </button>
-</div>`
-
-paramsModalController.$inject = ["$scope", "$uibModalInstance", "items"];
+</div>`;
 
 function paramsModalController($scope, $uibModalInstance, items) {
 
@@ -79,6 +77,8 @@ function paramsModalController($scope, $uibModalInstance, items) {
         $scope.additionalParams = savedObject.additional_params;
     };
 }
+
+paramsModalController.$inject = ["$scope", "$uibModalInstance", "items"];
 
 export default {
     template: paramsModalTemplate,

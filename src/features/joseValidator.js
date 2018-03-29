@@ -56,9 +56,7 @@ let joseValidatorTemplate = `
     </div>
 </div>
 
-</div>`
-
-joseValidatorController.$inject = ['$scope', 'JWTService', 'stateService', 'Notification'];
+</div>`;
 
 function joseValidatorController($scope, JWTService, stateService, Notification) {
     let controller = this;
@@ -97,6 +95,8 @@ function joseValidatorController($scope, JWTService, stateService, Notification)
         }
     }
 }
+
+joseValidatorController.$inject = ['$scope', 'JWTService', 'stateService', 'Notification'];
 
 export default {
     template: joseValidatorTemplate,

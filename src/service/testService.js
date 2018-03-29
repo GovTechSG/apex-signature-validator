@@ -1,7 +1,5 @@
 import KJUR from 'jsrsasign';
 
-testService.$inject = ["$http", "UtilityService"];
-
 function testService($http, UtilityService) {
     return {
         generateBasestring: function (params) {
@@ -85,5 +83,7 @@ function testService($http, UtilityService) {
         }
     }
 }
+
+testService.$inject = ["$http", "UtilityService"];
 
 export default testService;
