@@ -196,7 +196,7 @@ These scripts would automatically open the signature validator in a new Chrome w
 
 ## JOSE 
 
-JOSE (Javascript Object Signing and Encryption) is an approach on signing and encrypting JSON content. If your API response are packaged in any of the JOSE standards, you can use this client to further verify or decrpyt the corresponding API response.
+JOSE (Javascript Object Signing and Encryption) is an approach to signing and encrypting JSON content. If your API responses are packaged in any of the JOSE standards, you can use this client to further verify or decrpyt the corresponding API response.
 
 ### Verifying JWS
 ![jose_jws.png](https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/jose_jws_verified.png)
