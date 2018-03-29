@@ -56,8 +56,7 @@ let joseValidatorTemplate = `
     </div>
 </div>
 
-</div>
-`
+</div>`
 
 joseValidatorController.$inject = ['$scope', 'JWTService', 'stateService', 'Notification'];
 

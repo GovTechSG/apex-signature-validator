@@ -24,8 +24,7 @@ let paramsModalTemplate = `
         <span class="glyphicon glyphicon-remove"></span>
         Cancel
     </button>
-</div>
-`
+</div>`
 
 paramsModalController.$inject = ["$scope", "$uibModalInstance", "items"];
 
@@ -35,7 +34,9 @@ function paramsModalController($scope, $uibModalInstance, items) {
 
     $scope.downloadJSON = function () {
         // var paramJson = JSON.stringify(paramsToSave);
-        var blob = new Blob([$scope.jsonString], { type: "application/json;charset=utf-8;" });
+        var blob = new Blob([$scope.jsonString], {
+            type: "application/json;charset=utf-8;"
+        });
         var downloadLink = angular.element('<a></a>');
         downloadLink.attr('href', window.URL.createObjectURL(blob));
         downloadLink.attr('download', 'saved-inputs.json');

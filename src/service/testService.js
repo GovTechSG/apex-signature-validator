@@ -56,8 +56,7 @@ function testService($http, UtilityService) {
                 }
                 if (keys[i] !== 'realm') {
                     authHeader += keys[i] + '="' + sortedParams[keys[i]] + '",'
-                }
-                else {
+                } else {
                     authHeader += keys[i] + '="' + sortedParams["realm"] + '",'
                 }
             }

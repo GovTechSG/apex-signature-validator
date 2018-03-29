@@ -66,7 +66,7 @@ let signatureValidatorTemplate = `
         <div class="col-md-12" style="text-align: center">
             <h4>Authentication Level</h4>
             <div class="btn-group">
-                <label ng-repeat="level in options_level" class="btn btn-lg btn-default" ng-model="$ctrl.selectedLevel" ng-click="levelChange()"
+                <label ng-repeat="level in options_level" class="btn btn-lg btn-default" ng-model="$ctrl.selectedLevel" ng-click="$ctrl.levelChange()"
                     uib-btn-radio="{{level}}">{{level}}
                 </label>
             </div>
@@ -306,11 +306,11 @@ let signatureValidatorTemplate = `
         </div>
     </div>
 </div>
-</div>
-`
+</div>`
 
-signatureValidatorController.$inject = ["$scope", "$rootScope", "config", "Notification", "TestService", "ModalService", "$sce",
-    "$uibModal", 'stateService'];
+signatureValidatorController.$inject = ['$scope', '$rootScope', 'config', 'Notification', 'TestService', 'ModalService', '$sce',
+    '$uibModal', 'stateService'
+];
 
 function signatureValidatorController($scope, $rootScope, config, Notification, TestService, ModalService, $sce,
     $uibModal, stateService) {
@@ -326,7 +326,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
     $scope.add = add;
     $scope.remove = remove;
     $scope.formParams = formParams;
-    $scope.levelChange = levelChange;
+    controller.levelChange = levelChange;
     $scope.signAndTest = signAndTest;
 
     $scope.additionalParams = [];
@@ -336,15 +336,15 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
     function showOptions() {
         saveInputsToModalService();
         $uibModal.open({
-            animation: true,
-            backdrop: false,
-            template: paramsModal.template,
-            controller: paramsModal.controller,
-            size: 'lg',
-            resolve: {
-                items: getKeyValues()
-            }
-        }).result
+                animation: true,
+                backdrop: false,
+                template: paramsModal.template,
+                controller: paramsModal.controller,
+                size: 'lg',
+                resolve: {
+                    items: getKeyValues()
+                }
+            }).result
             .then(function (jsonString) {
                 var jsonObj = JSON.parse(jsonString);
                 ModalService.setParams(jsonObj.params);
@@ -354,7 +354,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
                 set();
                 formParams();
             })
-            .catch(function () { });
+            .catch(function () {});
     }
 
     function getKeyValues() {
@@ -400,7 +400,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         controller.selectedLevel = savedObject.level;
         controller.input_appSecret = savedObject.app_secret;
         loadDefaultFromConfig(savedObject.level);
-        $scope.levelChange();
+        levelChange();
 
         if (savedObject.nonce == null) {
             controller.input_nonce = "auto-generated";
@@ -436,12 +436,10 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
     }
 
     function add(name, value) {
-        $scope.additionalParams.push(
-            {
-                name: name,
-                value: value
-            }
-        )
+        $scope.additionalParams.push({
+            name: name,
+            value: value
+        })
     }
 
     function remove(index) {
@@ -537,8 +535,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             if (gen !== own && !before) {
                 own = "<span class='incorrect-basestring-char''>" + own;
                 before = true;
-            }
-            else if (gen === own && before) {
+            } else if (gen === own && before) {
                 own = "</span>" + own;
                 before = false;
             }
@@ -781,7 +778,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
 
         $scope.sendingTestRequest = true;
         return TestService.sendTestRequest($scope.realmUri, $scope.selectedRequest, $scope.testSendAuthHeader,
-            controller.selectedLevel)
+                controller.selectedLevel)
             .then(success => {
                 $scope.testSuccess = true;
                 $scope.responseData = success.data;

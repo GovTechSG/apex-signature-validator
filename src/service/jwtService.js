@@ -1,7 +1,6 @@
 import JOSE from 'jose';
 import URL from 'urlsafe-base64';
 
-
 function jwtService() {
     return {
         verifyJWS: function (input, publicKey) {

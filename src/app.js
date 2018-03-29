@@ -27,7 +27,7 @@ const mainModule = angular.module("app", [uibootstrap, uinotification, ngfx, ang
     .factory('TestService', testService)
     .factory('JWTService', jwtService)
     .factory('UtilityService', utilService)
-    .config(function ($stateProvider, $urlRouterProvider) {
+    .config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
         $stateProvider
             .state({
                 name: 'signatureValidator',
@@ -44,7 +44,7 @@ const mainModule = angular.module("app", [uibootstrap, uinotification, ngfx, ang
                 template: joseValidator.template
             });
         $urlRouterProvider.otherwise('/signature-validator');
-    })
+    }])
     .directive('onReadFile', ['$parse', function ($parse) {
         return {
             restrict: 'A',
@@ -57,7 +57,9 @@ const mainModule = angular.module("app", [uibootstrap, uinotification, ngfx, ang
 
                     reader.onload = function (onLoadEvent) {
                         scope.$apply(function () {
-                            fn(scope, { $fileContents: onLoadEvent.target.result })
+                            fn(scope, {
+                                $fileContents: onLoadEvent.target.result
+                            })
                         })
                     };
                     reader.readAsText((onChangeEvent.srcElement || onChangeEvent.target).files[0]);
@@ -66,7 +68,7 @@ const mainModule = angular.module("app", [uibootstrap, uinotification, ngfx, ang
             }
         }
     }])
-    .factory('stateService', function() {
+    .factory('stateService', function () {
         return {
             state: 'signatureValidator'
         }
