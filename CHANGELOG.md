@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.3.2] - 2018-03-31
+### Updated
+- Pre validation check for JOSE feature
+- Improve general code quality
+
 ## [0.3.1] - 2018-03-29
 ### Updated
 - UI to handle verification for JWS and JWE
