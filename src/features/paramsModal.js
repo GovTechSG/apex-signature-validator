@@ -80,4 +80,4 @@ paramsModalController.$inject = ["$scope", "$uibModalInstance", "items"];
 export default {
     template: paramsModalTemplate,
     controller: paramsModalController
-}
+};
