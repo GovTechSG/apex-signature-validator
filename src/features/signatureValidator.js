@@ -326,30 +326,32 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
     $scope.signAndTest = signAndTest;
 
     $scope.checkTestResult = function () {
-        if ($scope.test || $scope.testSuccess == null)
+        if ($scope.test || $scope.testSuccess == null) {
             return 'test-send';
+        }
 
-        if ($scope.testSuccess)
+        if ($scope.testSuccess) {
             return 'test-send-success';
-        else
-            return 'test-send-fail'
+        }else {
+            return 'test-send-fail';
+        }
     };
 
     $scope.nonceGenChange = function () {
         $scope.nonceDisabled = !$scope.nonceDisabled;
         if ($scope.nonceDisabled) {
-            controller.input_nonce = 'auto-generated'
+            controller.input_nonce = 'auto-generated';
         } else {
-            controller.input_nonce = ''
+            controller.input_nonce = '';
         }
     };
 
     $scope.timestampGenChange = function () {
         $scope.timestampDisabled = !$scope.timestampDisabled;
         if ($scope.timestampDisabled) {
-            controller.input_timestamp = 'auto-generated'
+            controller.input_timestamp = 'auto-generated';
         } else {
-            controller.input_timestamp = ''
+            controller.input_timestamp = '';
         }
     };
 
@@ -386,7 +388,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         return {
             params: ModalService.getParams(),
             password: ModalService.getPwd()
-        }
+        };
     }
 
     function init() {
@@ -428,14 +430,14 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         levelChange();
 
         if (savedObject.nonce == null) {
-            controller.input_nonce = "auto-generated";
+            controller.input_nonce = 'auto-generated';
             $scope.nonceDisabled = true;
         } else {
             controller.input_nonce = savedObject.nonce;
             $scope.nonceDisabled = false;
         }
         if (savedObject.timestamp == null) {
-            controller.input_timestamp = "auto-generated";
+            controller.input_timestamp = 'auto-generated';
             $scope.timestampDisabled = true;
         } else {
             controller.input_timestamp = savedObject.timestamp;
@@ -468,7 +470,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
     }
 
     function remove(index) {
-        $scope.additionalParams.splice(index, 1)
+        $scope.additionalParams.splice(index, 1);
     }
 
     function levelChange() {
@@ -476,11 +478,11 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         if (controller.selectedLevel === 2) {
             controller.showLevel2 = true;
             controller.showLevel1 = true;
-            $scope.input_sigmethod = config.main.sigMethod.level2
+            $scope.input_sigmethod = config.main.sigMethod.level2;
         } else if (controller.selectedLevel === 1) {
             controller.showLevel1 = true;
             controller.showLevel2 = false;
-            $scope.input_sigmethod = config.main.sigMethod.level1
+            $scope.input_sigmethod = config.main.sigMethod.level1;
         } else {
             controller.showLevel2 = false;
             controller.showLevel1 = false;
@@ -554,7 +556,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
                 title: "",
                 message: "Basestrings are different",
                 delay: config.notificationShowTime
-            })
+            });
     }
 
     function formUris(realmPartialUri) {
@@ -582,7 +584,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         return {
             uri: uri,
             realmUri: realmPartialUri
-        }
+        };
     }
 
     function formRealmUri() {
@@ -709,7 +711,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
                             controller.pem.indexOf(config.sign.endPrivRSA) + config.sign.endPrivRSA.length
                         ),
                         $scope.privSecret
-                    )
+                    );
                 } catch (exception) {
                     $scope.privateKeyError = true;
                     throw exception;
