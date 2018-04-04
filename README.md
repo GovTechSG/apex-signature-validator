@@ -1,4 +1,4 @@
-![APEX Logo]((https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/color_apex_landscape.png))
+![APEX Logo](https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/color_apex_landscape.png)
 ***
 # APEX Signature and JOSE Validator
 
