@@ -3,6 +3,9 @@
 # APEX Signature and JOSE Validator
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a20b2416cc2547e9ab6b3ef5669d82ec)](https://app.codacy.com/app/robincher/apex-signature-validator?utm_source=github.com&utm_medium=referral&utm_content=GovTechSG/apex-signature-validator&utm_campaign=badger)
+[![GitHub license](https://img.shields.io/github/license/GovTechSG/apex-signature-validator.svg)](https://github.com/GovTechSG/apex-signature-validator/blob/master/LICENSE)
+[![GitHub forks](https://img.shields.io/github/forks/GovTechSG/apex-signature-validator.svg)](https://github.com/GovTechSG/apex-signature-validator/network)
+
 
 The Apex Signature Validator is an AngularJS application that assists APEX API consumers in verifying whether signatures are generated correctly in their applications when making restful API calls to the APEX API Gateway. 
 
