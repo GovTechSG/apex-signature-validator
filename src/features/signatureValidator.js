@@ -326,30 +326,32 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
     $scope.signAndTest = signAndTest;
 
     $scope.checkTestResult = function () {
-        if ($scope.test || $scope.testSuccess == null)
+        if ($scope.test || $scope.testSuccess == null) {
             return 'test-send';
+        }
 
-        if ($scope.testSuccess)
+        if ($scope.testSuccess) {
             return 'test-send-success';
-        else
-            return 'test-send-fail'
+        }else {
+            return 'test-send-fail';
+        }
     };
 
     $scope.nonceGenChange = function () {
         $scope.nonceDisabled = !$scope.nonceDisabled;
         if ($scope.nonceDisabled) {
-            controller.input_nonce = 'auto-generated'
+            controller.input_nonce = 'auto-generated';
         } else {
-            controller.input_nonce = ''
+            controller.input_nonce = '';
         }
     };
 
     $scope.timestampGenChange = function () {
         $scope.timestampDisabled = !$scope.timestampDisabled;
         if ($scope.timestampDisabled) {
-            controller.input_timestamp = 'auto-generated'
+            controller.input_timestamp = 'auto-generated';
         } else {
-            controller.input_timestamp = ''
+            controller.input_timestamp = '';
         }
     };
 
@@ -386,7 +388,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         return {
             params: ModalService.getParams(),
             password: ModalService.getPwd()
-        }
+        };
     }
 
     function init() {
@@ -428,14 +430,14 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         levelChange();
 
         if (savedObject.nonce == null) {
-            controller.input_nonce = "auto-generated";
+            controller.input_nonce = 'auto-generated';
             $scope.nonceDisabled = true;
         } else {
             controller.input_nonce = savedObject.nonce;
             $scope.nonceDisabled = false;
         }
         if (savedObject.timestamp == null) {
-            controller.input_timestamp = "auto-generated";
+            controller.input_timestamp = 'auto-generated';
             $scope.timestampDisabled = true;
         } else {
             controller.input_timestamp = savedObject.timestamp;
@@ -452,12 +454,12 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         $scope.options_provider = config.main.providerGateway;
         $scope.input_app_ver = config.main.appVer;
         if (level === 1) {
-            $scope.input_sigmethod = config.main.sigMethod.level1
+            $scope.input_sigmethod = config.main.sigMethod.level1;
         } else {
-            $scope.input_sigmethod = config.main.sigMethod.level2
+            $scope.input_sigmethod = config.main.sigMethod.level2;
         }
 
-        $scope.options_level = config.main.authLevels
+        $scope.options_level = config.main.authLevels;
     }
 
     function add(name, value) {
@@ -468,7 +470,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
     }
 
     function remove(index) {
-        $scope.additionalParams.splice(index, 1)
+        $scope.additionalParams.splice(index, 1);
     }
 
     function levelChange() {
@@ -476,11 +478,11 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         if (controller.selectedLevel === 2) {
             controller.showLevel2 = true;
             controller.showLevel1 = true;
-            $scope.input_sigmethod = config.main.sigMethod.level2
+            $scope.input_sigmethod = config.main.sigMethod.level2;
         } else if (controller.selectedLevel === 1) {
             controller.showLevel1 = true;
             controller.showLevel2 = false;
-            $scope.input_sigmethod = config.main.sigMethod.level1
+            $scope.input_sigmethod = config.main.sigMethod.level1;
         } else {
             controller.showLevel2 = false;
             controller.showLevel1 = false;
@@ -510,7 +512,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
 
         ModalService.setParams(paramsToSave);
         ModalService.setPem(controller.pem);
-        ModalService.setPwd($scope.privSecret)
+        ModalService.setPwd($scope.privSecret);
     }
 
     function compareBS(generatedBS, ownBS) {
@@ -554,7 +556,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
                 title: "",
                 message: "Basestrings are different",
                 delay: config.notificationShowTime
-            })
+            });
     }
 
     function formUris(realmPartialUri) {
@@ -582,7 +584,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         return {
             uri: uri,
             realmUri: realmPartialUri
-        }
+        };
     }
 
     function formRealmUri() {
@@ -595,7 +597,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         } else if (controller.selectedFrom === 'SGNet') {
             url += '-pvt'
         }
-        return url + append
+        return url + append;
     }
     
     function formFullParams(params, additionalParams) {
@@ -614,7 +616,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         for (let i = 0; i < additionalParams.length; i++) {
             if (!(additionalParams[i].name == null || additionalParams[i].name === '') &&
                 !(additionalParams[i].value == null || additionalParams[i].value === '')) {
-                fullParams[additionalParams[i].name] = additionalParams[i].value
+                fullParams[additionalParams[i].name] = additionalParams[i].value;
             }
         }
 
@@ -668,15 +670,15 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             }
 
             if (params[params.prefix + '_app_id'] === '' || params[params.prefix + '_app_id'] == null) {
-                errorMsg += config.main.errorMsgs.noAppId + '<br>'
+                errorMsg += config.main.errorMsgs.noAppId + '<br>';
             }
 
             if (params[params.prefix + '_timestamp'] === '' || params[params.prefix + '_timestamp'] == null) {
-                errorMsg += config.main.errorMsgs.timestampInvalid + '<br>'
+                errorMsg += config.main.errorMsgs.timestampInvalid + '<br>';
             }
 
             if (params[params.prefix + '_nonce'] === '' || params[params.prefix + '_nonce'] == null) {
-                errorMsg += config.main.errorMsgs.nonceInvalid + '<br>'
+                errorMsg += config.main.errorMsgs.nonceInvalid + '<br>';
             }
         }
 
@@ -700,7 +702,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             validateParams();
             let key;
             if (controller.selectedLevel === 1) {
-                key = controller.input_appSecret
+                key = controller.input_appSecret;
             } else if (controller.selectedLevel === 2) {
                 try {
                     key = KJUR.KEYUTIL.getKey(
@@ -709,7 +711,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
                             controller.pem.indexOf(config.sign.endPrivRSA) + config.sign.endPrivRSA.length
                         ),
                         $scope.privSecret
-                    )
+                    );
                 } catch (exception) {
                     $scope.privateKeyError = true;
                     throw exception;
@@ -775,7 +777,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
                 $scope.responseData = success.data;
                 $scope.testResultData = success.data;
                 $scope.testResultStatus = success.status;
-                $scope.testResultStatusText = success.statusText
+                $scope.testResultStatusText = success.statusText;
             })
             .catch(failed => {
                 $scope.testSuccess = false;
@@ -800,4 +802,4 @@ signatureValidatorController.$inject = ['$scope', '$rootScope', 'config', 'Notif
 export default {
     controller: signatureValidatorController,
     template: signatureValidatorTemplate
-}
+};

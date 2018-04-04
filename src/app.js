@@ -59,7 +59,7 @@ angular.module("app", [uibootstrap, uinotification, ngfx, angularanimate, uiRout
                         scope.$apply(function () {
                             fn(scope, {
                                 $fileContents: onLoadEvent.target.result
-                            })
+                            });
                         })
                     };
                     reader.readAsText((onChangeEvent.srcElement || onChangeEvent.target).files[0]);

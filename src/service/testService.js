@@ -11,7 +11,7 @@ function testService($http, UtilityService) {
                     baseString += '&' + key + '=' + sortedParams[key];
                 }
             }
-            return baseString
+            return baseString;
         },
         signBasestring: function (selectedLevel, basestring, key) {
             let kjur, sig;
@@ -50,7 +50,7 @@ function testService($http, UtilityService) {
             let authHeader = 'Authorization: ' + params['prefix'].charAt(0).toUpperCase() + params['prefix'].slice(1) + ' ';
             for (let i = 0; i < keys.length; i++) {
                 if (keys[i] === 'prefix' || keys[i] === 'uri' || keys[i] === 'request') {
-                    continue
+                    continue;
                 }
                 if (keys[i] !== 'realm') {
                     authHeader += keys[i] + '="' + sortedParams[keys[i]] + '",'
@@ -67,7 +67,7 @@ function testService($http, UtilityService) {
                 return $http({
                     method: method,
                     url: url
-                })
+                });
             } else {
                 return $http({
                     method: method,
@@ -77,7 +77,7 @@ function testService($http, UtilityService) {
                         'Accept': 'application/x-www-form-urlencoded',
                         'Authorization': auth
                     }
-                })
+                });
             }
 
         }

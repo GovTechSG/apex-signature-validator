@@ -1,3 +1,5 @@
+![APEX Logo]((https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/color_apex.landscape.png))
+***
 # APEX Signature and JOSE Validator
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a20b2416cc2547e9ab6b3ef5669d82ec)](https://app.codacy.com/app/robincher/apex-signature-validator?utm_source=github.com&utm_medium=referral&utm_content=GovTechSG/apex-signature-validator&utm_campaign=badger)

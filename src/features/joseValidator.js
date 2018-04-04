@@ -3,59 +3,67 @@ let joseValidatorTemplate = `
 
 <h2>Apex JOSE Validator</h2>
 
-<div class="row">
-    <div class="col-md-2">
-        <label for="jwt-standard">JOSE Standard</label>
-        <select ng-options="o as o for o in $ctrl.jwt_standards" ng-model="$ctrl.selectedJWTStandard" 
-                ng-change="$ctrl.clearFields()" class="form-control" id="jwt-standard">
-        </select>
-    </div>
-</div>
+    <form name="joseForm">
 
-<hr>
+        <div class="row">
+            <div class="col-md-2">
+                <label for="jwt-standard">JOSE Standard</label>
+                <select ng-options="o as o for o in $ctrl.jwt_standards" ng-model="$ctrl.selectedJWTStandard" 
+                        ng-change="$ctrl.clearFields()" class="form-control" id="jwt-standard">
+                </select>
+            </div>
+        </div>
 
-<div class="row">
-    <div class="col-md-12">
-        <h4>Verify JWT</h4>
-        <label for="jwt-response">JSON serialized JWT response from APEX</label>
-        <textarea rows="12" class="form-control code" ng-model="$ctrl.input" id="jwt-response"
-                  placeholder="Paste API response here">
-        </textarea>
-    </div>
-</div>
-    
-<div class="row">
-    <div class="col-md-12">
-        <label for="key-content" ng-if='$ctrl.selectedJWTStandard === "JWS"'>
-            Public Certificate/Key to verify JWT signature
-        </label>
+        <hr>
 
-        <label for="key-content" ng-if='$ctrl.selectedJWTStandard === "JWE"'>
-            Private Key to decrypt JWT
-        </label>
+        <div class="row">
+            <div class="col-md-12">
+                <h4>Verify JWT</h4>
+                <label for="jwt-response">JSON serialized JWT response from APEX</label>
+                <textarea rows="12" class="form-control code" ng-model="$ctrl.input" id="jwt-response" name="res"
+                        placeholder="Paste API response here"  required>
+                </textarea>
+                <span ng-show="joseForm.res.$touched && joseForm.res.$invalid" class="fail">
+                    Response is required.
+                </span>
+            </div>
+        </div>
         
-        <textarea rows="12" class="form-control code" ng-model="$ctrl.key" id="key-content" 
-                  placeholder="Paste or load certificate/key contents here">
-        </textarea>
-    </div>
-</div>
+        <div class="row">
+            <div class="col-md-12">
+                <label for="key-content" ng-if='$ctrl.selectedJWTStandard === "JWS"'>
+                    Public Certificate/Key to verify JWT signature
+                </label>
 
-<div class="row">
-    <div class="col-md-12" style="text-align: center; margin: 5px;">
-        <input type="button" value="Verify JWT" class="btn btn-default btn-lg"
-                ng-click="$ctrl.verifyJOSE($ctrl.selectedJWTStandard, $ctrl.input, $ctrl.key)">
-    </div>
-</div>
+                <label for="key-content" ng-if='$ctrl.selectedJWTStandard === "JWE"'>
+                    Private Key to decrypt JWT
+                </label>
+                
+                <textarea rows="12" class="form-control code" ng-model="$ctrl.key" id="key-content" name="keycontent"
+                        placeholder="Paste or load certificate/key contents here" required>
+                </textarea>
+                <span ng-show="joseForm.keycontent.$touched && joseForm.keycontent.$invalid" class="fail">
+                    Key Content is required.
+                </span>
+            </div>
+        </div>
 
-<div class="row>
-    <div class="col-md-12">
-        <h4>Output</h4>
-        <label for="verification-results">Verification results</label>
-        <textarea rows="8" class="form-control code" ng-model="$ctrl.output" id="verification-results"
-                  placeholder="Parsed Output"></textarea>
-    </div>
-</div>
+        <div class="row">
+            <div class="col-md-12" style="text-align: center; margin: 5px;">
+                <input type="button" value="Verify JWT" class="btn btn-default btn-lg" ng-disabled="joseForm.$invalid"
+                        ng-click="$ctrl.verifyJOSE($ctrl.selectedJWTStandard, $ctrl.input, $ctrl.key)">
+            </div>
+        </div>
 
+        <div class="row>
+            <div class="col-md-12">
+                <h4>Output</h4>
+                <label for="verification-results">Verification results</label>
+                <textarea rows="8" class="form-control code" ng-model="$ctrl.output" id="verification-results"
+                        placeholder="Parsed Output"></textarea>
+            </div>
+        </div>
+    </form>
 </div>`;
 
 function joseValidatorController($scope, JWTService, stateService, Notification) {
@@ -73,6 +81,13 @@ function joseValidatorController($scope, JWTService, stateService, Notification)
         controller.key = '';
         controller.output = '';
     }
+
+    function validateParams() {
+        let params = $scope.params;
+        let errorMsg = '';
+
+    }
+
 
     function verifyJOSE(jwtStandard, input, key) {
         let response = undefined;
@@ -101,4 +116,4 @@ joseValidatorController.$inject = ['$scope', 'JWTService', 'stateService', 'Noti
 export default {
     template: joseValidatorTemplate,
     controller: joseValidatorController
-}
+};

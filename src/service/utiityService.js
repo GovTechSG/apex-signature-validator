@@ -2,7 +2,7 @@ function utilSvc() {
     return {
         hexToBase64: function (hexstring) {
             return btoa(hexstring.match(/\w{2}/g).map(a => {
-                return String.fromCharCode(parseInt(a, 16))
+                return String.fromCharCode(parseInt(a, 16));
             }).join(''))
         },
         ascii_to_hexa: function (str) {
