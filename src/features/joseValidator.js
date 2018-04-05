@@ -82,13 +82,6 @@ function joseValidatorController($scope, JWTService, stateService, Notification)
         controller.output = '';
     }
 
-    function validateParams() {
-        let params = $scope.params;
-        let errorMsg = '';
-
-    }
-
-
     function verifyJOSE(jwtStandard, input, key) {
         let response = undefined;
         try {
@@ -110,6 +103,13 @@ function joseValidatorController($scope, JWTService, stateService, Notification)
         }
     }
 }
+
+joseValidatorController.$inject = ['$scope', 'JWTService', 'stateService', 'Notification'];
+
+export default {
+    template: joseValidatorTemplate,
+    controller: joseValidatorController
+};
 
 joseValidatorController.$inject = ['$scope', 'JWTService', 'stateService', 'Notification'];
 
