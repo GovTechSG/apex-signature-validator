@@ -110,10 +110,3 @@ export default {
     template: joseValidatorTemplate,
     controller: joseValidatorController
 };
-
-joseValidatorController.$inject = ['$scope', 'JWTService', 'stateService', 'Notification'];
-
-export default {
-    template: joseValidatorTemplate,
-    controller: joseValidatorController
-};
