@@ -39,6 +39,8 @@ Download and extract the latest [release](https://github.com/GovTechSG/apex-sign
 
 ![homepage_1.png](https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/homepage_1.png)
 
+### Apex base string verification tool
+
 A basestring verification tool is provided for L1 and L2 authentication. This allows users to verify that basestrings in their own applications are correctly generated. This tool also highlights differences between its own and user-generated basestrings.
 
 ![basestring_correct.png](https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/basestring_correct.png)
@@ -47,7 +49,14 @@ A basestring verification tool is provided for L1 and L2 authentication. This al
 
 **Note**
 
-1. To to use the **Send Test Request** function, use one of the provided OS-appropriate scripts to open Google Chrome with web security disabled. This means running Google Chrome with the `--disable-web-security` and `--ignore-certificate-errors` flags. See [Sending test requests with the signature validator](#sending-test-requests-with-the-signature-validator) for more details.
+1. To to use the **Send Test Request** function, make sure that your Apex endpoint has a [CORS](https://enable-cors.org/) policy configured. For L1/L2 endpoints, this policy should _at least_ have the following configuration:
+
+```
+Allow Origin: *
+Allow Headers: Authorization
+```
+
+2. If you _really_ need to call an endpoint that does not have CORS enabled, use one of the provided OS-appropriate scripts to open Google Chrome with web security disabled. _You will likely need to have administrator rights on your computer to do this._ This means running Google Chrome with the `--disable-web-security` and `--ignore-certificate-errors` flags. See [Sending test requests with the signature validator](#sending-test-requests-with-the-signature-validator) for more details.
 
     - `launch-chrome-macos.command`
     - `launch-chrome-windows.bat or launch-chrome-windows.lnk`

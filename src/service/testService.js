@@ -73,13 +73,10 @@ function testService($http, UtilityService) {
                     method: method,
                     url: url,
                     headers: {
-                        'Content-Type': 'text/plain',
-                        'Accept': 'application/x-www-form-urlencoded',
                         'Authorization': auth
                     }
                 });
             }
-
         }
     }
 }
