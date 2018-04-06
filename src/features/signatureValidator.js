@@ -332,7 +332,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
 
         if ($scope.testSuccess) {
             return 'test-send-success';
-        }else {
+        } else {
             return 'test-send-fail';
         }
     };
@@ -488,6 +488,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             controller.showLevel1 = false;
         }
     }
+
     function saveInputsToModalService() {
         let paramsToSave = {
             'level': controller.selectedLevel,
@@ -599,7 +600,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         }
         return url + append;
     }
-    
+
     function formFullParams(params, additionalParams) {
         let fullParams = {};
         let keys = Object.keys(params);
@@ -704,17 +705,26 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             if (controller.selectedLevel === 1) {
                 key = controller.input_appSecret;
             } else if (controller.selectedLevel === 2) {
+                let keyStart = '';
+                let keyEnd = '';
+                if (controller.pem.indexOf(config.sign.beginPrivateRSA) !== -1) {
+                    keyStart = config.sign.beginPrivateRSA;
+                    keyEnd = config.sign.endPrivRSA;
+                } else if (controller.pem.indexOf(config.sign.beginPrivate) !== -1) {
+                    keyStart = config.sign.beginPrivate;
+                    keyEnd = config.sign.endPrivate;
+                }
                 try {
                     key = KJUR.KEYUTIL.getKey(
                         controller.pem.substring(
-                            controller.pem.indexOf(config.sign.beginPrivateRSA),
-                            controller.pem.indexOf(config.sign.endPrivRSA) + config.sign.endPrivRSA.length
+                            controller.pem.indexOf(keyStart),
+                            controller.pem.indexOf(keyEnd) + keyEnd.length
                         ),
                         $scope.privSecret
                     );
                 } catch (exception) {
                     $scope.privateKeyError = true;
-                    throw exception;
+                    throw new Error('Please check the validity of your private key.');
                 }
             }
             let sig = TestService.signBasestring(controller.selectedLevel, $scope.input_basestring, key);
@@ -724,20 +734,18 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             sendTest(send);
         } catch (exception) {
             $scope.showTestResults = false;
-            if (!$scope.paramForm.$valid) {
-                Notification.error({
-                    title: exception.name,
-                    message: exception.message,
-                    delay: config.notificationShowTime
-                });
-                // set all invalid form fields to $touched
-                if ($scope.paramForm.$invalid) {
-                    angular.forEach($scope.paramForm.$error, function (field) {
-                        angular.forEach(field, function (errorField) {
-                            errorField.$setTouched()
-                        })
+            Notification.error({
+                title: exception.name,
+                message: exception.message,
+                delay: config.notificationShowTime
+            });
+            // Set all fields to touched to show errors.
+            if ($scope.paramForm.$invalid) {
+                angular.forEach($scope.paramForm.$error, function (field) {
+                    angular.forEach(field, function (errorField) {
+                        errorField.$setTouched()
                     })
-                }
+                })
             }
         }
     }
