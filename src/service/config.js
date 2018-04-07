@@ -28,6 +28,8 @@ export default {
     sign: {
         beginPrivateRSA: '-----BEGIN RSA PRIVATE KEY-----',
         endPrivRSA: '-----END RSA PRIVATE KEY-----',
+        beginPrivate: '-----BEGIN PRIVATE KEY-----',
+        endPrivate: '-----END PRIVATE KEY-----',
         beginCert: '-----BEGIN CERTIFICATE-----',
         endCert: '-----END CERTIFICATE-----'
     },

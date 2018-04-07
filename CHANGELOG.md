@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.3.3] - 2018-04-06
+### Updated
+- Added support for the signature validator to load L2 private keys with -----BEGIN PRIVATE KEY----- headers
+
 ## [0.3.2] - 2018-03-31
 ### Updated
 - Pre validation check for JOSE feature
@@ -14,7 +18,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - State separation between signature validator and JOSE validator
 - .gitignore for local testing folder
 ### Added
-- jose dependecy in package.json
+- JOSE dependecy in package.json
 - JOSE Verify and Decrypt feature
 
 ## [0.2.5] - 2018-03-24
