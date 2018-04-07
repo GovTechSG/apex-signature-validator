@@ -33,7 +33,7 @@ function testService($http, UtilityService) {
                 });
                 kjur.updateString(basestring);
                 let hmacDigest = kjur.doFinal();
-                sig = UtilityService.hexToBase64(hmacDigest)
+                sig = UtilityService.hexToBase64(hmacDigest);
             }
             return sig;
         },
@@ -45,8 +45,8 @@ function testService($http, UtilityService) {
             let sortedParams = UtilityService.sortJSON(params);
             let keys = Object.keys(sortedParams);
             //remove realm and add to front
-            keys.splice(keys.indexOf("realm"), 1);
-            keys.unshift("realm");
+            keys.splice(keys.indexOf('realm'), 1);
+            keys.unshift('realm');
             let authHeader = 'Authorization: ' + params['prefix'].charAt(0).toUpperCase() + params['prefix'].slice(1) + ' ';
             for (let i = 0; i < keys.length; i++) {
                 if (keys[i] === 'prefix' || keys[i] === 'uri' || keys[i] === 'request') {
@@ -55,7 +55,7 @@ function testService($http, UtilityService) {
                 if (keys[i] !== 'realm') {
                     authHeader += keys[i] + '="' + sortedParams[keys[i]] + '",'
                 } else {
-                    authHeader += keys[i] + '="' + sortedParams["realm"] + '",'
+                    authHeader += keys[i] + '="' + sortedParams['realm'] + '",'
                 }
             }
             return authHeader;
