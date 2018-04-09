@@ -541,21 +541,22 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             bsResults += own;
         }
         if (ownBS.length > generatedBS.length) {
-            if (before)
+            if (before) {
                 bsResults += "</span>";
+            }
             bsResults += "<span class = 'extra-basestring-char'>" + ownBS.substr(generatedBS.length) + "</span>";
         }
         $scope.bsResults = $sce.trustAsHtml(bsResults);
         if (generatedBS === ownBS)
             Notification.success({
-                title: "",
-                message: "Basestrings are the same",
+                title: '',
+                message: 'Basestrings are the same',
                 delay: config.notificationShowTime
             });
         else
             Notification.error({
-                title: "",
-                message: "Basestrings are different",
+                title: '',
+                message: 'Basestrings are different',
                 delay: config.notificationShowTime
             });
     }
@@ -770,11 +771,11 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             $scope.testResultStatusText = undefined;
             $scope.testSuccess = undefined;
             $scope.test = true;
-            $scope.step3Title = "View Generated Basestring and Signature";
+            $scope.step3Title ='View Generated Basestring and Signature';
             return;
         }
 
-        $scope.step3Title = "Test Request Response";
+        $scope.step3Title = 'Test Request Response';
         $scope.test = false;
 
         $scope.sendingTestRequest = true;
