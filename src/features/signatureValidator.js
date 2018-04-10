@@ -561,32 +561,13 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             });
     }
 
-    function formUris(realmPartialUri) {
-        let gateway = $scope.selectedGateway || '';
-        let mid = config.main.domain;
-        let front;
-        if (controller.selectedProvider === 'External Gateway') {
-            front = 'https://' + gateway;
-        } else if (controller.selectedProvider === 'Internal Gateway' && (controller.selectedFrom === 'WWW' || controller.selectedFrom === 'Internet Zone')) {
-            front = 'https://' + gateway + '.i';
-        } else if (controller.selectedFrom === 'SGNet') {
-            front = 'http://' + gateway + '-pvt.i';
-        } else front = 'http://' + gateway + '.i';
-        let uri = front + mid;
-        if ($scope.input_uri != null) {
-            let userPath = $scope.input_uri;
-            if (!userPath.startsWith('/')) {
-                userPath = '/' + userPath;
-            }
-            uri += userPath;
-            realmPartialUri += userPath;
+    // Strips query params from path
+    function stripQueryParams(path) {
+        if (path.indexOf('?') !== -1) {
+            return path.substring(0, path.indexOf('?'));
+        } else {
+            return path;
         }
-        $scope.uri = uri;
-        $scope.realmUri = realmPartialUri;
-        return {
-            uri: uri,
-            realmUri: realmPartialUri
-        };
     }
 
     function formRealmUri() {
@@ -600,6 +581,41 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             url += '-pvt'
         }
         return url + append;
+    }
+
+    /**
+     *
+     * @param {string} realmPartialUri
+     * @returns {{uri: string, realmUri: *}}
+     */
+    function formUris(realmPartialUri) {
+        let gateway = $scope.selectedGateway || '';
+        let mid = config.main.domain;
+        let front;
+        if (controller.selectedProvider === 'External Gateway') {
+            front = 'https://' + gateway;
+        } else if (controller.selectedProvider === 'Internal Gateway' && (controller.selectedFrom === 'WWW' || controller.selectedFrom === 'Internet Zone')) {
+            front = 'https://' + gateway + '.i';
+        } else if (controller.selectedFrom === 'SGNet') {
+            front = 'http://' + gateway + '-pvt.i';
+        } else {
+            front = 'http://' + gateway + '.i';
+        }
+        let uri = front + mid;
+        if ($scope.input_uri != null) {
+            let userPath = $scope.input_uri;
+            if (!userPath.startsWith('/')) {
+                userPath = '/' + userPath;
+            }
+            uri += stripQueryParams(userPath);
+            realmPartialUri += stripQueryParams(userPath);
+        }
+        $scope.uri = uri;
+        $scope.realmUri = realmPartialUri;
+        return {
+            uri: uri,
+            realmUri: realmPartialUri
+        };
     }
 
     function formFullParams(params, additionalParams) {
