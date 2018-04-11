@@ -1,6 +1,5 @@
 import KJUR from 'jsrsasign';
 import nonce from 'nonce';
-import queryString from 'query-string';
 
 import paramsModal from './paramsModal';
 
@@ -717,9 +716,30 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         }
     }
 
+    /**
+     *
+     * @param {string} input A query string of format key1=value1&key2=value2.
+     *
+     * @returns {object} An object with key-value pairs taken from the input string.
+     */
+    function parseQueryString(input) {
+        let params = input.split('&');
+        let output = {};
+        for (let param of params) {
+            let outputKeys = Object.keys(output);
+            let paramKey = param.substring(0, param.indexOf('='));
+            let paramValue = param.substring(param.indexOf('=') + 1);
+            if (!outputKeys.includes(paramKey)) {
+                // If output doesn't contain key, add it in
+                output[paramKey] = paramValue;
+            }
+        }
+        return output;
+    }
+
     function extractQueryParams(path) {
         let search = path.substring(path.indexOf('?') + 1);
-        let queryParams = queryString.parse(search);
+        let queryParams = parseQueryString(search);
         let paramNames = Object.keys(queryParams);
         for (let key of paramNames) {
             $scope.extractedParams.push({
