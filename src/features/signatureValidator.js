@@ -1,9 +1,10 @@
 import KJUR from 'jsrsasign';
 import nonce from 'nonce';
-const generateNonce = nonce();
 import queryString from 'query-string';
 
 import paramsModal from './paramsModal';
+
+const generateNonce = nonce();
 
 let signatureValidatorTemplate = `
 <div class="container-fluid main-content">
@@ -306,7 +307,7 @@ let signatureValidatorTemplate = `
 </div>`;
 
 function signatureValidatorController($scope, $rootScope, config, Notification, TestService, ModalService, $sce,
-    $uibModal, stateService) {
+                                      $uibModal, stateService) {
 
     const controller = this;
 
@@ -327,7 +328,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
     controller.showOptions = showOptions;
     $scope.signAndTest = signAndTest;
 
-    $scope.checkTestResult = function () {
+    $scope.checkTestResult = function() {
         if ($scope.test || $scope.testSuccess == null) {
             return 'test-send';
         }
@@ -339,7 +340,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         }
     };
 
-    $scope.nonceGenChange = function () {
+    $scope.nonceGenChange = function() {
         $scope.nonceDisabled = !$scope.nonceDisabled;
         if ($scope.nonceDisabled) {
             controller.input_nonce = 'auto-generated';
@@ -348,7 +349,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         }
     };
 
-    $scope.timestampGenChange = function () {
+    $scope.timestampGenChange = function() {
         $scope.timestampDisabled = !$scope.timestampDisabled;
         if ($scope.timestampDisabled) {
             controller.input_timestamp = 'auto-generated';
@@ -357,24 +358,24 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         }
     };
 
-    $scope.parseInputFile = function (fileText) {
+    $scope.parseInputFile = function(fileText) {
         controller.pem = fileText;
-        ModalService.setPem(controller.pem)
+        ModalService.setPem(controller.pem);
     };
 
     function showOptions() {
         saveInputsToModalService();
         $uibModal.open({
-                animation: true,
-                backdrop: false,
-                template: paramsModal.template,
-                controller: paramsModal.controller,
-                size: 'lg',
-                resolve: {
-                    items: getKeyValues()
-                }
-            }).result
-            .then(function (jsonString) {
+            animation: true,
+            backdrop: false,
+            template: paramsModal.template,
+            controller: paramsModal.controller,
+            size: 'lg',
+            resolve: {
+                items: getKeyValues()
+            }
+        }).result
+            .then(function(jsonString) {
                 let jsonObj = JSON.parse(jsonString);
                 ModalService.setParams(jsonObj.params);
                 ModalService.setPem(jsonObj.pem);
@@ -383,7 +384,8 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
                 set();
                 formParams();
             })
-            .catch(function () {});
+            .catch(function() {
+            });
     }
 
     function getKeyValues() {
@@ -472,7 +474,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         $scope.additionalParams.push({
             name: name,
             value: value
-        })
+        });
     }
 
     function remove(index) {
@@ -505,7 +507,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             'provider_zone': controller.selectedProvider,
             'auth_prefix': $scope.input_authprefix,
             'app_id': controller.input_appId,
-            'additional_params': $scope.additionalParams,
+            'additional_params': $scope.additionalParams
         };
         if (controller.selectedLevel === 1) {
             paramsToSave.app_secret = controller.input_appSecret;
@@ -528,29 +530,29 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         }
         showBaseCompareResults(true);
         let before = false;
-        let bsResults = "";
+        let bsResults = '';
         for (let i = 0; i < generatedBS.length; i++) {
             let gen = generatedBS[i];
             let own = ownBS[i];
             if (own == null) {
                 let stringToAdd = generatedBS.substr(i, generatedBS.leading);
-                bsResults += "<span class='missing-basestring-char'>" + stringToAdd + "</span>";
+                bsResults += '<span class=\'missing-basestring-char\'>' + stringToAdd + '</span>';
                 break;
             }
             if (gen !== own && !before) {
-                own = "<span class='incorrect-basestring-char''>" + own;
+                own = '<span class=\'incorrect-basestring-char\'\'>' + own;
                 before = true;
             } else if (gen === own && before) {
-                own = "</span>" + own;
+                own = '</span>' + own;
                 before = false;
             }
             bsResults += own;
         }
         if (ownBS.length > generatedBS.length) {
             if (before) {
-                bsResults += "</span>";
+                bsResults += '</span>';
             }
-            bsResults += "<span class = 'extra-basestring-char'>" + ownBS.substr(generatedBS.length) + "</span>";
+            bsResults += '<span class = \'extra-basestring-char\'>' + ownBS.substr(generatedBS.length) + '</span>';
         }
         $scope.bsResults = $sce.trustAsHtml(bsResults);
         if (generatedBS === ownBS)
@@ -580,11 +582,11 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         let append = config.main.domain;
         let url = 'https://' + ($scope.selectedGateway || '');
         if (controller.selectedFrom === 'Internet Zone') {
-            url += '.e'
+            url += '.e';
         } else if (controller.selectedFrom === 'Intranet Zone') {
-            url += '.i'
+            url += '.i';
         } else if (controller.selectedFrom === 'SGNet') {
-            url += '-pvt'
+            url += '-pvt';
         }
         return url + append;
     }
@@ -681,7 +683,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
 
         if (controller.selectedLevel === 1 &&
             (controller.input_appSecret === '' || controller.input_appSecret == null)) {
-            errorMsg += config.main.errorMsgs.noAppSecret + '<br>'
+            errorMsg += config.main.errorMsgs.noAppSecret + '<br>';
         }
 
         if (controller.selectedLevel === 2 &&
@@ -723,7 +725,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             $scope.extractedParams.push({
                 name: key,
                 value: queryParams[key]
-            })
+            });
         }
     }
 
@@ -777,11 +779,11 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             });
             // Set all fields to touched to show errors.
             if ($scope.paramForm.$invalid) {
-                angular.forEach($scope.paramForm.$error, function (field) {
-                    angular.forEach(field, function (errorField) {
-                        errorField.$setTouched()
-                    })
-                })
+                angular.forEach($scope.paramForm.$error, function(field) {
+                    angular.forEach(field, function(errorField) {
+                        errorField.$setTouched();
+                    });
+                });
             }
         }
     }
@@ -806,7 +808,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             $scope.testResultStatusText = undefined;
             $scope.testSuccess = undefined;
             $scope.test = true;
-            $scope.step3Title ='View Generated Basestring and Signature';
+            $scope.step3Title = 'View Generated Basestring and Signature';
             return;
         }
 
@@ -815,7 +817,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
 
         $scope.sendingTestRequest = true;
         return TestService.sendTestRequest($scope.realmUri, $scope.selectedRequest, $scope.testSendAuthHeader,
-                controller.selectedLevel)
+            controller.selectedLevel)
             .then(success => {
                 $scope.testSuccess = true;
                 $scope.responseData = success.data;
@@ -835,7 +837,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             })
             .finally(() => {
                 $scope.sendingTestRequest = false;
-            })
+            });
     }
 }
 
