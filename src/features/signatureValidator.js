@@ -129,9 +129,9 @@ let signatureValidatorTemplate = `
     <div class="row">
         <div class="col-md-12">
             <div class="row fx-zoom-normal fx-speed-500" ng-if="$ctrl.showLevel1">
-                <div ng-class="{'col-md-6': $ctrl.showLevel2, 'col-md-4' : !$ctrl.showLevel2}">
+                <div ng-class="{'col-md-6': $ctrl.showLevel2, 'col-md-4' : $ctrl.showLevel1}">
                     <b>Auth Prefix</b>
-                    <input type="text" ng-model="input_authprefix" class="form-control" name="authPrefix" required ng-keyup="formParams()">
+                    <input type="text" ng-model="$ctrl.input_auth_prefix" class="form-control" name="authPrefix" required ng-keyup="formParams()">
                     <span ng-show="paramForm.authPrefix.$touched && paramForm.authPrefix.$invalid" class="fail">
                         Auth Prefix is required.
                     </span>
@@ -408,7 +408,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             $scope.selectedRequest = $scope.options[0];
             controller.selectedFrom = $scope.options_zone[0];
             controller.selectedProvider = $scope.options_provider[0];
-            $scope.input_authprefix = config.main.defaultAuthPrefix;
+            controller.input_auth_prefix = config.main.defaultAuthPrefix;
             $scope.nonceDisabled = true;
             $scope.timestampDisabled = true;
             controller.input_timestamp = 'auto-generated';
@@ -426,7 +426,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         $scope.input_uri = savedObject.path;
         controller.selectedFrom = savedObject.invoke_from;
         controller.selectedProvider = savedObject.provider_zone;
-        $scope.input_authprefix = savedObject.auth_prefix;
+        controller.input_auth_prefix = savedObject.auth_prefix;
         controller.input_appId = savedObject.app_id;
         controller.selectedLevel = savedObject.level;
         controller.input_appSecret = savedObject.app_secret;
@@ -505,7 +505,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             'path': $scope.input_uri,
             'invoke_from': controller.selectedFrom,
             'provider_zone': controller.selectedProvider,
-            'auth_prefix': $scope.input_authprefix,
+            'auth_prefix': controller.input_auth_prefix,
             'app_id': controller.input_appId,
             'additional_params': $scope.additionalParams
         };
@@ -655,7 +655,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         let uris = formUris(realmUri);
         let params = {};
 
-        let authPrefix = $scope.input_authprefix || '';
+        let authPrefix = controller.input_auth_prefix || '';
 
         params['prefix'] = authPrefix.toLowerCase();
         params['request'] = $scope.selectedRequest;
@@ -692,7 +692,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         }
 
         if (controller.selectedLevel === 1 || controller.selectedLevel === 2) {
-            if ($scope.input_authprefix === '' || $scope.input_authprefix == null) {
+            if (controller.input_auth_prefix === '' || controller.input_auth_prefix == null) {
                 errorMsg += config.main.errorMsgs.noAuthPrefix + '<br>';
             }
 
