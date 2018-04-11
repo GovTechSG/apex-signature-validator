@@ -1,6 +1,7 @@
 import KJUR from 'jsrsasign';
 import nonce from 'nonce';
 const generateNonce = nonce();
+import queryString from 'query-string';
 
 import paramsModal from './paramsModal';
 
@@ -316,6 +317,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
     $scope.sendingTestRequest = false;
 
     $scope.additionalParams = [];
+    $scope.extractedParams = [];
 
     $scope.add = add;
     $scope.compareBS = compareBS;
@@ -460,6 +462,10 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         }
 
         $scope.options_level = config.main.authLevels;
+    }
+
+    function showBaseCompareResults(boolean) {
+        $scope.showBaseStringCompareResults = boolean;
     }
 
     function add(name, value) {
@@ -641,6 +647,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         return fullParams;
     }
 
+    // Processes all fields on the form and generates base string
     function formParams() {
         let realmUri = formRealmUri();
         let uris = formUris(realmUri);
@@ -659,7 +666,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         params.timestamp = controller.input_timestamp === 'auto-generated' ? (new Date).getTime() : controller.input_timestamp;
         params.nonce = controller.input_nonce === 'auto-generated' ? generateNonce() : controller.input_nonce;
 
-        $scope.params = formFullParams(params, $scope.additionalParams);
+        $scope.params = formFullParams(params, $scope.additionalParams.concat($scope.extractedParams));
 
         $scope.input_basestring = TestService.generateBasestring($scope.params);
     }
@@ -708,14 +715,26 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         }
     }
 
-    function showBaseCompareResults(boolean) {
-        $scope.showBaseStringCompareResults = boolean;
+    function extractQueryParams(path) {
+        let search = path.substring(path.indexOf('?') + 1);
+        let queryParams = queryString.parse(search);
+        let paramNames = Object.keys(queryParams);
+        for (let key of paramNames) {
+            $scope.extractedParams.push({
+                name: key,
+                value: queryParams[key]
+            })
+        }
     }
 
     function signAndTest(send) {
         $scope.privateKeyError = false;
         showBaseCompareResults(false);
         try {
+            // Extract query params, if any, from the give path, before processing params and generating base string
+            if ($scope.input_uri.indexOf('?') !== -1) {
+                extractQueryParams($scope.input_uri);
+            }
             formParams();
             validateParams();
             let key;
