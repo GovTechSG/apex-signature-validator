@@ -763,20 +763,13 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             if (controller.selectedLevel === 1) {
                 key = controller.input_appSecret;
             } else if (controller.selectedLevel === 2) {
-                let keyStart = '';
-                let keyEnd = '';
-                if (controller.pem.indexOf(config.sign.beginPrivateRSA) !== -1) {
-                    keyStart = config.sign.beginPrivateRSA;
-                    keyEnd = config.sign.endPrivRSA;
-                } else if (controller.pem.indexOf(config.sign.beginPrivate) !== -1) {
-                    keyStart = config.sign.beginPrivate;
-                    keyEnd = config.sign.endPrivate;
-                }
+                let keyStart = controller.pem.search(config.sign.beginPrivateKeyHeader);
+                let keyEnd = controller.pem.search(config.sign.endPrivateKeyHeader);
                 try {
                     key = KJUR.KEYUTIL.getKey(
                         controller.pem.substring(
-                            controller.pem.indexOf(keyStart),
-                            controller.pem.indexOf(keyEnd) + keyEnd.length
+                            keyStart, 
+                            keyEnd + config.sign.endPrivateKeyHeader.toString().length - 2
                         ),
                         $scope.privSecret
                     );
