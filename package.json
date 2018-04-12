@@ -1,9 +1,10 @@
 {
   "name": "apex-signature-validator",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "APEX micro service and dev tool for testing level 0 - 2 requests and verifying JOSE (JSON Object Signing and Encryption) response",
   "scripts": {
     "build": "webpack --progress --colors --env.production --optimize-minimize",
+    "devbuild": "webpack-dev-server --progress --colors --env.devbuild --optimize-minimize",
     "devserver": "webpack-dev-server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -14,6 +15,7 @@
     "angular-animate": "^1.6.4",
     "angular-ui-bootstrap": "^2.5.0",
     "angular-ui-notification": "^0.3.6",
+    "babel-polyfill": "^6.26.0",
     "bootstrap": "^3.3.7",
     "jose": "^0.3.2",
     "jquery": "^3.3.1",
@@ -26,7 +28,6 @@
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
-    "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "base64-img": "^1.0.3",
     "css-loader": "^0.28.9",
@@ -37,6 +38,7 @@
     "html-webpack-plugin": "^2.30.1",
     "optimize-css-assets-webpack-plugin": "^2.0.0",
     "style-loader": "^0.18.1",
+    "uglifyjs-webpack-plugin": "^1.2.4",
     "url-loader": "^0.5.8",
     "webpack": "^3.11.0",
     "webpack-dev-server": "^2.11.1"

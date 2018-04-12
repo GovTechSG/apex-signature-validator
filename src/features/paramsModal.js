@@ -9,14 +9,16 @@ let paramsModalTemplate = `
     style="margin-top: 5px;"></textarea>
 </div>
 <div class="modal-footer">
+    <button class="btn btn-primary" style="float:left" type="button" ng-click="downloadJSON()">
+        <span class="glyphicon glyphicon-save"></span>
+        Save as JSON
+    </button>
+    
     <button class="btn btn-primary" type="button" ng-click="set()">
         <span class="glyphicon glyphicon-ok"></span>
         Okay
     </button>
-    <button class="btn btn-primary" type="button" ng-click="downloadJSON()">
-        <span class="glyphicon glyphicon-save"></span>
-        Save as JSON
-    </button>
+    
     <button class="btn btn-danger" type="button" ng-click="cancel()">
         <span class="glyphicon glyphicon-remove"></span>
         Cancel
@@ -59,19 +61,6 @@ function paramsModalController($scope, $uibModalInstance, items) {
 
     $scope.parseInputFile = function (fileText) {
         $scope.jsonString = JSON.stringify(JSON.parse(fileText), null, 2);
-
-        //populate values
-        let savedObject = JSON.parse(fileText);
-        $scope.selectedRequest = savedObject.request;
-        $scope.selectedGateway = savedObject.gateway;
-        $scope.input_uri = savedObject.path;
-        $scope.selectedFrom = savedObject.invoke_from;
-        $scope.selectedProvider = savedObject.provider_zone;
-        $scope.input_authprefix = savedObject.auth_prefix;
-        $scope.input_appId = savedObject.app_id;
-        $scope.input_timestamp = savedObject.timestamp;
-        $scope.input_nonce = savedObject.nonce;
-        $scope.additionalParams = savedObject.additional_params;
     };
 }
 

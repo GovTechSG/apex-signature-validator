@@ -2,7 +2,7 @@ import KJUR from 'jsrsasign';
 
 function testService($http, UtilityService) {
     return {
-        generateBasestring: function (params) {
+        generateBasestring: function(params) {
             let sortedParams = UtilityService.sortJSON(params);
             let sortedKeys = Object.keys(sortedParams);
             let baseString = sortedParams.request + '&' + sortedParams.uri;
@@ -13,7 +13,7 @@ function testService($http, UtilityService) {
             }
             return baseString;
         },
-        signBasestring: function (selectedLevel, basestring, key) {
+        signBasestring: function(selectedLevel, basestring, key) {
             let kjur, sig;
             if (selectedLevel === 2) {
                 kjur = new KJUR.crypto.Signature({
@@ -22,13 +22,13 @@ function testService($http, UtilityService) {
                 kjur.init(key);
                 kjur.updateString(basestring);
                 let sigVal = kjur.sign();
-                sig = UtilityService.hexToBase64(sigVal)
+                sig = UtilityService.hexToBase64(sigVal);
             } else if (selectedLevel === 1) {
 
                 kjur = new KJUR.crypto.Mac({
                     alg: 'HmacSHA256',
                     'pass': {
-                        "hex": UtilityService.ascii_to_hexa(key)
+                        'hex': UtilityService.ascii_to_hexa(key)
                     }
                 });
                 kjur.updateString(basestring);
@@ -37,8 +37,7 @@ function testService($http, UtilityService) {
             }
             return sig;
         },
-        genAuthHeader: function (params, signature) {
-
+        genAuthHeader: function(params, signature) {
             let prefix = params.prefix + '_';
             params[prefix + 'signature'] = signature;
 
@@ -53,16 +52,14 @@ function testService($http, UtilityService) {
                     continue;
                 }
                 if (keys[i] !== 'realm') {
-                    authHeader += keys[i] + '="' + sortedParams[keys[i]] + '",'
+                    authHeader += keys[i] + '="' + sortedParams[keys[i]] + '",';
                 } else {
-                    authHeader += keys[i] + '="' + sortedParams['realm'] + '",'
+                    authHeader += keys[i] + '="' + sortedParams['realm'] + '",';
                 }
             }
             return authHeader;
         },
-
-
-        sendTestRequest: function (url, method, auth, level) {
+        sendTestRequest: function(url, method, auth, level) {
             if (level === 0) {
                 return $http({
                     method: method,
@@ -78,9 +75,9 @@ function testService($http, UtilityService) {
                 });
             }
         }
-    }
+    };
 }
 
-testService.$inject = ["$http", "UtilityService"];
+testService.$inject = ['$http', 'UtilityService'];
 
 export default testService;
