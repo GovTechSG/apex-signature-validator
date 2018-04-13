@@ -26,12 +26,8 @@ export default {
         }
     },
     sign: {
-        beginPrivateRSA: '-----BEGIN RSA PRIVATE KEY-----',
-        endPrivRSA: '-----END RSA PRIVATE KEY-----',
-        beginPrivate: '-----BEGIN PRIVATE KEY-----',
-        endPrivate: '-----END PRIVATE KEY-----',
-        beginCert: '-----BEGIN CERTIFICATE-----',
-        endCert: '-----END CERTIFICATE-----'
+        beginPrivateKeyHeader: /-----BEGIN ([A-Z]+ )*PRIVATE KEY-----/,
+        endPrivateKeyHeader: /-----END ([A-Z]+ )*PRIVATE KEY-----/
     },
     test: {
         levels: [0, 1, 2]
