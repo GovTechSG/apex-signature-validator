@@ -99,7 +99,7 @@ function joseValidatorController($scope, JWTService, stateService, Notification)
             controller.output = error.message;
             Notification.error({
                 message: error.message
-            })
+            });
         }
     }
 }

@@ -1,20 +1,25 @@
 .pass {
     color: green;
 }
+
 .fail {
     font-style: italic;
     color: red;
 }
+
 .immutable {
     color: green;
 }
-.point-cursor{
+
+.point-cursor {
     cursor: pointer;
 }
-.uri-preview{
+
+.uri-preview {
     font-size: 16px;
 }
-.heading{
+
+.heading {
     font-size: 22px;
     margin-bottom: 15px;
 }
@@ -25,41 +30,49 @@
 }
 
 .main-content {
-    padding-left: 40px; 
-    padding-right: 40px; 
+    padding-left: 40px;
+    padding-right: 40px;
     margin-bottom: 50px;
 }
 
-.test-send-success{
+.test-send-success {
     background-color: lightgreen;
 }
-.test-send-fail{
+
+.test-send-fail {
     background-color: lightsalmon;
 }
-.test-send{
+
+.test-send {
     background-color: #ededed;
 }
+
 .inline {
-    display:inline;
+    display: inline;
 }
-.missing-basestring-char{
+
+.missing-basestring-char {
     background-color: #ff7762
 }
-.incorrect-basestring-char{
+
+.incorrect-basestring-char {
     /*background-color: #FFFF00;*/
     background-color: #ffef96;
 }
-.extra-basestring-char{
-    text-decoration : line-through;
+
+.extra-basestring-char {
+    text-decoration: line-through;
     color: #ff7762;
 }
+
 pre, .wrap {
-    white-space: pre-wrap;       /* css-3 */
-    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
-    white-space: -pre-wrap;      /* Opera 4-6 */
-    white-space: -o-pre-wrap;    /* Opera 7 */
-    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+    white-space: pre-wrap; /* css-3 */
+    white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+    white-space: -pre-wrap; /* Opera 4-6 */
+    white-space: -o-pre-wrap; /* Opera 7 */
+    word-wrap: break-word; /* Internet Explorer 5.5+ */
 }
+
 .code {
     font-family: monospace;
 }
@@ -93,17 +106,23 @@ pre, .wrap {
 }
 
 @-webkit-keyframes sk-bouncedelay {
-    0%, 80%, 100% { -webkit-transform: scale(0) }
-    40% { -webkit-transform: scale(1.0) }
+    0%, 80%, 100% {
+        -webkit-transform: scale(0)
+    }
+    40% {
+        -webkit-transform: scale(1.0)
+    }
 }
 
 @keyframes sk-bouncedelay {
     0%, 80%, 100% {
         -webkit-transform: scale(0);
         transform: scale(0);
-    } 40% {
-          -webkit-transform: scale(1.0);
-          transform: scale(1.0);
-      }
+    }
+    40% {
+        -webkit-transform: scale(1.0);
+        transform: scale(1.0);
+    }
 }
+
 /*-------------------------------*/

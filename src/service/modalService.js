@@ -1,30 +1,31 @@
 function modalService() {
     return {
-        setParams: function (params) {
+        setParams: function(params) {
             this.params = params;
         },
-        getParams: function () {
+        getParams: function() {
             return this.params;
         },
-        setPem: function (pem) {
+        setPem: function(pem) {
             // this.params[name] = value;
             this.pem = pem;
         },
-        getPem: function () {
+        getPem: function() {
             return this.pem;
         },
-        setPwd: function (pwd) {
+        setPwd: function(pwd) {
             this.pwd = pwd;
         },
-        getPwd: function () {
+        getPwd: function() {
             return this.pwd;
         },
-        setRealmUri: function (realmUri) {
+        setRealmUri: function(realmUri) {
             this.realmUri = realmUri;
         },
-        getRealmUri: function () {
+        getRealmUri: function() {
             return this.realmUri;
         }
-    }
+    };
 }
+
 export default modalService;

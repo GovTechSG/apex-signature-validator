@@ -1,4 +1,4 @@
-import "babel-polyfill";
+import 'babel-polyfill';
 import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
 import uinotification from 'angular-ui-notification';
@@ -20,14 +20,14 @@ import utilService from './service/utiityService';
 
 import './css/style.css';
 
-angular.module("app", [uibootstrap, uinotification, ngfx, angularanimate, uiRouter])
+angular.module('app', [uibootstrap, uinotification, ngfx, angularanimate, uiRouter])
     .constant('config', config)
     .controller('mainController', mainController)
     .factory('ModalService', modalService)
     .factory('TestService', testService)
     .factory('JWTService', jwtService)
     .factory('UtilityService', utilService)
-    .config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
+    .config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
         $stateProvider
             .state({
                 name: 'signatureValidator',
@@ -45,31 +45,31 @@ angular.module("app", [uibootstrap, uinotification, ngfx, angularanimate, uiRout
             });
         $urlRouterProvider.otherwise('/signature-validator');
     }])
-    .directive('onReadFile', ['$parse', function ($parse) {
+    .directive('onReadFile', ['$parse', function($parse) {
         return {
             restrict: 'A',
             scope: false,
-            link: function (scope, ele, attrs) {
+            link: function(scope, ele, attrs) {
 
                 let fn = $parse(attrs.onReadFile);
-                ele.on('change', function (onChangeEvent) {
+                ele.on('change', function(onChangeEvent) {
                     let reader = new FileReader();
 
-                    reader.onload = function (onLoadEvent) {
-                        scope.$apply(function () {
+                    reader.onload = function(onLoadEvent) {
+                        scope.$apply(function() {
                             fn(scope, {
                                 $fileContents: onLoadEvent.target.result
                             });
-                        })
+                        });
                     };
                     reader.readAsText((onChangeEvent.srcElement || onChangeEvent.target).files[0]);
                     ele.val('');
-                })
+                });
             }
-        }
+        };
     }])
-    .factory('stateService', function () {
+    .factory('stateService', function() {
         return {
             state: 'signatureValidator'
-        }
+        };
     });

@@ -1,11 +1,11 @@
 function utilSvc() {
     return {
-        hexToBase64: function (hexstring) {
+        hexToBase64: function(hexstring) {
             return btoa(hexstring.match(/\w{2}/g).map(a => {
                 return String.fromCharCode(parseInt(a, 16));
-            }).join(''))
+            }).join(''));
         },
-        ascii_to_hexa: function (str) {
+        ascii_to_hexa: function(str) {
             let arr1 = [];
             for (let n = 0, l = str.length; n < l; n++) {
                 let hex = Number(str.charCodeAt(n)).toString(16);
@@ -13,7 +13,7 @@ function utilSvc() {
             }
             return arr1.join('');
         },
-        sortJSON: function (json) {
+        sortJSON: function(json) {
             let newJSON = {};
             let keys = Object.keys(json);
             keys.sort();
@@ -22,7 +22,7 @@ function utilSvc() {
             }
             return newJSON;
         }
-    }
+    };
 }
 
 export default utilSvc;

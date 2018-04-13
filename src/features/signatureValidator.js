@@ -768,7 +768,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
                 try {
                     key = KJUR.KEYUTIL.getKey(
                         controller.pem.substring(
-                            keyStart, 
+                            keyStart,
                             keyEnd + config.sign.endPrivateKeyHeader.toString().length - 2
                         ),
                         $scope.privSecret
