@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.3.6] - 2018-04-15
+- Signature token generated no longer contains query params
+
 ## [0.3.5] - 2018-04-13
 - Recognizes all PEM formatted private key headers for L2 signatures
 
