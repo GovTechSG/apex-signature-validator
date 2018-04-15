@@ -555,18 +555,21 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             bsResults += '<span class = \'extra-basestring-char\'>' + ownBS.substr(generatedBS.length) + '</span>';
         }
         $scope.bsResults = $sce.trustAsHtml(bsResults);
-        if (generatedBS === ownBS)
+        if (generatedBS === ownBS) {
+
+       
             Notification.success({
                 title: '',
                 message: 'Basestrings are the same',
                 delay: config.notificationShowTime
             });
-        else
+        } else {
             Notification.error({
                 title: '',
                 message: 'Basestrings are different',
                 delay: config.notificationShowTime
             });
+        }
     }
 
     /**
