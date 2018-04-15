@@ -55,7 +55,7 @@ let signatureValidatorTemplate = `
 
         <div class="col-md-6">
             <b>Path</b>
-            <input type="text" ng-model="input_uri" class="form-control" ng-keyup="formParams()" placeholder="e.g. /v1/rest/level2/ig/ping"
+            <input type="text" ng-model="inputUri" class="form-control" ng-keyup="formParams()" placeholder="e.g. /v1/rest/level2/ig/ping"
             />
         </div>
 
@@ -130,7 +130,7 @@ let signatureValidatorTemplate = `
             <div class="row fx-zoom-normal fx-speed-500" ng-if="$ctrl.showLevel1">
                 <div ng-class="{'col-md-6': $ctrl.showLevel2, 'col-md-4' : $ctrl.showLevel1}">
                     <b>Auth Prefix</b>
-                    <input type="text" ng-model="$ctrl.input_auth_prefix" class="form-control" name="authPrefix" required ng-keyup="formParams()">
+                    <input type="text" ng-model="$ctrl.inputAuthPrefix" class="form-control" name="authPrefix" required ng-keyup="formParams()">
                     <span ng-show="paramForm.authPrefix.$touched && paramForm.authPrefix.$invalid" class="fail">
                         Auth Prefix is required.
                     </span>
@@ -401,20 +401,21 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             // Initial load
 
             // $scope.selectedGateway = config.main.defaultGateway;
-            // $scope.input_uri = config.main.defaultUri;
+            // $scope.inputUri = config.main.defaultUri;
 
             loadDefaultFromConfig(2);
             $scope.selectedRequest = $scope.options[0];
             controller.selectedFrom = $scope.options_zone[0];
             controller.selectedProvider = $scope.options_provider[0];
-            controller.input_auth_prefix = config.main.defaultAuthPrefix;
+            controller.inputAuthPrefix = config.main.defaultAuthPrefix;
             $scope.nonceDisabled = true;
             $scope.timestampDisabled = true;
             controller.input_timestamp = 'auto-generated';
             controller.input_nonce = 'auto-generated';
             controller.selectedLevel = 0;
         }
-        formUris(formRealmUri());
+        formRealmUri();
+        formUri();
     }
 
     function set() {
@@ -422,10 +423,10 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         let savedObject = ModalService.getParams();
         $scope.selectedRequest = savedObject.request;
         $scope.selectedGateway = savedObject.gateway;
-        $scope.input_uri = savedObject.path;
+        $scope.inputUri = savedObject.path;
         controller.selectedFrom = savedObject.invoke_from;
         controller.selectedProvider = savedObject.provider_zone;
-        controller.input_auth_prefix = savedObject.auth_prefix;
+        controller.inputAuthPrefix = savedObject.auth_prefix;
         controller.input_appId = savedObject.app_id;
         controller.selectedLevel = savedObject.level;
         controller.input_appSecret = savedObject.app_secret;
@@ -501,10 +502,10 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             'level': controller.selectedLevel,
             'request': $scope.selectedRequest,
             'gateway': $scope.selectedGateway,
-            'path': $scope.input_uri,
+            'path': $scope.inputUri,
             'invoke_from': controller.selectedFrom,
             'provider_zone': controller.selectedProvider,
-            'auth_prefix': controller.input_auth_prefix,
+            'auth_prefix': controller.inputAuthPrefix,
             'app_id': controller.input_appId,
             'additional_params': $scope.additionalParams
         };
@@ -568,8 +569,10 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             });
     }
 
-    // Strips query params from path
-    function stripQueryParams(path) {
+    /**
+     * Strips query string from path, for signing.
+     */
+    function stripQueryString(path) {
         if (path.indexOf('?') !== -1) {
             return path.substring(0, path.indexOf('?'));
         } else {
@@ -577,59 +580,53 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         }
     }
 
-    function formRealmUri() {
-        let append = config.main.domain;
-        let url = 'https://' + ($scope.selectedGateway || '');
-        if (controller.selectedFrom === 'Internet Zone') {
-            url += '.e';
-        } else if (controller.selectedFrom === 'Intranet Zone') {
-            url += '.i';
-        } else if (controller.selectedFrom === 'SGNet') {
-            url += '-pvt';
+    /**
+     * Removes starting slash '/' from input user path for internal formatting.
+     */
+    function processUserPath(userPath) {
+        if (userPath != null && userPath.startsWith('/')) {
+            return userPath.substring(1);
+        } else {
+            return userPath || '';
         }
-        return url + append;
+    }
+
+    function formRealmUri() {
+        let gateway = $scope.selectedGateway || '';
+        let domain = config.main.domain;
+        let userPath = processUserPath($scope.inputUri);
+        $scope.realmUri = `https://${gateway}.${domain}/${userPath}`;
     }
 
     /**
-     *
-     * @param {string} realmPartialUri
-     * @returns {{uri: string, realmUri: *}}
+     * Forms url used for base string generation. Strips query params.
      */
-    function formUris(realmPartialUri) {
+    function formUri() {
         let gateway = $scope.selectedGateway || '';
-        let mid = config.main.domain;
-        let front;
-        if (controller.selectedProvider === 'External Gateway') {
-            front = 'https://' + gateway;
-        } else if (controller.selectedProvider === 'Internal Gateway' && (controller.selectedFrom === 'WWW' || controller.selectedFrom === 'Internet Zone')) {
-            front = 'https://' + gateway + '.i';
-        } else if (controller.selectedFrom === 'SGNet') {
-            front = 'http://' + gateway + '-pvt.i';
-        } else {
-            front = 'http://' + gateway + '.i';
-        }
-        let uri = front + mid;
-        if ($scope.input_uri != null) {
-            let userPath = $scope.input_uri;
-            if (!userPath.startsWith('/')) {
-                userPath = '/' + userPath;
+        let domain = config.main.domain;
+        let userPath = stripQueryString(processUserPath($scope.inputUri));
+
+        let uri = '';
+        if (process.env.NODE_ENV === 'production') {
+            // production work-around
+            if (controller.selectedProvider === 'External Gateway') {
+                uri = `https://${gateway}.e.${domain}`
+            } else if (controller.selectedProvider === 'Internal Gateway') {
+                uri = `https://${gateway}.i.${domain}`
             }
-            uri += stripQueryParams(userPath);
-            realmPartialUri += stripQueryParams(userPath);
+        } else {
+            uri = `https://${gateway}.${domain}`
         }
+
+        uri += `/${userPath}`;
         $scope.uri = uri;
-        $scope.realmUri = realmPartialUri;
-        return {
-            uri: uri,
-            realmUri: realmPartialUri
-        };
     }
 
     function formFullParams(params, additionalParams) {
         let fullParams = {};
         let keys = Object.keys(params);
         for (let key of keys) {
-            if (!['prefix', 'uri', 'realm', 'request'].includes(key)) {
+            if (!['request', 'uri', 'realm', 'prefix'].includes(key)) {
                 let prefixKey = params.prefix + '_' + key;
                 fullParams[prefixKey] = params[key];
             } else {
@@ -648,22 +645,24 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         return fullParams;
     }
 
-    // Processes all fields on the form and generates base string
+    /**
+     * Processes all fields on the form and generates base string
+     */
     function formParams() {
-        let realmUri = formRealmUri();
-        let uris = formUris(realmUri);
+        formRealmUri(); // Sets $scope.realmUri
+        formUri(); // Sets $scope.uri
         let params = {};
 
-        let authPrefix = controller.input_auth_prefix || '';
+        let authPrefix = controller.inputAuthPrefix || '';
 
         params['prefix'] = authPrefix.toLowerCase();
         params['request'] = $scope.selectedRequest;
-        params['uri'] = uris.uri;
-        params['realm'] = uris.realmUri;
+        params['uri'] = $scope.uri;
+        params['realm'] = $scope.realmUri;
+        // Processed in base string
         params['app_id'] = controller.input_appId;
         params['signature_method'] = $scope.input_sigmethod;
         params['version'] = $scope.input_app_ver;
-
         params.timestamp = controller.input_timestamp === 'auto-generated' ? (new Date).getTime() : controller.input_timestamp;
         params.nonce = controller.input_nonce === 'auto-generated' ? generateNonce() : controller.input_nonce;
 
@@ -691,7 +690,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         }
 
         if (controller.selectedLevel === 1 || controller.selectedLevel === 2) {
-            if (controller.input_auth_prefix === '' || controller.input_auth_prefix == null) {
+            if (controller.inputAuthPrefix === '' || controller.inputAuthPrefix == null) {
                 errorMsg += config.main.errorMsgs.noAuthPrefix + '<br>';
             }
 
@@ -754,8 +753,8 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         showBaseCompareResults(false);
         try {
             // Extract query params, if any, from the give path, before processing params and generating base string
-            if ($scope.input_uri.indexOf('?') !== -1) {
-                extractQueryParams($scope.input_uri);
+            if ($scope.inputUri.indexOf('?') !== -1) {
+                extractQueryParams($scope.inputUri);
             }
             formParams();
             validateParams();
@@ -778,6 +777,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
                     throw new Error('Please check the validity of your private key.');
                 }
             }
+            console.log(angular.toJson($scope.params, 2));
             let sig = TestService.signBasestring(controller.selectedLevel, $scope.input_basestring, key);
             let authHeader = TestService.genAuthHeader($scope.params, sig);
             $scope.testSendAuthHeader = authHeader.substring('Authorization: '.length, authHeader.length - 1);

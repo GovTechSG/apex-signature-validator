@@ -12,7 +12,7 @@ export default {
         defaultUri: '/apex/example/path',
         defaultAuthPrefix: 'Apex',
         notificationShowTime: 5000,
-        domain: process.env.NODE_ENV === 'production' ? '.api.gov.sg' : '.api.dev',
+        domain: process.env.NODE_ENV === 'production' ? 'api.gov.sg' : 'api.dev',
         errorMsgs: {
             noSelectedGateway: 'Gateway must be specified',
             noAuthPrefix: 'Auth prefix must be specified',
