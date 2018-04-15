@@ -399,10 +399,6 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             set();
         } else {
             // Initial load
-
-            // $scope.selectedGateway = config.main.defaultGateway;
-            // $scope.inputUri = config.main.defaultUri;
-
             loadDefaultFromConfig(2);
             $scope.selectedRequest = $scope.options[0];
             controller.selectedFrom = $scope.options_zone[0];
@@ -780,7 +776,6 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
                     throw new Error('Please check the validity of your private key.');
                 }
             }
-            console.log(angular.toJson($scope.params, 2));
             let sig = TestService.signBasestring(controller.selectedLevel, $scope.input_basestring, key);
             let authHeader = TestService.genAuthHeader($scope.params, sig);
             $scope.testSendAuthHeader = authHeader.substring('Authorization: '.length, authHeader.length - 1);

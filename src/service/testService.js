@@ -1,5 +1,9 @@
 import KJUR from 'jsrsasign';
 
+function capitalizePrefix(prefix) {
+    return prefix.charAt(0).toUpperCase() + prefix.substring(1);
+}
+
 function testService($http, UtilityService) {
     return {
         /**
@@ -8,11 +12,8 @@ function testService($http, UtilityService) {
          * @param params.request and params.uri always required, used to generate the beginning of the base string.
          * params.request: HTTP Method: GET, POST etc
          * params.uri: Signature URL - ${protocol}//${hostname}${pathname} (query strings need to be stripped)
-         *
          * @param params.realm Unused.
-         *
          * @param params.prefix Prefix added to other param keys, see below
-         *
          * @param params Required params (below) and query string params
          * The following are appended to params.prefix:
          * params.app_id: App ID
@@ -60,23 +61,15 @@ function testService($http, UtilityService) {
             return sig;
         },
         genAuthHeader: function(params, signature) {
-            let prefix = params.prefix + '_';
-            params[prefix + 'signature'] = signature;
+            params[params.prefix + '_signature'] = signature;
 
             let sortedParams = UtilityService.sortJSON(params);
             let keys = Object.keys(sortedParams);
-            //remove realm and add to front
-            keys.splice(keys.indexOf('realm'), 1);
-            keys.unshift('realm');
-            let authHeader = 'Authorization: ' + params['prefix'].charAt(0).toUpperCase() + params['prefix'].slice(1) + ' ';
+
+            let authHeader = `Authorization: ${capitalizePrefix(params.prefix)} realm="${params.realm}",`;
             for (let i = 0; i < keys.length; i++) {
-                if (keys[i] === 'prefix' || keys[i] === 'uri' || keys[i] === 'request' || keys[i].indexOf(prefix) === -1) {
-                    continue;
-                }
-                if (keys[i] !== 'realm') {
-                    authHeader += keys[i] + '="' + sortedParams[keys[i]] + '",';
-                } else {
-                    authHeader += keys[i] + '="' + sortedParams['realm'] + '",';
+                if (keys[i].indexOf(params.prefix) !== -1) {
+                    authHeader += `${keys[i]}="${sortedParams[keys[i]]}",`;
                 }
             }
             return authHeader;
