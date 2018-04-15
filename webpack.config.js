@@ -1,4 +1,5 @@
 const webpack = require('webpack');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
@@ -62,7 +63,7 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
     };
     // Production only
     if (env.production) {
-        config.plugins.push(new webpack.optimize.UglifyJsPlugin()); // minify js
+        config.plugins.push(new UglifyJsPlugin()); // minify js
         config.plugins.push(new OptimizeCssAssetsPlugin()); // minify css
         config.plugins.push(new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify('production'),
@@ -74,6 +75,17 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
             inlineSource: '.js$'
         }));
         config.plugins.push(new HtmlWebpackInlineSourcePlugin());
+    } else if (env.devbuild) {
+        config.plugins.push(new UglifyJsPlugin()); // minify js
+        config.plugins.push(new OptimizeCssAssetsPlugin()); // minify css
+        config.plugins.push(new webpack.DefinePlugin({
+            'process.env.NODE_ENV': JSON.stringify('development'),
+            'VERSION': JSON.stringify(version)
+        }));
+        config.plugins.push(new HtmlWebpackPlugin({
+            title: 'Apex Signature Validator',
+            template: 'index.ejs'
+        }));
     } else {
         config.plugins.push(new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify('development'),

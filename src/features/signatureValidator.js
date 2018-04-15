@@ -1,8 +1,9 @@
 import KJUR from 'jsrsasign';
 import nonce from 'nonce';
-const generateNonce = nonce();
 
 import paramsModal from './paramsModal';
+
+const generateNonce = nonce();
 
 let signatureValidatorTemplate = `
 <div class="container-fluid main-content">
@@ -127,9 +128,9 @@ let signatureValidatorTemplate = `
     <div class="row">
         <div class="col-md-12">
             <div class="row fx-zoom-normal fx-speed-500" ng-if="$ctrl.showLevel1">
-                <div ng-class="{'col-md-6': $ctrl.showLevel2, 'col-md-4' : !$ctrl.showLevel2}">
+                <div ng-class="{'col-md-6': $ctrl.showLevel2, 'col-md-4' : $ctrl.showLevel1}">
                     <b>Auth Prefix</b>
-                    <input type="text" ng-model="input_authprefix" class="form-control" name="authPrefix" required ng-keyup="formParams()">
+                    <input type="text" ng-model="$ctrl.input_auth_prefix" class="form-control" name="authPrefix" required ng-keyup="formParams()">
                     <span ng-show="paramForm.authPrefix.$touched && paramForm.authPrefix.$invalid" class="fail">
                         Auth Prefix is required.
                     </span>
@@ -305,7 +306,7 @@ let signatureValidatorTemplate = `
 </div>`;
 
 function signatureValidatorController($scope, $rootScope, config, Notification, TestService, ModalService, $sce,
-    $uibModal, stateService) {
+                                      $uibModal, stateService) {
 
     const controller = this;
 
@@ -316,6 +317,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
     $scope.sendingTestRequest = false;
 
     $scope.additionalParams = [];
+    $scope.extractedParams = [];
 
     $scope.add = add;
     $scope.compareBS = compareBS;
@@ -325,7 +327,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
     controller.showOptions = showOptions;
     $scope.signAndTest = signAndTest;
 
-    $scope.checkTestResult = function () {
+    $scope.checkTestResult = function() {
         if ($scope.test || $scope.testSuccess == null) {
             return 'test-send';
         }
@@ -337,7 +339,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         }
     };
 
-    $scope.nonceGenChange = function () {
+    $scope.nonceGenChange = function() {
         $scope.nonceDisabled = !$scope.nonceDisabled;
         if ($scope.nonceDisabled) {
             controller.input_nonce = 'auto-generated';
@@ -346,7 +348,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         }
     };
 
-    $scope.timestampGenChange = function () {
+    $scope.timestampGenChange = function() {
         $scope.timestampDisabled = !$scope.timestampDisabled;
         if ($scope.timestampDisabled) {
             controller.input_timestamp = 'auto-generated';
@@ -355,24 +357,24 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         }
     };
 
-    $scope.parseInputFile = function (fileText) {
+    $scope.parseInputFile = function(fileText) {
         controller.pem = fileText;
-        ModalService.setPem(controller.pem)
+        ModalService.setPem(controller.pem);
     };
 
     function showOptions() {
         saveInputsToModalService();
         $uibModal.open({
-                animation: true,
-                backdrop: false,
-                template: paramsModal.template,
-                controller: paramsModal.controller,
-                size: 'lg',
-                resolve: {
-                    items: getKeyValues()
-                }
-            }).result
-            .then(function (jsonString) {
+            animation: true,
+            backdrop: false,
+            template: paramsModal.template,
+            controller: paramsModal.controller,
+            size: 'lg',
+            resolve: {
+                items: getKeyValues()
+            }
+        }).result
+            .then(function(jsonString) {
                 let jsonObj = JSON.parse(jsonString);
                 ModalService.setParams(jsonObj.params);
                 ModalService.setPem(jsonObj.pem);
@@ -381,7 +383,8 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
                 set();
                 formParams();
             })
-            .catch(function () {});
+            .catch(function() {
+            });
     }
 
     function getKeyValues() {
@@ -404,7 +407,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             $scope.selectedRequest = $scope.options[0];
             controller.selectedFrom = $scope.options_zone[0];
             controller.selectedProvider = $scope.options_provider[0];
-            $scope.input_authprefix = config.main.defaultAuthPrefix;
+            controller.input_auth_prefix = config.main.defaultAuthPrefix;
             $scope.nonceDisabled = true;
             $scope.timestampDisabled = true;
             controller.input_timestamp = 'auto-generated';
@@ -422,7 +425,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         $scope.input_uri = savedObject.path;
         controller.selectedFrom = savedObject.invoke_from;
         controller.selectedProvider = savedObject.provider_zone;
-        $scope.input_authprefix = savedObject.auth_prefix;
+        controller.input_auth_prefix = savedObject.auth_prefix;
         controller.input_appId = savedObject.app_id;
         controller.selectedLevel = savedObject.level;
         controller.input_appSecret = savedObject.app_secret;
@@ -462,11 +465,15 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         $scope.options_level = config.main.authLevels;
     }
 
+    function showBaseCompareResults(boolean) {
+        $scope.showBaseStringCompareResults = boolean;
+    }
+
     function add(name, value) {
         $scope.additionalParams.push({
             name: name,
             value: value
-        })
+        });
     }
 
     function remove(index) {
@@ -497,9 +504,9 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             'path': $scope.input_uri,
             'invoke_from': controller.selectedFrom,
             'provider_zone': controller.selectedProvider,
-            'auth_prefix': $scope.input_authprefix,
+            'auth_prefix': controller.input_auth_prefix,
             'app_id': controller.input_appId,
-            'additional_params': $scope.additionalParams,
+            'additional_params': $scope.additionalParams
         };
         if (controller.selectedLevel === 1) {
             paramsToSave.app_secret = controller.input_appSecret;
@@ -522,29 +529,29 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         }
         showBaseCompareResults(true);
         let before = false;
-        let bsResults = "";
+        let bsResults = '';
         for (let i = 0; i < generatedBS.length; i++) {
             let gen = generatedBS[i];
             let own = ownBS[i];
             if (own == null) {
                 let stringToAdd = generatedBS.substr(i, generatedBS.leading);
-                bsResults += "<span class='missing-basestring-char'>" + stringToAdd + "</span>";
+                bsResults += '<span class=\'missing-basestring-char\'>' + stringToAdd + '</span>';
                 break;
             }
             if (gen !== own && !before) {
-                own = "<span class='incorrect-basestring-char''>" + own;
+                own = '<span class=\'incorrect-basestring-char\'\'>' + own;
                 before = true;
             } else if (gen === own && before) {
-                own = "</span>" + own;
+                own = '</span>' + own;
                 before = false;
             }
             bsResults += own;
         }
         if (ownBS.length > generatedBS.length) {
             if (before) {
-                bsResults += "</span>";
+                bsResults += '</span>';
             }
-            bsResults += "<span class = 'extra-basestring-char'>" + ownBS.substr(generatedBS.length) + "</span>";
+            bsResults += '<span class = \'extra-basestring-char\'>' + ownBS.substr(generatedBS.length) + '</span>';
         }
         $scope.bsResults = $sce.trustAsHtml(bsResults);
         if (generatedBS === ownBS)
@@ -561,6 +568,33 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             });
     }
 
+    // Strips query params from path
+    function stripQueryParams(path) {
+        if (path.indexOf('?') !== -1) {
+            return path.substring(0, path.indexOf('?'));
+        } else {
+            return path;
+        }
+    }
+
+    function formRealmUri() {
+        let append = config.main.domain;
+        let url = 'https://' + ($scope.selectedGateway || '');
+        if (controller.selectedFrom === 'Internet Zone') {
+            url += '.e';
+        } else if (controller.selectedFrom === 'Intranet Zone') {
+            url += '.i';
+        } else if (controller.selectedFrom === 'SGNet') {
+            url += '-pvt';
+        }
+        return url + append;
+    }
+
+    /**
+     *
+     * @param {string} realmPartialUri
+     * @returns {{uri: string, realmUri: *}}
+     */
     function formUris(realmPartialUri) {
         let gateway = $scope.selectedGateway || '';
         let mid = config.main.domain;
@@ -571,15 +605,17 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             front = 'https://' + gateway + '.i';
         } else if (controller.selectedFrom === 'SGNet') {
             front = 'http://' + gateway + '-pvt.i';
-        } else front = 'http://' + gateway + '.i';
+        } else {
+            front = 'http://' + gateway + '.i';
+        }
         let uri = front + mid;
         if ($scope.input_uri != null) {
             let userPath = $scope.input_uri;
             if (!userPath.startsWith('/')) {
                 userPath = '/' + userPath;
             }
-            uri += userPath;
-            realmPartialUri += userPath;
+            uri += stripQueryParams(userPath);
+            realmPartialUri += stripQueryParams(userPath);
         }
         $scope.uri = uri;
         $scope.realmUri = realmPartialUri;
@@ -587,19 +623,6 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             uri: uri,
             realmUri: realmPartialUri
         };
-    }
-
-    function formRealmUri() {
-        let append = config.main.domain;
-        let url = 'https://' + ($scope.selectedGateway || '');
-        if (controller.selectedFrom === 'Internet Zone') {
-            url += '.e'
-        } else if (controller.selectedFrom === 'Intranet Zone') {
-            url += '.i'
-        } else if (controller.selectedFrom === 'SGNet') {
-            url += '-pvt'
-        }
-        return url + append;
     }
 
     function formFullParams(params, additionalParams) {
@@ -625,12 +648,13 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         return fullParams;
     }
 
+    // Processes all fields on the form and generates base string
     function formParams() {
         let realmUri = formRealmUri();
         let uris = formUris(realmUri);
         let params = {};
 
-        let authPrefix = $scope.input_authprefix || '';
+        let authPrefix = controller.input_auth_prefix || '';
 
         params['prefix'] = authPrefix.toLowerCase();
         params['request'] = $scope.selectedRequest;
@@ -643,7 +667,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         params.timestamp = controller.input_timestamp === 'auto-generated' ? (new Date).getTime() : controller.input_timestamp;
         params.nonce = controller.input_nonce === 'auto-generated' ? generateNonce() : controller.input_nonce;
 
-        $scope.params = formFullParams(params, $scope.additionalParams);
+        $scope.params = formFullParams(params, $scope.additionalParams.concat($scope.extractedParams));
 
         $scope.input_basestring = TestService.generateBasestring($scope.params);
     }
@@ -658,7 +682,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
 
         if (controller.selectedLevel === 1 &&
             (controller.input_appSecret === '' || controller.input_appSecret == null)) {
-            errorMsg += config.main.errorMsgs.noAppSecret + '<br>'
+            errorMsg += config.main.errorMsgs.noAppSecret + '<br>';
         }
 
         if (controller.selectedLevel === 2 &&
@@ -667,7 +691,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         }
 
         if (controller.selectedLevel === 1 || controller.selectedLevel === 2) {
-            if ($scope.input_authprefix === '' || $scope.input_authprefix == null) {
+            if (controller.input_auth_prefix === '' || controller.input_auth_prefix == null) {
                 errorMsg += config.main.errorMsgs.noAuthPrefix + '<br>';
             }
 
@@ -692,34 +716,60 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         }
     }
 
-    function showBaseCompareResults(boolean) {
-        $scope.showBaseStringCompareResults = boolean;
+    /**
+     *
+     * @param {string} input A query string of format key1=value1&key2=value2.
+     *
+     * @returns {object} An object with key-value pairs taken from the input string.
+     */
+    function parseQueryString(input) {
+        let params = input.split('&');
+        let output = {};
+        for (let param of params) {
+            let outputKeys = Object.keys(output);
+            let paramKey = param.substring(0, param.indexOf('='));
+            let paramValue = param.substring(param.indexOf('=') + 1);
+            if (!outputKeys.includes(paramKey)) {
+                // If output doesn't contain key, add it in
+                output[paramKey] = paramValue;
+            }
+        }
+        return output;
+    }
+
+    function extractQueryParams(path) {
+        let search = path.substring(path.indexOf('?') + 1);
+        let queryParams = parseQueryString(search);
+        let paramNames = Object.keys(queryParams);
+        for (let key of paramNames) {
+            $scope.extractedParams.push({
+                name: key,
+                value: queryParams[key]
+            });
+        }
     }
 
     function signAndTest(send) {
         $scope.privateKeyError = false;
         showBaseCompareResults(false);
         try {
+            // Extract query params, if any, from the give path, before processing params and generating base string
+            if ($scope.input_uri.indexOf('?') !== -1) {
+                extractQueryParams($scope.input_uri);
+            }
             formParams();
             validateParams();
             let key;
             if (controller.selectedLevel === 1) {
                 key = controller.input_appSecret;
             } else if (controller.selectedLevel === 2) {
-                let keyStart = '';
-                let keyEnd = '';
-                if (controller.pem.indexOf(config.sign.beginPrivateRSA) !== -1) {
-                    keyStart = config.sign.beginPrivateRSA;
-                    keyEnd = config.sign.endPrivRSA;
-                } else if (controller.pem.indexOf(config.sign.beginPrivate) !== -1) {
-                    keyStart = config.sign.beginPrivate;
-                    keyEnd = config.sign.endPrivate;
-                }
+                let keyStart = controller.pem.search(config.sign.beginPrivateKeyHeader);
+                let keyEnd = controller.pem.search(config.sign.endPrivateKeyHeader);
                 try {
                     key = KJUR.KEYUTIL.getKey(
                         controller.pem.substring(
-                            controller.pem.indexOf(keyStart),
-                            controller.pem.indexOf(keyEnd) + keyEnd.length
+                            keyStart, 
+                            keyEnd + config.sign.endPrivateKeyHeader.toString().length - 2
                         ),
                         $scope.privSecret
                     );
@@ -742,11 +792,11 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             });
             // Set all fields to touched to show errors.
             if ($scope.paramForm.$invalid) {
-                angular.forEach($scope.paramForm.$error, function (field) {
-                    angular.forEach(field, function (errorField) {
-                        errorField.$setTouched()
-                    })
-                })
+                angular.forEach($scope.paramForm.$error, function(field) {
+                    angular.forEach(field, function(errorField) {
+                        errorField.$setTouched();
+                    });
+                });
             }
         }
     }
@@ -771,7 +821,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             $scope.testResultStatusText = undefined;
             $scope.testSuccess = undefined;
             $scope.test = true;
-            $scope.step3Title ='View Generated Basestring and Signature';
+            $scope.step3Title = 'View Generated Basestring and Signature';
             return;
         }
 
@@ -780,7 +830,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
 
         $scope.sendingTestRequest = true;
         return TestService.sendTestRequest($scope.realmUri, $scope.selectedRequest, $scope.testSendAuthHeader,
-                controller.selectedLevel)
+            controller.selectedLevel)
             .then(success => {
                 $scope.testSuccess = true;
                 $scope.responseData = success.data;
@@ -800,7 +850,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             })
             .finally(() => {
                 $scope.sendingTestRequest = false;
-            })
+            });
     }
 }
 

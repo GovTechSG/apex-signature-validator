@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.3.5] - 2018-04-13
+- Recognizes all PEM formatted private key headers for L2 signatures
+
+## [0.3.4] - 2018-04-12
+- Fixed query params handling in signature validator path
+
 ## [0.3.3] - 2018-04-06
 ### Updated
 - Added support for the signature validator to load L2 private keys with -----BEGIN PRIVATE KEY----- headers
