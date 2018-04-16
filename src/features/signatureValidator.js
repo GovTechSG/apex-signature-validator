@@ -314,8 +314,19 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
 
     init();
 
-    $scope.sendingTestRequest = false;
+    $scope.selectedRequest = $scope.options[0];
+    controller.selectedFrom = $scope.options_zone[0];
+    controller.selectedProvider = $scope.options_provider[0];
+    controller.inputAuthPrefix = config.main.defaultAuthPrefix;
 
+    $scope.nonceDisabled = true;
+    $scope.timestampDisabled = true;
+    controller.input_timestamp = 'auto-generated';
+    controller.input_nonce = 'auto-generated';
+    controller.selectedLevel = 0;
+
+    $scope.sendingTestRequest = false;
+    $scope.inputUri = '';
     $scope.additionalParams = [];
     $scope.extractedParams = [];
 
@@ -326,6 +337,17 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
     controller.levelChange = levelChange;
     controller.showOptions = showOptions;
     $scope.signAndTest = signAndTest;
+
+    function init() {
+        if (ModalService.getParams() != null) {
+            set();
+        } else {
+            // Initial load
+            loadDefaultFromConfig(2);
+        }
+        formRealmUri();
+        formUri();
+    }
 
     $scope.checkTestResult = function() {
         if ($scope.test || $scope.testSuccess == null) {
@@ -392,26 +414,6 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
             params: ModalService.getParams(),
             password: ModalService.getPwd()
         };
-    }
-
-    function init() {
-        if (ModalService.getParams() != null) {
-            set();
-        } else {
-            // Initial load
-            loadDefaultFromConfig(2);
-            $scope.selectedRequest = $scope.options[0];
-            controller.selectedFrom = $scope.options_zone[0];
-            controller.selectedProvider = $scope.options_provider[0];
-            controller.inputAuthPrefix = config.main.defaultAuthPrefix;
-            $scope.nonceDisabled = true;
-            $scope.timestampDisabled = true;
-            controller.input_timestamp = 'auto-generated';
-            controller.input_nonce = 'auto-generated';
-            controller.selectedLevel = 0;
-        }
-        formRealmUri();
-        formUri();
     }
 
     function set() {
