@@ -645,11 +645,51 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
     }
 
     /**
+     *
+     * @param {string} input A query string of format key1=value1&key2=value2.
+     *
+     * @returns {object} An object with key-value pairs taken from the input string.
+     */
+    function parseQueryString(input) {
+        let params = input.split('&');
+        let output = {};
+        for (let param of params) {
+            let outputKeys = Object.keys(output);
+            let paramKey = param.substring(0, param.indexOf('='));
+            let paramValue = param.substring(param.indexOf('=') + 1);
+            if (!outputKeys.includes(paramKey)) {
+                // If output doesn't contain key, add it in
+                output[paramKey] = paramValue;
+            }
+        }
+        return output;
+    }
+
+    function extractQueryParams(path) {
+        let search = path.substring(path.indexOf('?') + 1);
+        let queryParams = parseQueryString(search);
+        let paramNames = Object.keys(queryParams);
+        for (let key of paramNames) {
+            $scope.extractedParams.push({
+                name: key,
+                value: queryParams[key]
+            });
+        }
+    }
+
+    /**
      * Processes all fields on the form and generates base string
      */
     function formParams() {
         formRealmUri(); // Sets $scope.realmUri
         formUri(); // Sets $scope.uri
+
+        // Extract query params into $scope.extractedParams
+        $scope.extractedParams = [];
+        if ($scope.inputUri.indexOf('?') !== -1) {
+            extractQueryParams($scope.inputUri);
+        }
+
         let params = {};
 
         let authPrefix = controller.inputAuthPrefix || '';
@@ -714,47 +754,11 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         }
     }
 
-    /**
-     *
-     * @param {string} input A query string of format key1=value1&key2=value2.
-     *
-     * @returns {object} An object with key-value pairs taken from the input string.
-     */
-    function parseQueryString(input) {
-        let params = input.split('&');
-        let output = {};
-        for (let param of params) {
-            let outputKeys = Object.keys(output);
-            let paramKey = param.substring(0, param.indexOf('='));
-            let paramValue = param.substring(param.indexOf('=') + 1);
-            if (!outputKeys.includes(paramKey)) {
-                // If output doesn't contain key, add it in
-                output[paramKey] = paramValue;
-            }
-        }
-        return output;
-    }
-
-    function extractQueryParams(path) {
-        let search = path.substring(path.indexOf('?') + 1);
-        let queryParams = parseQueryString(search);
-        let paramNames = Object.keys(queryParams);
-        for (let key of paramNames) {
-            $scope.extractedParams.push({
-                name: key,
-                value: queryParams[key]
-            });
-        }
-    }
 
     function signAndTest(send) {
         $scope.privateKeyError = false;
         showBaseCompareResults(false);
         try {
-            // Extract query params, if any, from the give path, before processing params and generating base string
-            if ($scope.inputUri.indexOf('?') !== -1) {
-                extractQueryParams($scope.inputUri);
-            }
             formParams();
             validateParams();
             let key;
