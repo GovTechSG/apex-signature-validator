@@ -3,7 +3,7 @@ import URL from 'urlsafe-base64';
 
 function jwtService() {
     return {
-        verifyJWS: function(input, publicKey) {
+        verifyJWS(input, publicKey) {
             try {
                 let alg = JOSE.jwa(input.header.alg);
                 let isValid = alg.verify(Buffer.from(input.protected + '.' + input.payload), URL.decode(input.signature), publicKey);
@@ -18,7 +18,7 @@ function jwtService() {
                 };
             }
         },
-        decryptJWE: function(input, privateKey) {
+        decryptJWE(input, privateKey) {
             try {
                 let cipherText = URL.decode(input.ciphertext);
                 let tag = Buffer.from(input.tag, 'base64');

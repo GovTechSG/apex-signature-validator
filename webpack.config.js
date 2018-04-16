@@ -84,8 +84,10 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
         }));
         config.plugins.push(new HtmlWebpackPlugin({
             title: 'Apex Signature Validator',
-            template: 'index.ejs'
+            template: 'index.ejs',
+            inlineSource: '.js$'
         }));
+        config.plugins.push(new HtmlWebpackInlineSourcePlugin());
     } else {
         config.plugins.push(new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify('development'),
