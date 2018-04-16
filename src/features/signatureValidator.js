@@ -127,15 +127,15 @@ let signatureValidatorTemplate = `
     </div>
     <div class="row">
         <div class="col-md-12">
-            <div class="row fx-zoom-normal fx-speed-500" ng-if="$ctrl.showLevel1">
-                <div ng-class="{'col-md-6': $ctrl.showLevel2, 'col-md-4' : $ctrl.showLevel1}">
+            <div ng-if="$ctrl.showLevel2 || $ctrl.showLevel1" class="row fx-zoom-normal fx-speed-500">
+                <div ng-class="{'col-md-6': $ctrl.showLevel2, 'col-md-4': $ctrl.showLevel1}">
                     <b>Auth Prefix</b>
                     <input type="text" ng-model="$ctrl.inputAuthPrefix" class="form-control" name="authPrefix" required ng-keyup="formParams()">
                     <span ng-show="paramForm.authPrefix.$touched && paramForm.authPrefix.$invalid" class="fail">
                         Auth Prefix is required.
                     </span>
                 </div>
-                <div ng-class="{'col-md-6': $ctrl.showLevel2, 'col-md-4' : !$ctrl.showLevel2}">
+                <div ng-class="{'col-md-6': $ctrl.showLevel2, 'col-md-4': $ctrl.showLevel1}">
                     <b>Application ID</b>
                     <input type="text" ng-model="$ctrl.input_appId" class="form-control" required name="appId" ng-keyup="formParams()">
                     <span ng-show="paramForm.appId.$touched && paramForm.appId.$invalid" class="fail">
@@ -143,7 +143,7 @@ let signatureValidatorTemplate = `
                     </span>
                 </div>
 
-                <div class="col-md-4" ng-if="!$ctrl.showLevel2">
+                <div class="col-md-4" ng-if="$ctrl.showLevel1">
                     <b>Application Secret</b>
                     <input type="text" ng-model="$ctrl.input_appSecret" required ng-keyup="formParams()" class="form-control" name="appSecret">
                     <span ng-show="paramForm.appSecret.$touched && paramForm.appSecret.$invalid" class="fail">
@@ -483,7 +483,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         $scope.showTestResults = false;
         if (controller.selectedLevel === 2) {
             controller.showLevel2 = true;
-            controller.showLevel1 = true;
+            controller.showLevel1 = false;
             $scope.input_sigmethod = config.main.sigMethod.level2;
         } else if (controller.selectedLevel === 1) {
             controller.showLevel1 = true;
@@ -554,8 +554,6 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         }
         $scope.bsResults = $sce.trustAsHtml(bsResults);
         if (generatedBS === ownBS) {
-
-       
             Notification.success({
                 title: '',
                 message: 'Basestrings are the same',
@@ -611,12 +609,12 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         if (process.env.NODE_ENV === 'production') {
             // production work-around
             if (controller.selectedProvider === 'External Gateway') {
-                uri = `https://${gateway}.e.${domain}`
+                uri = `https://${gateway}.e.${domain}`;
             } else if (controller.selectedProvider === 'Internal Gateway') {
-                uri = `https://${gateway}.i.${domain}`
+                uri = `https://${gateway}.i.${domain}`;
             }
         } else {
-            uri = `https://${gateway}.${domain}`
+            uri = `https://${gateway}.${domain}`;
         }
 
         uri += `/${userPath}`;
