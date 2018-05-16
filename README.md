@@ -6,8 +6,7 @@
 [![GitHub license](https://img.shields.io/github/license/GovTechSG/apex-signature-validator.svg)](https://github.com/GovTechSG/apex-signature-validator/blob/master/LICENSE)
 [![GitHub forks](https://img.shields.io/github/forks/GovTechSG/apex-signature-validator.svg)](https://github.com/GovTechSG/apex-signature-validator/network)
 
-
-The Apex Signature Validator is an AngularJS application that assists APEX API consumers in verifying whether signatures are generated correctly in their applications when making restful API calls to the APEX API Gateway. 
+The Apex Signature Validator is an AngularJS application that assists APEX API consumers in verifying whether signatures are generated correctly in their applications when making restful API calls to the APEX API Gateway. See it in action [here](https://govtechsg.github.io/apex-signature-validator/).
 
 You can find out more about Apex signature generation from our reference Node.js implementation at https://github.com/GovTechSG/node-apex-api-security.
 
