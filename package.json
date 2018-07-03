@@ -6,7 +6,9 @@
     "build": "webpack --progress --colors --env.production --optimize-minimize",
     "devbuild": "webpack-dev-server --progress --colors --env.devbuild --optimize-minimize",
     "devserver": "webpack-dev-server",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "license": "MIT",
   "dependencies": {
@@ -23,7 +25,8 @@
     "lodash": "^4.17.5",
     "ng-fx": "^2.0.4",
     "nonce": "^1.0.4",
-    "urlsafe-base64": "1.0.0"
+    "urlsafe-base64": "1.0.0",
+    "snyk": "^1.88.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
@@ -46,5 +49,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/GovTechSG/apex-signature-validator.git"
-  }
+  },
+  "snyk": true
 }
