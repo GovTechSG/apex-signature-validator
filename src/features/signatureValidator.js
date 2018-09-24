@@ -305,7 +305,7 @@ let signatureValidatorTemplate = `
 </div>
 </div>`;
 
-function signatureValidatorController($scope, $rootScope, config, Notification, TestService, ModalService, $sce,
+function signatureValidatorController($scope, config, Notification, TestService, ModalService, $sce,
                                       $uibModal, stateService) {
 
     const controller = this;
@@ -856,7 +856,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
     }
 }
 
-signatureValidatorController.$inject = ['$scope', '$rootScope', 'config', 'Notification', 'TestService', 'ModalService', '$sce',
+signatureValidatorController.$inject = ['$scope', 'config', 'Notification', 'TestService', 'ModalService', '$sce',
     '$uibModal', 'stateService'
 ];
 
