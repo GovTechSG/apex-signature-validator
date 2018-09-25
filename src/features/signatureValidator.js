@@ -21,6 +21,7 @@ let signatureValidatorTemplate = `
 
     <div class="row">
 
+    <!--
         <div class="col-md-6">
             <b>From</b>
 
@@ -28,19 +29,22 @@ let signatureValidatorTemplate = `
                 <input type="radio" name="from" ng-model="$ctrl.selectedFrom" value="{{single}}" ng-change="formParams()">{{single}}
             </label>
         </div>
-
+    -->
         <div class="col-md-6">
-            <b>Provider Zone</b>
-            <label class="radio-inline" ng-repeat="single in options_provider">
-                <input type="radio" name="to" ng-model="$ctrl.selectedProvider" value="{{single}}" ng-change="formParams()">{{single}}
+            <b>API Gateway Zone</b>
+            <label class="radio-inline" ng-repeat="gatewayZone in gatewayZoneOptions">
+                <input type="radio" name="gatewayZoneOptions" ng-model="$ctrl.selectedProvider" value="{{gatewayZone}}" ng-change="formParams()">
+                {{gatewayZone}}
             </label>
         </div>
     </div>
     <br>
     <div class="row">
         <div class="col-md-2">
-            <b>Request</b>
-            <select ng-options="o as o for o in options" ng-model="selectedRequest" class="form-control"></select>
+            <label for="httpMethodSelector">Request</label>
+            <select id="httpMethodSelector" ng-change="formParams()" ng-options="httpMethod for httpMethod in httpMethods" 
+                    ng-model="selectedRequest" class="form-control">
+            </select>
         </div>
 
         <div class="col-md-4">
@@ -305,7 +309,7 @@ let signatureValidatorTemplate = `
 </div>
 </div>`;
 
-function signatureValidatorController($scope, $rootScope, config, Notification, TestService, ModalService, $sce,
+function signatureValidatorController($scope, config, Notification, TestService, ModalService, $sce,
                                       $uibModal, stateService) {
 
     const controller = this;
@@ -314,9 +318,9 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
 
     init();
 
-    $scope.selectedRequest = $scope.options[0];
+    $scope.selectedRequest = $scope.httpMethods[0];
     controller.selectedFrom = $scope.options_zone[0];
-    controller.selectedProvider = $scope.options_provider[0];
+    controller.selectedProvider = $scope.gatewayZoneOptions[0];
     controller.inputAuthPrefix = config.main.defaultAuthPrefix;
 
     $scope.nonceDisabled = true;
@@ -451,9 +455,9 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
     }
 
     function loadDefaultFromConfig(level) {
-        $scope.options = ['GET', 'POST'];
+        $scope.httpMethods = config.main.httpMethods;
         $scope.options_zone = config.main.callerZone;
-        $scope.options_provider = config.main.providerGateway;
+        $scope.gatewayZoneOptions = config.main.providerGateway;
         $scope.input_app_ver = config.main.appVer;
         if (level === 1) {
             $scope.input_sigmethod = config.main.sigMethod.level1;
@@ -608,9 +612,9 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
         let uri = '';
         if (process.env.NODE_ENV === 'production') {
             // production work-around
-            if (controller.selectedProvider === 'External Gateway') {
+            if (controller.selectedProvider === 'Internet Gateway') {
                 uri = `https://${gateway}.e.${domain}`;
-            } else if (controller.selectedProvider === 'Internal Gateway') {
+            } else if (controller.selectedProvider === 'Intranet Gateway') {
                 uri = `https://${gateway}.i.${domain}`;
             }
         } else {
@@ -856,7 +860,7 @@ function signatureValidatorController($scope, $rootScope, config, Notification, 
     }
 }
 
-signatureValidatorController.$inject = ['$scope', '$rootScope', 'config', 'Notification', 'TestService', 'ModalService', '$sce',
+signatureValidatorController.$inject = ['$scope', 'config', 'Notification', 'TestService', 'ModalService', '$sce',
     '$uibModal', 'stateService'
 ];
 

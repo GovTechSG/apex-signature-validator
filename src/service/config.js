@@ -5,8 +5,14 @@ export default {
             level1: 'HMACSHA256',
             level2: 'SHA256withRSA'
         },
+        httpMethods: [
+            'GET', 
+            'POST', // Only POST body encoding of x-www-urlencoded affects basestring
+            'PUT', 
+            'DELETE'
+        ],
         callerZone: ['WWW', 'Internet Zone', 'Intranet Zone', 'SGNet'],
-        providerGateway: ['External Gateway', 'Internal Gateway'],
+        providerGateway: ['Internet Gateway', 'Intranet Gateway'],
         authLevels: [0, 1, 2],
         defaultGateway: 'apex_example_gateway',
         defaultUri: '/apex/example/path',
