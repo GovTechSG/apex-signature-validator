@@ -10,12 +10,12 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@babel/polyfill": "^7.0.0",
     "@uirouter/angularjs": "^1.0.15",
     "angular": "^1.6.4",
     "angular-animate": "^1.6.4",
     "angular-ui-bootstrap": "^2.5.0",
     "angular-ui-notification": "^0.3.6",
-    "babel-polyfill": "^6.26.0",
     "bootstrap": "^3.3.7",
     "jose": "^0.3.2",
     "jquery": "^3.3.1",
@@ -26,9 +26,9 @@
     "urlsafe-base64": "1.0.0"
   },
   "devDependencies": {
-    "babel-core": "^6.26.3",
-    "babel-loader": "^7.1.2",
-    "babel-preset-env": "^1.7.0",
+    "@babel/core": "^7.1.0",
+    "@babel/preset-env": "^7.1.0",
+    "babel-loader": "^8.0.0",
     "base64-img": "^1.0.3",
     "css-loader": "^0.28.9",
     "cssnano": "^3.10.0",

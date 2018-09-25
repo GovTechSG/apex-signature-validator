@@ -27,7 +27,7 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
                         options: {
                             presets: [
                                 [
-                                    'babel-preset-env',
+                                    '@babel/preset-env',
                                     {
                                         targets: {
                                             browsers: ['ie 11']
@@ -61,8 +61,9 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
             contentBase: path.resolve(__dirname, 'dist')
         }
     };
-    // Production only
+    
     if (env.production) {
+        // PRODUCTION
         config.plugins.push(new UglifyJsPlugin()); // minify js
         config.plugins.push(new OptimizeCssAssetsPlugin()); // minify css
         config.plugins.push(new webpack.DefinePlugin({
@@ -76,6 +77,7 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
         }));
         config.plugins.push(new HtmlWebpackInlineSourcePlugin());
     } else if (env.devbuild) {
+        // DEV:MINIFIED/INLINED
         config.plugins.push(new UglifyJsPlugin()); // minify js
         config.plugins.push(new OptimizeCssAssetsPlugin()); // minify css
         config.plugins.push(new webpack.DefinePlugin({
@@ -89,6 +91,7 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
         }));
         config.plugins.push(new HtmlWebpackInlineSourcePlugin());
     } else {
+        // DEV
         config.plugins.push(new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify('development'),
             'VERSION': JSON.stringify(version)

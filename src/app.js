@@ -1,4 +1,4 @@
-import 'babel-polyfill';
+import '@babel/polyfill';
 import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
 import uinotification from 'angular-ui-notification';
