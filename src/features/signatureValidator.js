@@ -22,14 +22,7 @@ let signatureValidatorTemplate = `
         </div>
     </div>
 
-    <div class="panel-body">       
-        <div class="well">
-            <p><strong>API URL: </strong> {{$ctrl.apiUrl}}</p>
-            <p ng-if="$ctrl.showLevel2 || $ctrl.showLevel1">
-                <strong>API Signing URL: </strong> {{$ctrl.apiSigningUrl}}
-            </p>
-        </div>        
-
+    <div class="panel-body">
         <form name="httpRequestForm">
             <div class="row">
                 <div class="col-md-6">
@@ -51,20 +44,16 @@ let signatureValidatorTemplate = `
                     </select>
                 </div>
 
-                <div class="col-md-4">
-                    <label for="apiGatewayName">API Gateway Name</label>
+                <div class="col-md-10">
+                    <label for="apiUrl">API URL</label>
 
-                    <input type="text" autocomplete="off" class="form-control" placeholder="myapexgateway" ng-model="$ctrl.apiGatewayName"
-                        name="apiGatewayName" id="apiGatewayName" ng-keyup="formParams()" required>
+                    <input type="text" autocomplete="off" class="form-control" ng-model="$ctrl.apiUrl"
+                        name="apiUrl" id="apiUrl" ng-keyup="formParams()" required
+                        placeholder="https://mygateway.api.gov.sg/myservice/api/v1/users">
                     
-                    <span ng-show="httpRequestForm.apiGatewayName.$touched && httpRequestForm.apiGatewayName.$invalid" class="fail">
-                        Input Gateway is required.
+                    <span ng-show="httpRequestForm.apiUrl.$touched && httpRequestForm.apiUrl.$invalid" class="fail">
+                        API URL is required.
                     </span>
-                </div>
-
-                <div class="col-md-6">
-                    <label for="apiPath">API Path</label>
-                    <input type="text" name="apiPath" id="apiPath" ng-model="$ctrl.apiPath" class="form-control" ng-keyup="formParams()" placeholder="/myservice/api/v1/users">
                 </div>
             </div>
 
@@ -113,7 +102,10 @@ let signatureValidatorTemplate = `
             <div class="col-sm-12" style="text-align:center">
                 <h4><span class="label label-primary">2</span> Apex Authentication Level</h4>
                 <div class="btn-group">
-                    <button ng-repeat="level in $ctrl.authLevels" class="btn btn-default" ng-click="$ctrl.selectedLevel = level">{{level}}</button>
+                    <button ng-repeat="level in $ctrl.authLevels" class="btn btn-default" 
+                        ng-click="$ctrl.selectedLevel = level" ng-class="{active: $ctrl.selectedLevel === level}">
+                        {{level}}
+                    </button>
                 </div>
             </div>
         </div>
@@ -122,10 +114,34 @@ let signatureValidatorTemplate = `
     <div class="panel-body">
         <div class="row">
             <div class="col-sm-12" style="text-align:center" ng-if="$ctrl.selectedLevel === 0">
-                <strong>No authentication parameters for L0</strong>
+                <strong>No authentication required for L0</strong>
             </div>
         </div>
     </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="row">
+            <div class="col-sm-12" style="text-align:center">
+                <h4><span class="label label-primary">3</span> Signature base string and headers</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-sm-12" style="text-align:center" ng-if="$ctrl.selectedLevel === 0">
+                <strong>No authentication required for L0</strong>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" style='text-align:center'>
+    <button type="button" class="btn btn-lg btn-default" ng-click="">
+        <span class="glyphicon glyphicon-transfer"></span> Send Test Request
+    </button>
 </div>
 
 <form name="paramForm">
@@ -133,7 +149,7 @@ let signatureValidatorTemplate = `
         <div class="col-md-12" style="text-align: center">
             <h4>Authentication Level</h4>
             <div class="btn-group">
-                <label ng-repeat="level in options_level" class="btn btn-lg btn-default" ng-model="$ctrl.selectedLevel" ng-click="$ctrl.levelChange()"
+                <label ng-repeat="level in $ctrl.authLevels" class="btn btn-lg btn-default" ng-model="$ctrl.selectedLevel" ng-click="$ctrl.levelChange()"
                     uib-btn-radio="{{level}}">{{level}}
                 </label>
             </div>
