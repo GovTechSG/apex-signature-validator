@@ -66,6 +66,7 @@ let signatureValidatorTemplate = `
             </div>
 
             <fieldset class="form-horizontal" ng-if="$ctrl.postBody">
+                <br>
                 <div class="row" ng-repeat="kvpair in $ctrl.postBody">
                     <div class="col-sm-6">
                         <div class="form-group">
