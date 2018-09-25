@@ -8,64 +8,127 @@ const generateNonce = nonce();
 let signatureValidatorTemplate = `
 <div class="container-fluid main-content">
 
-<h2>Apex Signature Validator</h2>
-
-<div class="heading">
-    <span class="label label-primary">1</span> Input Request Parameters and Generate Basestring
-    <span ng-click="$ctrl.showOptions()" style="float: right;">
+<h3 style="display: inline-block">Apex Signature Validator</h3>
+<h5 ng-click="$ctrl.showOptions()" style="float: right">
         <a href><span class="glyphicon glyphicon-cog"></span> Load/save From JSON</a>
-    </span>
+</h5>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="row">
+            <div class="col-sm-12" style="text-align:center">
+                <h4><span class="label label-primary">1</span> HTTP Request parameters</h4>                
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-body">       
+        <div class="well">
+            <p><strong>API URL: </strong> {{$ctrl.apiUrl}}</p>
+            <p ng-if="$ctrl.showLevel2 || $ctrl.showLevel1">
+                <strong>API Signing URL: </strong> {{$ctrl.apiSigningUrl}}
+            </p>
+        </div>        
+
+        <form name="httpRequestForm">
+            <div class="row">
+                <div class="col-md-6">
+                            <label>API Gateway Zone</label>
+                    <label class="radio-inline" ng-repeat="gatewayZone in gatewayZoneOptions">
+                                <input type="radio" name="gatewayZoneOptions" ng-model="$ctrl.gatewayZone" value="{{gatewayZone}}" ng-change="formParams()">
+                        {{gatewayZone}}
+                    </label>
+                </div>
+            </div>
+            
+            <br>
+        
+            <div class="row">
+                <div class="col-md-2">
+                    <label for="httpMethodSelector">Request</label>
+                    <select id="httpMethodSelector" ng-change="formParams()" ng-options="httpMethod for httpMethod in httpMethods" 
+                                    ng-model="$ctrl.httpMethod" class="form-control">
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label for="apiGatewayName">API Gateway Name</label>
+
+                    <input type="text" autocomplete="off" class="form-control" placeholder="myapexgateway" ng-model="$ctrl.apiGatewayName"
+                        name="apiGatewayName" id="apiGatewayName" ng-keyup="formParams()" required>
+                    
+                    <span ng-show="httpRequestForm.apiGatewayName.$touched && httpRequestForm.apiGatewayName.$invalid" class="fail">
+                        Input Gateway is required.
+                    </span>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="apiPath">API Path</label>
+                    <input type="text" name="apiPath" id="apiPath" ng-model="$ctrl.apiPath" class="form-control" ng-keyup="formParams()" placeholder="/myservice/api/v1/users">
+                </div>
+            </div>
+
+            <br>
+
+            <div class="row" ng-if="$ctrl.httpMethod" === 'POST'">
+                <div class="col-md-12">
+                    <b>POST body (only if POST body encoding is application/x-www-form-urlencoded)</b> <a href ng-click=$ctrl.addPostBody('','')> <span class="glyphicon glyphicon-plus"></span>Add</a>        
+                </div>
+            </div>
+
+            <fieldset class="form-horizontal" ng-if="$ctrl.postBody">
+                <div class="row" ng-repeat="kvpair in $ctrl.postBody">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="{{ 'postBodyKey' + $index }}">Key</label>
+                            <div class="col-sm-10">
+                                <input type="text" id="{{ 'postBodyKey' + $index }}" class="form-control" ng-model="kvpair.key" ng-keyup="formParams()">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-sm-5">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="{{ 'postBodyValue' + $index }}">Value</label>
+                            <div class="col-sm-10">
+                                <input type="text" id="{{ 'postBodyValue' + $index }}" class="form-control" ng-model="kvpair.value" ng-keyup="formParams()">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-1">
+                        <button type="button" class="btn btn-danger" ng-click="$ctrl.removePostBody($index)">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                    </div>
+                </div>
+            </fieldset>             
+        </form>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="row">
+            <div class="col-sm-12" style="text-align:center">
+                <h4><span class="label label-primary">2</span> Apex Authentication Level</h4>
+                <div class="btn-group">
+                    <button ng-repeat="level in $ctrl.authLevels" class="btn btn-default" ng-click="$ctrl.selectedLevel = level">{{level}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-sm-12" style="text-align:center" ng-if="$ctrl.selectedLevel === 0">
+                <strong>No authentication parameters for L0</strong>
+            </div>
+        </div>
+    </div>
 </div>
 
 <form name="paramForm">
-
-    <div class="row">
-
-    <!--
-        <div class="col-md-6">
-            <b>From</b>
-
-            <label class="radio-inline" ng-repeat="single in options_zone">
-                <input type="radio" name="from" ng-model="$ctrl.selectedFrom" value="{{single}}" ng-change="formParams()">{{single}}
-            </label>
-        </div>
-    -->
-        <div class="col-md-6">
-            <b>API Gateway Zone</b>
-            <label class="radio-inline" ng-repeat="gatewayZone in gatewayZoneOptions">
-                <input type="radio" name="gatewayZoneOptions" ng-model="$ctrl.selectedProvider" value="{{gatewayZone}}" ng-change="formParams()">
-                {{gatewayZone}}
-            </label>
-        </div>
-    </div>
-    <br>
-    <div class="row">
-        <div class="col-md-2">
-            <label for="httpMethodSelector">Request</label>
-            <select id="httpMethodSelector" ng-change="formParams()" ng-options="httpMethod for httpMethod in httpMethods" 
-                    ng-model="selectedRequest" class="form-control">
-            </select>
-        </div>
-
-        <div class="col-md-4">
-            <b>Gateway</b>
-
-            <input autocomplete="off" class="form-control" placeholder="e.g. my_apex_gateway" ng-model="selectedGateway" name="inputGateway"
-                ng-keyup="formParams()" required/>
-            <span ng-show="paramForm.inputGateway.$touched && paramForm.inputGateway.$invalid" class="fail">
-                Input Gateway is required.
-            </span>
-        </div>
-
-        <div class="col-md-6">
-            <b>Path</b>
-            <input type="text" ng-model="inputUri" class="form-control" ng-keyup="formParams()" placeholder="e.g. /v1/rest/level2/ig/ping"
-            />
-        </div>
-
-    </div>
-    <br>
-
     <div class="row">
         <div class="col-md-12" style="text-align: center">
             <h4>Authentication Level</h4>
@@ -310,47 +373,67 @@ let signatureValidatorTemplate = `
 </div>`;
 
 function signatureValidatorController($scope, config, Notification, TestService, ModalService, $sce,
-                                      $uibModal, stateService) {
+    $uibModal, stateService) {
 
     const controller = this;
 
-    stateService.state = 'signatureValidator';
-
     init();
 
-    $scope.selectedRequest = $scope.httpMethods[0];
-    controller.selectedFrom = $scope.options_zone[0];
-    controller.selectedProvider = $scope.gatewayZoneOptions[0];
+    controller.addPostBody = addPostBody;
+    controller.removePostBody = removePostBody;
+
     controller.inputAuthPrefix = config.main.defaultAuthPrefix;
-
-    $scope.nonceDisabled = true;
-    $scope.timestampDisabled = true;
-    controller.input_timestamp = 'auto-generated';
-    controller.input_nonce = 'auto-generated';
-    controller.selectedLevel = 0;
-
-    $scope.sendingTestRequest = false;
-    $scope.inputUri = '';
-    $scope.additionalParams = [];
-    $scope.extractedParams = [];
 
     $scope.add = add;
     $scope.compareBS = compareBS;
     $scope.remove = remove;
-    $scope.formParams = formParams;
+    // $scope.formParams = formParams;
+    $scope.formParams = function() { };
     controller.levelChange = levelChange;
     controller.showOptions = showOptions;
     $scope.signAndTest = signAndTest;
 
     function init() {
+        stateService.state = 'signatureValidator';
+        controller.postBody = [];
+        $scope.nonceDisabled = true;
+        $scope.timestampDisabled = true;
+        controller.input_timestamp = 'auto-generated';
+        controller.input_nonce = 'auto-generated';
+        controller.selectedLevel = 0;
+
+        $scope.sendingTestRequest = false;
+        $scope.inputUri = '';
+        $scope.additionalParams = [];
+        $scope.extractedParams = [];
         if (ModalService.getParams() != null) {
             set();
         } else {
             // Initial load
-            loadDefaultFromConfig(2);
+            $scope.httpMethods = config.main.httpMethods;
+            controller.httpMethod = $scope.httpMethods[0];
+
+            $scope.gatewayZoneOptions = config.main.providerGateway;
+            controller.selectedProvider = $scope.gatewayZoneOptions[0];
+
+            controller.authLevels = config.main.authLevels;
+
+            $scope.input_app_ver = config.main.appVer;
+            controller.authLevels = config.main.authLevels;
         }
         formRealmUri();
         formUri();
+    }
+
+    function addPostBody(key, value) {
+        controller.postBody.push({
+            key: key,
+            value: value
+        })
+    }
+
+    function removePostBody(index) {
+        controller.postBody.splice(index, 1);
     }
 
     $scope.checkTestResult = function() {
@@ -465,7 +548,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
             $scope.input_sigmethod = config.main.sigMethod.level2;
         }
 
-        $scope.options_level = config.main.authLevels;
+        controller.authLevels = config.main.authLevels;
     }
 
     function showBaseCompareResults(boolean) {
