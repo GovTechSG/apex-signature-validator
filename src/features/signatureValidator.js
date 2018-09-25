@@ -26,9 +26,9 @@ let signatureValidatorTemplate = `
         <form name="httpRequestForm">
             <div class="row">
                 <div class="col-md-6">
-                            <label>API Gateway Zone</label>
+                    <label>API Gateway Zone</label>
                     <label class="radio-inline" ng-repeat="gatewayZone in gatewayZoneOptions">
-                                <input type="radio" name="gatewayZoneOptions" ng-model="$ctrl.gatewayZone" value="{{gatewayZone}}" ng-change="formParams()">
+                        <input type="radio" name="gatewayZoneOptions" ng-model="$ctrl.gatewayZone" value="{{gatewayZone}}" ng-change="formParams()">
                         {{gatewayZone}}
                     </label>
                 </div>
@@ -40,7 +40,7 @@ let signatureValidatorTemplate = `
                 <div class="col-md-2">
                     <label for="httpMethodSelector">Request</label>
                     <select id="httpMethodSelector" ng-change="formParams()" ng-options="httpMethod for httpMethod in httpMethods" 
-                                    ng-model="$ctrl.httpMethod" class="form-control">
+                            ng-model="$ctrl.httpMethod" class="form-control">
                     </select>
                 </div>
 
@@ -59,7 +59,7 @@ let signatureValidatorTemplate = `
 
             <br>
 
-            <div class="row" ng-if="$ctrl.httpMethod" === 'POST'">
+            <div class="row" ng-if="$ctrl.httpMethod === 'POST'">
                 <div class="col-md-12">
                     <b>POST body (only if POST body encoding is application/x-www-form-urlencoded)</b> <a href ng-click=$ctrl.addPostBody('','')> <span class="glyphicon glyphicon-plus"></span>Add</a>        
                 </div>
@@ -92,7 +92,10 @@ let signatureValidatorTemplate = `
                         </button>
                     </div>
                 </div>
-            </fieldset>             
+            </fieldset>
+            
+            <div class="well uri-preview">            
+            </div>
         </form>
     </div>
 </div>
