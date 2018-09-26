@@ -28,7 +28,7 @@ let signatureValidatorTemplate = `
                 <div class="col-md-6">
                     <label>API Gateway Zone</label>
                     <label class="radio-inline" ng-repeat="gatewayZone in gatewayZoneOptions">
-                        <input type="radio" name="gatewayZoneOptions" ng-model="$ctrl.gatewayZone" value="{{gatewayZone}}" ng-change="formParams()">
+                        <input type="radio" name="gatewayZoneOptions" ng-model="$ctrl.gatewayZone" value="{{gatewayZone}}" ng-change="formSignature()">
                         {{gatewayZone}}
                     </label>
                 </div>
@@ -39,7 +39,7 @@ let signatureValidatorTemplate = `
             <div class="row">
                 <div class="col-md-2">
                     <label for="httpMethodSelector">Request</label>
-                    <select id="httpMethodSelector" ng-change="formParams()" ng-options="httpMethod for httpMethod in httpMethods" 
+                    <select id="httpMethodSelector" ng-change="formSignature()" ng-options="httpMethod for httpMethod in httpMethods" 
                             ng-model="$ctrl.httpMethod" class="form-control">
                     </select>
                 </div>
@@ -48,7 +48,7 @@ let signatureValidatorTemplate = `
                     <label for="apiUrl">API URL</label>
 
                     <input type="text" autocomplete="off" class="form-control" ng-model="$ctrl.apiUrl"
-                        name="apiUrl" id="apiUrl" ng-keyup="formParams()" required
+                        name="apiUrl" id="apiUrl" ng-keyup="formSignature()" required
                         placeholder="https://mygateway.api.gov.sg/myservice/api/v1/users">
                     
                     <span ng-show="httpRequestForm.apiUrl.$touched && httpRequestForm.apiUrl.$invalid" class="fail">
@@ -72,7 +72,7 @@ let signatureValidatorTemplate = `
                         <div class="form-group">
                             <label class="col-sm-2 control-label" for="{{ 'postBodyKey' + $index }}">Key</label>
                             <div class="col-sm-10">
-                                <input type="text" id="{{ 'postBodyKey' + $index }}" class="form-control" ng-model="kvpair.key" ng-keyup="formParams()">
+                                <input type="text" id="{{ 'postBodyKey' + $index }}" class="form-control" ng-model="kvpair.key" ng-keyup="formSignature()">
                             </div>
                         </div>
                     </div>
@@ -81,7 +81,7 @@ let signatureValidatorTemplate = `
                         <div class="form-group">
                             <label class="col-sm-2 control-label" for="{{ 'postBodyValue' + $index }}">Value</label>
                             <div class="col-sm-10">
-                                <input type="text" id="{{ 'postBodyValue' + $index }}" class="form-control" ng-model="kvpair.value" ng-keyup="formParams()">
+                                <input type="text" id="{{ 'postBodyValue' + $index }}" class="form-control" ng-model="kvpair.value" ng-keyup="formSignature()">
                             </div>
                         </div>
                     </div>
@@ -136,7 +136,7 @@ let signatureValidatorTemplate = `
                             <input type="text" class="form-control" name="authPrefix" id="authPrefix" required disabled
                                 ng-model="$ctrl.getAuthPrefix($ctrl.gatewayZone, $ctrl.selectedLevel)" 
                                 ng-model-options="{ getterSetter: true }"
-                                ng-keyup="formParams()">
+                                ng-keyup="formSignature()">
 
                             <span ng-show="authParamsForm.authPrefix.$touched && authParamsForm.authPrefix.$invalid" class="fail">
                                 Auth Prefix is required.
@@ -147,7 +147,7 @@ let signatureValidatorTemplate = `
                             <label for="appId">Application ID</label>
 
                             <input type="text" name="appId" id="appId" class="form-control" required
-                                ng-model="$ctrl.appId" ng-keyup="formParams()">
+                                ng-model="$ctrl.appId" ng-keyup="formSignature()">
 
                             <span ng-show="authParamsForm.appId.$touched && authParamsForm.appId.$invalid" class="fail">
                                 App Id is required.
@@ -158,7 +158,7 @@ let signatureValidatorTemplate = `
                             <label for="appSecret">Application Secret</label>
 
                             <input type="text"name="appSecret" id="appSecret" required class="form-control"
-                                   ng-model="$ctrl.appSecret" ng-keyup="formParams()">
+                                   ng-model="$ctrl.appSecret" ng-keyup="formSignature()">
 
                             <span ng-show="authParamsForm.appSecret.$touched && authParamsForm.appSecret.$invalid" class="fail">
                                 App Secret is required.
@@ -191,7 +191,8 @@ let signatureValidatorTemplate = `
                                 <small>auto-generate:</small>
                                 <input type="checkbox" ng-model="timestampDisabled" ng-change="timestampGenChange()">
                             </label>
-                            <input type="text" ng-model="$ctrl.timestamp" class="form-control" required ng-disabled="timestampDisabled" name="timestamp" id="timestamp">
+                            <input type="text" class="form-control" required name="timestamp" id="timestamp"
+                                ng-model="$ctrl.timestamp" ng-disabled="timestampDisabled" ng-change="formSignature()">
                             <span ng-show="authParamsForm.timestamp.$touched && authParamsForm.timestamp.$invalid" class="fail">
                                 Timestamp is required.
                             </span>
@@ -202,7 +203,8 @@ let signatureValidatorTemplate = `
                                 <small>auto-generate:</small>
                                 <input type="checkbox" ng-model="nonceDisabled" ng-change="nonceGenChange()">
                             </label>
-                            <input type="text" ng-model="$ctrl.nonce" class="form-control" required ng-disabled="nonceDisabled" name="nonce" id="nonce">
+                            <input type="text" class="form-control" required name="nonce" id="nonce"
+                                ng-model="$ctrl.nonce" ng-disabled="nonceDisabled" ng-change="formSignature()">
                             <span ng-show="authParamsForm.nonce.$touched && authParamsForm.nonce.$invalid" class="fail">
                                 Nonce is required.
                             </span>
@@ -215,17 +217,18 @@ let signatureValidatorTemplate = `
                         <div class="col-sm-12">
                             <div class="row">
                                 <div class="col-sm-12">
-                                    <h4>Pem File
-                                        <small>
-                                            Load pem file: <input type="file" on-read-file="parseInputFile($fileContents)" style="display:inline">
-                                        </small>
-                                    </h4>
+                                    <label for="pem">Pem File</label>
+                                    <small>
+                                        Load pem file: <input type="file" on-read-file="parseInputFile($fileContents)" style="display:inline">
+                                    </small>
                                 </div>                              
                             </div>
 
                             <div class="row">
                                 <div class="col-md-12">
-                                    <textarea rows="10" cols="65" class="form-control code" ng-model="$ctrl.pem" name="pem" required></textarea>
+                                    <textarea rows="10" cols="65" class="form-control code" name="pem" id="pem" required
+                                        ng-model="$ctrl.pem" ng-change="formSignature()">
+                                    </textarea>
                                     <span ng-show="authParamsForm.pem.$touched && authParamsForm.pem.$invalid" class="fail">
                                         Pem string is required.
                                     </span>
@@ -236,10 +239,10 @@ let signatureValidatorTemplate = `
 
                             <div class="row">
                                 <div class="col-md-12">
-                                    <label for="pkeySecret">Secret for Private Key</label>
+                                    <label for="pkeySecret">Passphrase for private key (optional)</label>
                                     <input type="password" class="form-control" name="pkeySecret" id="pkeySecret"
                                             ng-model="$ctrl.pkeySecret">
-                                    <span ng-if="privateKeyError" class="fail">Please verify that both pem string and secret are correct</span>
+                                    <span ng-if="privateKeyError" class="fail">Please verify that both private key and secret are correct</span>
                                 </div>
                             </div>
                         </div>
@@ -255,14 +258,64 @@ let signatureValidatorTemplate = `
         <div class="row">
             <div class="col-sm-12" style="text-align:center">
                 <h4><span class="label label-primary">3</span> Signature base string and headers</h4>
+                <!-- <button type="button" class="btn btn-default" ng-if="$ctrl.selectedLevel === 1 || $ctrl.selectedLevel === 2" 
+                        ng-click="$ctrl.showBasestring = true; $ctrl.showAuthHeader = true">
+                    <span class="glyphicon glyphicon-eye-open"></span> Show Basestring and Header
+                </button> -->
             </div>
-        </div>
+        </div> 
     </div>
 
     <div class="panel-body">
-        <div class="row">
-            <div class="col-sm-12" style="text-align:center" ng-if="$ctrl.selectedLevel === 0">
+        <div class="row" style="text-align:center">
+            <div class="col-sm-12" ng-if="$ctrl.selectedLevel === 0">
                 <strong>No authentication required for L0</strong>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12" ng-if="$ctrl.selectedLevel === 1 || $ctrl.selectedLevel === 2">
+                <div class="jumbotron"">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="basestring">Generated Basestring</label>
+                            <textarea rows="3" disabled class="form-control immutable code" ng-model="basestring" name="basestring" id="basestring"></textarea>
+                        </div>
+                    </div>
+
+                    <br>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="basestringToCompare">Basestring to Compare</label>
+                            <textarea rows="3" class="form-control code" ng-model="basestringToCompare" name="basestringToCompare" id="basestringToCompare"></textarea>
+                        </div>
+                    </div>
+
+                    <br>
+                
+                    <div class="row">
+                        <div class="col-md-12 fx-fade-normal" ng-if="showBaseStringCompareResults">
+                            <label>Comparison Results</label>
+                            <pre ng-bind-html="bsResults"></pre>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <span style="float:right; margin-top:5px">
+                                <button class="btn btn-default" ng-click="compareBS(input_basestring, input_basestring_tocompare)">Compare Basestrings</button>
+                            </span>
+                        </div>
+                    </div>
+            
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="authHeader">Request Authorization Header</label>
+                            <textarea rows="10" class="form-control immutable code" name="authHeader" id="authHeader"
+                                ng-model="$ctrl.authHeader" disabled></textarea>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -272,6 +325,33 @@ let signatureValidatorTemplate = `
     <button type="button" class="btn btn-lg btn-default" ng-click="">
         <span class="glyphicon glyphicon-transfer"></span> Send Test Request
     </button>
+</div>
+
+<div style="text-align: center" ng-if="!sendingTestRequest">
+    <span>
+        <b>Response:</b>
+    </span>
+    <span ng-cloak ng-bind="testResultStatus"></span>
+    <br/>
+    <span>
+        <b>Status:</b>
+    </span>
+    <span ng-cloak ng-bind="testResultStatusText"></span>
+    <br/>
+    <span>
+        <b>Data:</b>
+    </span>
+    <span class="wrap" ng-cloak ng-bind="testResultData"></span>
+</div>
+
+<div class="row">
+<div class="col-sm-12">
+<div ng-if="sendingTestRequest" class="spinner">
+    <div class="bounce1"></div>
+    <div class="bounce2"></div>
+    <div class="bounce3"></div>
+</div>
+</div>
 </div>
 
 <form name="paramForm">
@@ -314,13 +394,13 @@ let signatureValidatorTemplate = `
 
             <div class="col-md-6">
                 <b>Name</b>
-                <input type="text" class="form-control" ng-model="single.name" uib-tooltip="name of extra parameter" ng-keyup="formParams()"
+                <input type="text" class="form-control" ng-model="single.name" uib-tooltip="name of extra parameter" ng-keyup="formSignature()"
                     placeholder="name">
             </div>
 
             <div class="col-md-5">
                 <b>Value</b>
-                <input type="text" class="form-control" ng-model="single.value" ng-keyup="formParams()" uib-tooltip="value of extra parameter"
+                <input type="text" class="form-control" ng-model="single.value" ng-keyup="formSignature()" uib-tooltip="value of extra parameter"
                     placeholder="value" />
             </div>
 
@@ -343,14 +423,14 @@ let signatureValidatorTemplate = `
             <div ng-if="$ctrl.showLevel2 || $ctrl.showLevel1" class="row fx-zoom-normal fx-speed-500">
                 <div ng-class="{'col-md-6': $ctrl.showLevel2, 'col-md-4': $ctrl.showLevel1}">
                     <b>Auth Prefix</b>
-                    <input type="text" ng-model="$ctrl.inputAuthPrefix" class="form-control" name="authPrefix" required ng-keyup="formParams()">
+                    <input type="text" ng-model="$ctrl.inputAuthPrefix" class="form-control" name="authPrefix" required ng-keyup="formSignature()">
                     <span ng-show="paramForm.authPrefix.$touched && paramForm.authPrefix.$invalid" class="fail">
                         Auth Prefix is required.
                     </span>
                 </div>
                 <div ng-class="{'col-md-6': $ctrl.showLevel2, 'col-md-4': $ctrl.showLevel1}">
                     <b>Application ID</b>
-                    <input type="text" ng-model="$ctrl.appId" class="form-control" required name="appId" ng-keyup="formParams()">
+                    <input type="text" ng-model="$ctrl.appId" class="form-control" required name="appId" ng-keyup="formSignature()">
                     <span ng-show="paramForm.appId.$touched && paramForm.appId.$invalid" class="fail">
                         App Id is required.
                     </span>
@@ -358,7 +438,7 @@ let signatureValidatorTemplate = `
 
                 <div class="col-md-4" ng-if="$ctrl.showLevel1">
                     <b>Application Secret</b>
-                    <input type="text" ng-model="$ctrl.input_appSecret" required ng-keyup="formParams()" class="form-control" name="appSecret">
+                    <input type="text" ng-model="$ctrl.input_appSecret" required ng-keyup="formSignature()" class="form-control" name="appSecret">
                     <span ng-show="paramForm.appSecret.$touched && paramForm.appSecret.$invalid" class="fail">
                         App Secret is required.
                     </span>
@@ -537,8 +617,8 @@ function signatureValidatorController($scope, config, Notification, TestService,
     $scope.add = add;
     $scope.compareBS = compareBS;
     $scope.remove = remove;
-    // $scope.formParams = formParams;
-    $scope.formParams = function() { };
+    // $scope.formSignature = formSignature;
+    $scope.formSignature = function() { };
     controller.levelChange = levelChange;
     controller.showOptions = showOptions;
     $scope.signAndTest = signAndTest;
@@ -637,6 +717,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
 
     function removePostBody(index) {
         controller.postBody.splice(index, 1);
+        formSignature();
     }
 
     $scope.checkTestResult = function() {
@@ -693,7 +774,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
                 ModalService.setPwd(jsonObj.password);
 
                 set();
-                formParams();
+                formSignature();
             })
             .catch(function() {
             });
@@ -970,7 +1051,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
     /**
      * Processes all fields on the form and generates base string
      */
-    function formParams() {
+    function formSignature() {
         formRealmUri(); // Sets $scope.realmUri
         formUri(); // Sets $scope.uri
 
@@ -1049,7 +1130,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
         $scope.privateKeyError = false;
         showBaseCompareResults(false);
         try {
-            formParams();
+            formSignature();
             validateParams();
             let key;
             if (controller.selectedLevel === 1) {
