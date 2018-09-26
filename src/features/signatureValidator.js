@@ -208,6 +208,42 @@ let signatureValidatorTemplate = `
                             </span>
                         </div>
                     </div>
+
+                    <br>
+
+                    <div class="row fx-zoom-normal fx-speed-500" ng-if="$ctrl.selectedLevel === 2">
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <h4>Pem File
+                                        <small>
+                                            Load pem file: <input type="file" on-read-file="parseInputFile($fileContents)" style="display:inline">
+                                        </small>
+                                    </h4>
+                                </div>                              
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <textarea rows="10" cols="65" class="form-control code" ng-model="$ctrl.pem" name="pem" required></textarea>
+                                    <span ng-show="authParamsForm.pem.$touched && authParamsForm.pem.$invalid" class="fail">
+                                        Pem string is required.
+                                    </span>
+                                </div>
+                            </div>
+
+                            <br>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label for="pkeySecret">Secret for Private Key</label>
+                                    <input type="password" class="form-control" name="pkeySecret" id="pkeySecret"
+                                            ng-model="$ctrl.pkeySecret">
+                                    <span ng-if="privateKeyError" class="fail">Please verify that both pem string and secret are correct</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </form>  
             </div>
         </div>
@@ -514,7 +550,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
         $scope.timestampDisabled = true;
         controller.timestamp = 'auto-generated';
         controller.nonce = 'auto-generated';
-        controller.selectedLevel = 1;
+        controller.selectedLevel = 2;
 
         $scope.sendingTestRequest = false;
         $scope.inputUri = '';
