@@ -94,7 +94,12 @@ let signatureValidatorTemplate = `
                 </div>
             </fieldset>
             
-            <div class="well uri-preview">            
+            <div class="well uri-preview">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <strong>Signature URL</strong>: {{ $ctrl.getSignatureUrl($ctrl.apiUrl) }}
+                    </div>
+                </div>       
             </div>
         </form>
     </div>
@@ -401,6 +406,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
 
     controller.addPostBody = addPostBody;
     controller.removePostBody = removePostBody;
+    controller.getSignatureUrl = getSignatureUrl;
 
     controller.inputAuthPrefix = config.main.defaultAuthPrefix;
 
@@ -434,7 +440,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
             controller.httpMethod = $scope.httpMethods[0];
 
             $scope.gatewayZoneOptions = config.main.providerGateway;
-            controller.selectedProvider = $scope.gatewayZoneOptions[0];
+            controller.gatewayZone = $scope.gatewayZoneOptions[0];
 
             controller.authLevels = config.main.authLevels;
 
@@ -450,6 +456,18 @@ function signatureValidatorController($scope, config, Notification, TestService,
             key: key,
             value: value
         })
+    }
+
+    function getSignatureUrl(apiUrl) {
+        if (apiUrl === '' || !apiUrl) return '';
+
+        let apexDomain = apiUrl.indexOf('.api.gov.sg');
+        if (apexDomain !== -1) {
+            let right = apiUrl.substring(apexDomain);
+            let left = apiUrl.substring(0, apexDomain);
+            let domainIdentifier = controller.gatewayZone === config.constants.gatewayZones.internet ? 'e' : 'i';
+            return `${left}.${domainIdentifier}${right}`;
+        } else return apiUrl;
     }
 
     function removePostBody(index) {

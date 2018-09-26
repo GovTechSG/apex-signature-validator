@@ -70,6 +70,6 @@ angular.module('app', [uibootstrap, uinotification, ngfx, angularanimate, uiRout
     }])
     .factory('stateService', function() {
         return {
-            state: 'signatureValidator'
+            state: 'signatureValidator' // Default state is signature validator
         };
     });

@@ -1,4 +1,12 @@
+const constants = {
+    gatewayZones: {
+        internet: 'Internet Gateway',
+        intranet: 'Intranet Gateway'
+    }
+}
+
 export default {
+    constants: constants,
     main: {
         appVer: '1.0',
         sigMethod: {
@@ -6,13 +14,13 @@ export default {
             level2: 'SHA256withRSA'
         },
         httpMethods: [
-            'GET', 
+            'GET',
             'POST', // Only POST body encoding of x-www-urlencoded affects basestring
-            'PUT', 
+            'PUT',
             'DELETE'
         ],
         callerZone: ['WWW', 'Internet Zone', 'Intranet Zone', 'SGNet'],
-        providerGateway: ['Internet Gateway', 'Intranet Gateway'],
+        providerGateway: [constants.gatewayZones.internet, constants.gatewayZones.intranet],
         authLevels: [0, 1, 2],
         defaultGateway: 'apex_example_gateway',
         defaultUri: '/apex/example/path',
