@@ -97,7 +97,7 @@ let signatureValidatorTemplate = `
             <div class="well uri-preview">
                 <div class="row">
                     <div class="col-sm-12">
-                        <strong>Signature URL</strong>: {{ $ctrl.getSignatureUrl($ctrl.apiUrl) }}
+                        <strong>Signature URL</strong> <span class="glyphicon glyphicon-info-sign" tooltip-placement="top" uib-tooltip="{{ config.constants.strings.signatureUrl }}"></span>: {{ $ctrl.getSignatureUrl($ctrl.apiUrl) }}
                     </div>
                 </div>       
             </div>
@@ -403,6 +403,8 @@ function signatureValidatorController($scope, config, Notification, TestService,
     const controller = this;
 
     init();
+
+    $scope.config = config;
 
     controller.addPostBody = addPostBody;
     controller.removePostBody = removePostBody;
