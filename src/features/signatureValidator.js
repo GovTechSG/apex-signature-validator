@@ -126,88 +126,89 @@ let signatureValidatorTemplate = `
                 <strong style="text-align:center">No authentication required for L0</strong>
             </div>
             <div class="col-sm-12"  ng-if="$ctrl.selectedLevel === 1 || $ctrl.selectedLevel === 2">
-                <h4 style="text-align:center">Required Parameters For L{{$ctrl.selectedLevel}} Authentication</h4>
+                <form name="authParamsForm">
+                    <h4 style="text-align:center">Required Parameters For L{{$ctrl.selectedLevel}} Authentication</h4>
 
-                <div class="row fx-zoom-normal fx-speed-500">
-                    <div ng-class="{'col-md-6': $ctrl.selectedLevel === 2, 'col-md-4': $ctrl.selectedLevel === 1}">
-                        <label for="authPrefix">Auth Prefix</label>
+                    <div class="row fx-zoom-normal fx-speed-500">
+                        <div ng-class="{'col-md-6': $ctrl.selectedLevel === 2, 'col-md-4': $ctrl.selectedLevel === 1}">
+                            <label for="authPrefix">Auth Prefix</label>
 
-                        <input type="text" class="form-control" name="authPrefix" id="authPrefix" required
-                            ng-model="$ctrl.getAuthPrefix($ctrl.gatewayZone, $ctrl.selectedLevel)" 
-                            ng-model-options="{ getterSetter: true }"
-                            ng-keyup="formParams()">
+                            <input type="text" class="form-control" name="authPrefix" id="authPrefix" required disabled
+                                ng-model="$ctrl.getAuthPrefix($ctrl.gatewayZone, $ctrl.selectedLevel)" 
+                                ng-model-options="{ getterSetter: true }"
+                                ng-keyup="formParams()">
 
-                        <span ng-show="paramForm.authPrefix.$touched && paramForm.authPrefix.$invalid" class="fail">
-                            Auth Prefix is required.
-                        </span>
-                    </div>
-                    <div ng-class="{'col-md-6': $ctrl.selectedLevel === 2, 'col-md-4': $ctrl.selectedLevel === 1}">
-                        <b>Application ID</b>
-                        <input type="text" ng-model="$ctrl.input_appId" class="form-control" required name="appId" ng-keyup="formParams()">
-                        <span ng-show="paramForm.appId.$touched && paramForm.appId.$invalid" class="fail">
-                            App Id is required.
-                        </span>
-                    </div>
-
-                    <div class="col-md-4" ng-if="$ctrl.selectedLevel === 1">
-                        <b>Application Secret</b>
-                        <input type="text" ng-model="$ctrl.input_appSecret" required ng-keyup="formParams()" class="form-control" name="appSecret">
-                        <span ng-show="paramForm.appSecret.$touched && paramForm.appSecret.$invalid" class="fail">
-                            App Secret is required.
-                        </span>
-                    </div>
-                </div>
-
-                <br>
-
-                <div ng-if="$ctrl.selectedLevel === 2 || $ctrl.selectedLevel === 1" class="fx-zoom-normal fx-speed-500">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <b>Signature Method</b>
-                            <input type="text" class="form-control" ng-model="input_sigmethod" disabled>
+                            <span ng-show="authParamsForm.authPrefix.$touched && authParamsForm.authPrefix.$invalid" class="fail">
+                                Auth Prefix is required.
+                            </span>
                         </div>
 
-                        <div class="col-md-6">
-                            <b>App Version</b>
-                            <input type="text" class="form-control" ng-model="input_app_ver" disabled>
+                        <div ng-class="{'col-md-6': $ctrl.selectedLevel === 2, 'col-md-4': $ctrl.selectedLevel === 1}">
+                            <label for="appId">Application ID</label>
+
+                            <input type="text" name="appId" id="appId" class="form-control" required
+                                ng-model="$ctrl.appId" ng-keyup="formParams()">
+
+                            <span ng-show="authParamsForm.appId.$touched && authParamsForm.appId.$invalid" class="fail">
+                                App Id is required.
+                            </span>
                         </div>
 
+                        <div class="col-md-4" ng-if="$ctrl.selectedLevel === 1">
+                            <label for="appSecret">Application Secret</label>
+
+                            <input type="text"name="appSecret" id="appSecret" required class="form-control"
+                                   ng-model="$ctrl.appSecret" ng-keyup="formParams()">
+
+                            <span ng-show="authParamsForm.appSecret.$touched && authParamsForm.appSecret.$invalid" class="fail">
+                                App Secret is required.
+                            </span>
+                        </div>
                     </div>
+
                     <br>
-                    <div class="row">
+
+                    <div class="row fx-zoom-normal fx-speed-500">
                         <div class="col-md-6">
-                            <b>Timestamp </b>
+                            <label for="signatureMethod">Signature Method</label>
+                            <input type="text" class="form-control" name="signatureMethod" id="signatureMethod" disabled
+                                ng-model="$ctrl.signatureMethod"
+                                ng-model-options="{ getterSetter: true }">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="appVersion">App Version</label>
+                            <input type="text" class="form-control" name="appVersion" id="appVersion" ng-model="$ctrl.appVersion" disabled>
+                        </div>
+                    </div>
+
+                    <br>
+
+                    <div class="row fx-zoom-normal fx-speed-500">
+                        <div class="col-md-6">
+                            <label for="timestamp">Timestamp</label>
                             <label style="float:right">
                                 <small>auto-generate:</small>
                                 <input type="checkbox" ng-model="timestampDisabled" ng-change="timestampGenChange()">
                             </label>
-                            <br/>
-
-                            <input type="text" ng-model="$ctrl.input_timestamp" class="form-control" required ng-disabled="timestampDisabled" name="timestamp">
-                            <span ng-show="paramForm.timestamp.$touched && paramForm.timestamp.$invalid" class="fail">
+                            <input type="text" ng-model="$ctrl.timestamp" class="form-control" required ng-disabled="timestampDisabled" name="timestamp" id="timestamp">
+                            <span ng-show="authParamsForm.timestamp.$touched && authParamsForm.timestamp.$invalid" class="fail">
                                 Timestamp is required.
                             </span>
                         </div>
                         <div class="col-md-6">
-                            <b>Nonce</b>
+                            <label for="nonce">Nonce</label>
                             <label style="float:right">
                                 <small>auto-generate:</small>
                                 <input type="checkbox" ng-model="nonceDisabled" ng-change="nonceGenChange()">
                             </label>
-
-                            <br>
-
-                            <input type="text" ng-model="$ctrl.input_nonce" class="form-control" required name="nonce" ng-disabled="nonceDisabled">
-                            <span ng-show="paramForm.nonce.$touched && paramForm.nonce.$invalid" class="fail">
+                            <input type="text" ng-model="$ctrl.nonce" class="form-control" required ng-disabled="nonceDisabled" name="nonce" id="nonce">
+                            <span ng-show="authParamsForm.nonce.$touched && authParamsForm.nonce.$invalid" class="fail">
                                 Nonce is required.
                             </span>
                         </div>
                     </div>
-
-                    <br>
-
-                </div>
-                   
+                </form>  
             </div>
         </div>
     </div>
@@ -313,7 +314,7 @@ let signatureValidatorTemplate = `
                 </div>
                 <div ng-class="{'col-md-6': $ctrl.showLevel2, 'col-md-4': $ctrl.showLevel1}">
                     <b>Application ID</b>
-                    <input type="text" ng-model="$ctrl.input_appId" class="form-control" required name="appId" ng-keyup="formParams()">
+                    <input type="text" ng-model="$ctrl.appId" class="form-control" required name="appId" ng-keyup="formParams()">
                     <span ng-show="paramForm.appId.$touched && paramForm.appId.$invalid" class="fail">
                         App Id is required.
                     </span>
@@ -353,7 +354,7 @@ let signatureValidatorTemplate = `
                         </label>
                         <br/>
 
-                        <input type="text" ng-model="$ctrl.input_timestamp" class="form-control" required ng-disabled="timestampDisabled" name="timestamp">
+                        <input type="text" ng-model="$ctrl.timestamp" class="form-control" required ng-disabled="timestampDisabled" name="timestamp">
                         <span ng-show="paramForm.timestamp.$touched && paramForm.timestamp.$invalid" class="fail">
                             Timestamp is required.
                         </span>
@@ -367,7 +368,7 @@ let signatureValidatorTemplate = `
 
                         <br>
 
-                        <input type="text" ng-model="$ctrl.input_nonce" class="form-control" required name="nonce" ng-disabled="nonceDisabled">
+                        <input type="text" ng-model="$ctrl.nonce" class="form-control" required name="nonce" ng-disabled="nonceDisabled">
                         <span ng-show="paramForm.nonce.$touched && paramForm.nonce.$invalid" class="fail">
                             Nonce is required.
                         </span>
@@ -495,6 +496,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
     controller.getAuthPrefix = getAuthPrefix;
     controller.getSignatureUrl = getSignatureUrl;
     controller.removePostBody = removePostBody;
+    controller.signatureMethod = signatureMethod;
 
     $scope.add = add;
     $scope.compareBS = compareBS;
@@ -510,9 +512,9 @@ function signatureValidatorController($scope, config, Notification, TestService,
         controller.postBody = [];
         $scope.nonceDisabled = true;
         $scope.timestampDisabled = true;
-        controller.input_timestamp = 'auto-generated';
-        controller.input_nonce = 'auto-generated';
-        controller.selectedLevel = 0;
+        controller.timestamp = 'auto-generated';
+        controller.nonce = 'auto-generated';
+        controller.selectedLevel = 1;
 
         $scope.sendingTestRequest = false;
         $scope.inputUri = '';
@@ -527,7 +529,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
 
         controller.authLevels = config.main.authLevels;
 
-        $scope.input_app_ver = config.main.appVer;
+        controller.appVersion = config.main.appVer;
 
         controller.inputAuthPrefix = getAuthPrefix(controller.gatewayZone, controller.selectedLevel);
 
@@ -538,6 +540,17 @@ function signatureValidatorController($scope, config, Notification, TestService,
         }
         formRealmUri();
         formUri();
+    }
+
+    function signatureMethod() {
+        switch (controller.selectedLevel) {
+            case 0: 
+                return '';
+            case 1:
+                return config.main.sigMethod.level1;
+            case 2:
+                return config.main.sigMethod.level2;
+        }
     }
 
     function changeLevel(level) {
@@ -605,18 +618,18 @@ function signatureValidatorController($scope, config, Notification, TestService,
     $scope.nonceGenChange = function() {
         $scope.nonceDisabled = !$scope.nonceDisabled;
         if ($scope.nonceDisabled) {
-            controller.input_nonce = 'auto-generated';
+            controller.nonce = 'auto-generated';
         } else {
-            controller.input_nonce = '';
+            controller.nonce = '';
         }
     };
 
     $scope.timestampGenChange = function() {
         $scope.timestampDisabled = !$scope.timestampDisabled;
         if ($scope.timestampDisabled) {
-            controller.input_timestamp = 'auto-generated';
+            controller.timestamp = 'auto-generated';
         } else {
-            controller.input_timestamp = '';
+            controller.timestamp = '';
         }
     };
 
@@ -666,24 +679,24 @@ function signatureValidatorController($scope, config, Notification, TestService,
         controller.selectedFrom = savedObject.invoke_from;
         controller.selectedProvider = savedObject.provider_zone;
         controller.inputAuthPrefix = savedObject.auth_prefix;
-        controller.input_appId = savedObject.app_id;
+        controller.appId = savedObject.app_id;
         controller.selectedLevel = savedObject.level;
         controller.input_appSecret = savedObject.app_secret;
         loadDefaultFromConfig(savedObject.level);
         levelChange();
 
         if (savedObject.nonce == null) {
-            controller.input_nonce = 'auto-generated';
+            controller.nonce = 'auto-generated';
             $scope.nonceDisabled = true;
         } else {
-            controller.input_nonce = savedObject.nonce;
+            controller.nonce = savedObject.nonce;
             $scope.nonceDisabled = false;
         }
         if (savedObject.timestamp == null) {
-            controller.input_timestamp = 'auto-generated';
+            controller.timestamp = 'auto-generated';
             $scope.timestampDisabled = true;
         } else {
-            controller.input_timestamp = savedObject.timestamp;
+            controller.timestamp = savedObject.timestamp;
             $scope.timestampDisabled = false;
         }
         $scope.additionalParams = savedObject.additional_params;
@@ -745,17 +758,17 @@ function signatureValidatorController($scope, config, Notification, TestService,
             'invoke_from': controller.selectedFrom,
             'provider_zone': controller.selectedProvider,
             'auth_prefix': controller.inputAuthPrefix,
-            'app_id': controller.input_appId,
+            'app_id': controller.appId,
             'additional_params': $scope.additionalParams
         };
         if (controller.selectedLevel === 1) {
             paramsToSave.app_secret = controller.input_appSecret;
         }
         if (!$scope.nonceDisabled) {
-            paramsToSave['nonce'] = controller.input_nonce;
+            paramsToSave['nonce'] = controller.nonce;
         }
         if (!$scope.timestampDisabled) {
-            paramsToSave['timestamp'] = controller.input_timestamp;
+            paramsToSave['timestamp'] = controller.timestamp;
         }
 
         ModalService.setParams(paramsToSave);
@@ -940,11 +953,11 @@ function signatureValidatorController($scope, config, Notification, TestService,
         params['uri'] = $scope.uri;
         params['realm'] = $scope.realmUri;
         // Processed in base string
-        params['app_id'] = controller.input_appId;
+        params['app_id'] = controller.appId;
         params['signature_method'] = $scope.input_sigmethod;
         params['version'] = $scope.input_app_ver;
-        params.timestamp = controller.input_timestamp === 'auto-generated' ? (new Date).getTime() : controller.input_timestamp;
-        params.nonce = controller.input_nonce === 'auto-generated' ? generateNonce() : controller.input_nonce;
+        params.timestamp = controller.timestamp === 'auto-generated' ? (new Date).getTime() : controller.timestamp;
+        params.nonce = controller.nonce === 'auto-generated' ? generateNonce() : controller.nonce;
 
         $scope.params = formFullParams(params, $scope.additionalParams.concat($scope.extractedParams));
 
