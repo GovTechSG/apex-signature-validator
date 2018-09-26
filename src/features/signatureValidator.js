@@ -131,7 +131,7 @@ let signatureValidatorTemplate = `
                 <div class="row fx-zoom-normal fx-speed-500">
                     <div ng-class="{'col-md-6': $ctrl.selectedLevel === 2, 'col-md-4': $ctrl.selectedLevel === 1}">
                         <label for="authPrefix">Auth Prefix</label>
-                        
+
                         <input type="text" class="form-control" name="authPrefix" id="authPrefix" required
                             ng-model="$ctrl.getAuthPrefix($ctrl.gatewayZone, $ctrl.selectedLevel)" 
                             ng-model-options="{ getterSetter: true }"
@@ -551,7 +551,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
                 case 1:
                     return 'apex_l1_eg';
                 case 2:
-                    return 'apex_l2_eg;'
+                    return 'apex_l2_eg';
                 default:
                     return '';
             }
@@ -560,7 +560,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
                 case 1:
                     return 'apex_l1_ig';
                 case 2:
-                    return 'apex_l2_ig'
+                    return 'apex_l2_ig';
                 default: 
                     return ''
             }
