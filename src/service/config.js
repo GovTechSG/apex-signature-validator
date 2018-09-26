@@ -27,7 +27,16 @@ export default {
         authLevels: [0, 1, 2],
         defaultGateway: 'apex_example_gateway',
         defaultUri: '/apex/example/path',
-        defaultAuthPrefix: 'Apex',
+        authPrefix: {
+            internet: {
+                l1: 'apex_l1_eg',
+                l2: 'apex_l2_eg'    
+            },
+            intranet: {
+                l1: 'apex_l1_ig',
+                l2: 'apex_l2_ig'
+            }
+        },
         notificationShowTime: 5000,
         domain: process.env.NODE_ENV === 'production' ? 'api.gov.sg' : 'api.dev',
         errorMsgs: {

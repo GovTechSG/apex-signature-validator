@@ -122,8 +122,92 @@ let signatureValidatorTemplate = `
 
     <div class="panel-body">
         <div class="row">
-            <div class="col-sm-12" style="text-align:center" ng-if="$ctrl.selectedLevel === 0">
-                <strong>No authentication required for L0</strong>
+            <div class="col-sm-12" ng-if="$ctrl.selectedLevel === 0">
+                <strong style="text-align:center">No authentication required for L0</strong>
+            </div>
+            <div class="col-sm-12"  ng-if="$ctrl.selectedLevel === 1 || $ctrl.selectedLevel === 2">
+                <h4 style="text-align:center">Required Parameters For L{{$ctrl.selectedLevel}} Authentication</h4>
+
+                <div class="row fx-zoom-normal fx-speed-500">
+                    <div ng-class="{'col-md-6': $ctrl.selectedLevel === 2, 'col-md-4': $ctrl.selectedLevel === 1}">
+                        <label for="authPrefix">Auth Prefix</label>
+                        
+                        <input type="text" class="form-control" name="authPrefix" id="authPrefix" required
+                            ng-model="$ctrl.getAuthPrefix($ctrl.gatewayZone, $ctrl.selectedLevel)" 
+                            ng-model-options="{ getterSetter: true }"
+                            ng-keyup="formParams()">
+
+                        <span ng-show="paramForm.authPrefix.$touched && paramForm.authPrefix.$invalid" class="fail">
+                            Auth Prefix is required.
+                        </span>
+                    </div>
+                    <div ng-class="{'col-md-6': $ctrl.selectedLevel === 2, 'col-md-4': $ctrl.selectedLevel === 1}">
+                        <b>Application ID</b>
+                        <input type="text" ng-model="$ctrl.input_appId" class="form-control" required name="appId" ng-keyup="formParams()">
+                        <span ng-show="paramForm.appId.$touched && paramForm.appId.$invalid" class="fail">
+                            App Id is required.
+                        </span>
+                    </div>
+
+                    <div class="col-md-4" ng-if="$ctrl.selectedLevel === 1">
+                        <b>Application Secret</b>
+                        <input type="text" ng-model="$ctrl.input_appSecret" required ng-keyup="formParams()" class="form-control" name="appSecret">
+                        <span ng-show="paramForm.appSecret.$touched && paramForm.appSecret.$invalid" class="fail">
+                            App Secret is required.
+                        </span>
+                    </div>
+                </div>
+
+                <br>
+
+                <div ng-if="$ctrl.selectedLevel === 2 || $ctrl.selectedLevel === 1" class="fx-zoom-normal fx-speed-500">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <b>Signature Method</b>
+                            <input type="text" class="form-control" ng-model="input_sigmethod" disabled>
+                        </div>
+
+                        <div class="col-md-6">
+                            <b>App Version</b>
+                            <input type="text" class="form-control" ng-model="input_app_ver" disabled>
+                        </div>
+
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <b>Timestamp </b>
+                            <label style="float:right">
+                                <small>auto-generate:</small>
+                                <input type="checkbox" ng-model="timestampDisabled" ng-change="timestampGenChange()">
+                            </label>
+                            <br/>
+
+                            <input type="text" ng-model="$ctrl.input_timestamp" class="form-control" required ng-disabled="timestampDisabled" name="timestamp">
+                            <span ng-show="paramForm.timestamp.$touched && paramForm.timestamp.$invalid" class="fail">
+                                Timestamp is required.
+                            </span>
+                        </div>
+                        <div class="col-md-6">
+                            <b>Nonce</b>
+                            <label style="float:right">
+                                <small>auto-generate:</small>
+                                <input type="checkbox" ng-model="nonceDisabled" ng-change="nonceGenChange()">
+                            </label>
+
+                            <br>
+
+                            <input type="text" ng-model="$ctrl.input_nonce" class="form-control" required name="nonce" ng-disabled="nonceDisabled">
+                            <span ng-show="paramForm.nonce.$touched && paramForm.nonce.$invalid" class="fail">
+                                Nonce is required.
+                            </span>
+                        </div>
+                    </div>
+
+                    <br>
+
+                </div>
+                   
             </div>
         </div>
     </div>
@@ -407,10 +491,10 @@ function signatureValidatorController($scope, config, Notification, TestService,
     $scope.config = config;
 
     controller.addPostBody = addPostBody;
-    controller.removePostBody = removePostBody;
+    controller.changeLevel = changeLevel;
+    controller.getAuthPrefix = getAuthPrefix;
     controller.getSignatureUrl = getSignatureUrl;
-
-    controller.inputAuthPrefix = config.main.defaultAuthPrefix;
+    controller.removePostBody = removePostBody;
 
     $scope.add = add;
     $scope.compareBS = compareBS;
@@ -434,23 +518,53 @@ function signatureValidatorController($scope, config, Notification, TestService,
         $scope.inputUri = '';
         $scope.additionalParams = [];
         $scope.extractedParams = [];
+
+        $scope.httpMethods = config.main.httpMethods;
+        controller.httpMethod = $scope.httpMethods[0];
+
+        $scope.gatewayZoneOptions = config.main.providerGateway;
+        controller.gatewayZone = $scope.gatewayZoneOptions[0];
+
+        controller.authLevels = config.main.authLevels;
+
+        $scope.input_app_ver = config.main.appVer;
+
+        controller.inputAuthPrefix = getAuthPrefix(controller.gatewayZone, controller.selectedLevel);
+
         if (ModalService.getParams() != null) {
             set();
         } else {
             // Initial load
-            $scope.httpMethods = config.main.httpMethods;
-            controller.httpMethod = $scope.httpMethods[0];
-
-            $scope.gatewayZoneOptions = config.main.providerGateway;
-            controller.gatewayZone = $scope.gatewayZoneOptions[0];
-
-            controller.authLevels = config.main.authLevels;
-
-            $scope.input_app_ver = config.main.appVer;
-            controller.authLevels = config.main.authLevels;
         }
         formRealmUri();
         formUri();
+    }
+
+    function changeLevel(level) {
+        controller.selectedLevel = level;
+        controller.inputAuthPrefix = getAuthPrefix(controller.gatewayZone, controller.selectedLevel)
+    }
+
+    function getAuthPrefix(gatewayZone, selectedLevel) {
+        if (gatewayZone === config.constants.gatewayZones.internet) {
+            switch (selectedLevel) {
+                case 1:
+                    return 'apex_l1_eg';
+                case 2:
+                    return 'apex_l2_eg;'
+                default:
+                    return '';
+            }
+        } else if (gatewayZone === config.constants.gatewayZones.intranet) {
+            switch (selectedLevel) {
+                case 1:
+                    return 'apex_l1_ig';
+                case 2:
+                    return 'apex_l2_ig'
+                default: 
+                    return ''
+            }
+        }
     }
 
     function addPostBody(key, value) {
