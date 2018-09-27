@@ -30,6 +30,7 @@ function testService($http, UtilityService) {
 
             // Remove port from url
             delete signatureUrl.port;
+            let basestringUrl = signatureUrl.origin;
 
             let defaultParams = {};
 
@@ -72,7 +73,7 @@ function testService($http, UtilityService) {
                 }
             }).join('&');
 
-            return basestringOptions.httpMethod.toUpperCase() + '&' + signatureUrl + '&' + stringParams;
+            return basestringOptions.httpMethod.toUpperCase() + '&' + basestringUrl + '&' + stringParams;
         },
         signBasestring(selectedLevel, basestring, key) {
             let kjur, sig;
