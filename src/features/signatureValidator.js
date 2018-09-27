@@ -1,9 +1,7 @@
 import KJUR from 'jsrsasign';
-import nonce from 'nonce';
+import randomBytes from 'randombytes';
 
 import paramsModal from './paramsModal';
-
-const generateNonce = nonce();
 
 let signatureValidatorTemplate = `
 <div class="container-fluid main-content">
@@ -48,7 +46,7 @@ let signatureValidatorTemplate = `
                     <label for="apiUrl">API URL</label>
 
                     <input type="text" autocomplete="off" class="form-control" ng-model="$ctrl.apiUrl"
-                        name="apiUrl" id="apiUrl" ng-keyup="formSignature()" required
+                        name="apiUrl" id="apiUrl" ng-change="formSignature()" required
                         placeholder="https://mygateway.api.gov.sg/myservice/api/v1/users">
                     
                     <span ng-show="httpRequestForm.apiUrl.$touched && httpRequestForm.apiUrl.$invalid" class="fail">
@@ -72,7 +70,7 @@ let signatureValidatorTemplate = `
                         <div class="form-group">
                             <label class="col-sm-2 control-label" for="{{ 'postBodyKey' + $index }}">Key</label>
                             <div class="col-sm-10">
-                                <input type="text" id="{{ 'postBodyKey' + $index }}" class="form-control" ng-model="kvpair.key" ng-keyup="formSignature()">
+                                <input type="text" id="{{ 'postBodyKey' + $index }}" class="form-control" ng-model="kvpair.key" ng-change="formSignature()">
                             </div>
                         </div>
                     </div>
@@ -81,7 +79,7 @@ let signatureValidatorTemplate = `
                         <div class="form-group">
                             <label class="col-sm-2 control-label" for="{{ 'postBodyValue' + $index }}">Value</label>
                             <div class="col-sm-10">
-                                <input type="text" id="{{ 'postBodyValue' + $index }}" class="form-control" ng-model="kvpair.value" ng-keyup="formSignature()">
+                                <input type="text" id="{{ 'postBodyValue' + $index }}" class="form-control" ng-model="kvpair.value" ng-change="formSignature()">
                             </div>
                         </div>
                     </div>
@@ -136,7 +134,7 @@ let signatureValidatorTemplate = `
                             <input type="text" class="form-control" name="authPrefix" id="authPrefix" required disabled
                                 ng-model="$ctrl.getAuthPrefix($ctrl.gatewayZone, $ctrl.selectedLevel)" 
                                 ng-model-options="{ getterSetter: true }"
-                                ng-keyup="formSignature()">
+                                ng-change="formSignature()">
 
                             <span ng-show="authParamsForm.authPrefix.$touched && authParamsForm.authPrefix.$invalid" class="fail">
                                 Auth Prefix is required.
@@ -147,7 +145,7 @@ let signatureValidatorTemplate = `
                             <label for="appId">Application ID</label>
 
                             <input type="text" name="appId" id="appId" class="form-control" required
-                                ng-model="$ctrl.appId" ng-keyup="formSignature()">
+                                ng-model="$ctrl.appId" ng-change="formSignature()">
 
                             <span ng-show="authParamsForm.appId.$touched && authParamsForm.appId.$invalid" class="fail">
                                 App Id is required.
@@ -158,7 +156,7 @@ let signatureValidatorTemplate = `
                             <label for="appSecret">Application Secret</label>
 
                             <input type="text"name="appSecret" id="appSecret" required class="form-control"
-                                   ng-model="$ctrl.appSecret" ng-keyup="formSignature()">
+                                   ng-model="$ctrl.appSecret" ng-change="formSignature()">
 
                             <span ng-show="authParamsForm.appSecret.$touched && authParamsForm.appSecret.$invalid" class="fail">
                                 App Secret is required.
@@ -278,7 +276,7 @@ let signatureValidatorTemplate = `
                     <div class="row">
                         <div class="col-md-12">
                             <label for="basestring">Generated Basestring</label>
-                            <textarea rows="3" disabled class="form-control immutable code" ng-model="basestring" name="basestring" id="basestring"></textarea>
+                            <textarea rows="3" disabled class="form-control immutable code" ng-model="$ctrl.basestring" name="basestring" id="basestring"></textarea>
                         </div>
                     </div>
 
@@ -287,7 +285,7 @@ let signatureValidatorTemplate = `
                     <div class="row">
                         <div class="col-md-12">
                             <label for="basestringToCompare">Basestring to Compare</label>
-                            <textarea rows="3" class="form-control code" ng-model="basestringToCompare" name="basestringToCompare" id="basestringToCompare"></textarea>
+                            <textarea rows="3" class="form-control code" ng-model="$ctrl.basestringToCompare" name="basestringToCompare" id="basestringToCompare"></textarea>
                         </div>
                     </div>
 
@@ -345,13 +343,13 @@ let signatureValidatorTemplate = `
 </div>
 
 <div class="row">
-<div class="col-sm-12">
-<div ng-if="sendingTestRequest" class="spinner">
-    <div class="bounce1"></div>
-    <div class="bounce2"></div>
-    <div class="bounce3"></div>
-</div>
-</div>
+    <div class="col-sm-12">
+        <div ng-if="sendingTestRequest" class="spinner">
+            <div class="bounce1"></div>
+            <div class="bounce2"></div>
+            <div class="bounce3"></div>
+        </div>
+    </div>
 </div>
 
 <form name="paramForm">
@@ -611,16 +609,15 @@ function signatureValidatorController($scope, config, Notification, TestService,
     controller.changeLevel = changeLevel;
     controller.getAuthPrefix = getAuthPrefix;
     controller.getSignatureUrl = getSignatureUrl;
+    controller.levelChange = levelChange;
     controller.removePostBody = removePostBody;
     controller.signatureMethod = signatureMethod;
+    controller.showOptions = showOptions;
 
     $scope.add = add;
     $scope.compareBS = compareBS;
+    $scope.formSignature = formSignature;
     $scope.remove = remove;
-    // $scope.formSignature = formSignature;
-    $scope.formSignature = function() { };
-    controller.levelChange = levelChange;
-    controller.showOptions = showOptions;
     $scope.signAndTest = signAndTest;
 
     function init() {
@@ -645,7 +642,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
 
         controller.authLevels = config.main.authLevels;
 
-        controller.appVersion = config.main.appVer;
+        controller.appVersion = config.main.appVersion;
 
         controller.inputAuthPrefix = getAuthPrefix(controller.gatewayZone, controller.selectedLevel);
 
@@ -660,7 +657,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
 
     function signatureMethod() {
         switch (controller.selectedLevel) {
-            case 0: 
+            case 0:
                 return '';
             case 1:
                 return config.main.sigMethod.level1;
@@ -690,7 +687,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
                     return 'apex_l1_ig';
                 case 2:
                     return 'apex_l2_ig';
-                default: 
+                default:
                     return ''
             }
         }
@@ -718,6 +715,79 @@ function signatureValidatorController($scope, config, Notification, TestService,
     function removePostBody(index) {
         controller.postBody.splice(index, 1);
         formSignature();
+    }
+
+    function formSignature() {
+        let valid = validateForm(controller.selectedLevel);
+        if (valid) {
+            // 1. Base string generation
+            // Process any POST body data
+            let formData = null;
+            if (controller.postBody) {
+                formData = {};
+                controller.postBody.forEach(function(kvpair) {
+                    formData[kvpair.key] = kvpair.value;
+                })
+            }
+            let basestringOptions = {
+                signatureUrl: getSignatureUrl(controller.apiUrl),
+                authPrefix: getAuthPrefix(controller.gatewayZone, controller.selectedLevel),
+                signatureMethod: signatureMethod(),
+                appId: controller.appId,
+                httpMethod: controller.httpMethod,
+                appVersion: config.main.appVersion,
+                // Optional parameters
+                nonce: controller.nonce === 'auto-generated' ? randomBytes(32).toString('base64') : controller.nonce,
+                timestamp: controller.timestamp === 'auto-generated' ? (new Date).getTime() : controller.timestamp,
+                queryString: controller.queryString,
+                formData: controller.postBody
+            };
+            controller.basestring = TestService.generateBasestring(basestringOptions);
+
+            // 2. Signature generation
+            let key;
+            if (controller.selectedLevel === 1) {
+                key = controller.appSecret;
+            } else if (controller.selectedLevel === 2) {
+                let keyStart = controller.pem.search(config.sign.beginPrivateKeyHeader);
+                let keyEnd = controller.pem.search(config.sign.endPrivateKeyHeader);
+                try {
+                    key = KJUR.KEYUTIL.getKey(
+                        controller.pem.substring(
+                            keyStart,
+                            keyEnd + config.sign.endPrivateKeyHeader.toString().length - 2
+                        ),
+                        controller.pkeySecret
+                    );
+                } catch (exception) {
+                    $scope.privateKeyError = true;
+                    throw new Error('Please check the validity of your private key.');
+                }
+            }
+            let signature = TestService.signBasestring(controller.selectedLevel, controller.basestring, key);
+            let authHeader = TestService.genAuthHeader(basestringOptions, signature);
+            controller.authHeader = `Authorization: ${authHeader}`; 
+        }
+    }
+
+    /**
+     * 
+     * @param {number} level Apex auth level
+     * @returns {boolean} true if form is valid, false otherwise
+     */
+    function validateForm(level) {
+        switch (level) {
+            case 0:
+                return controller.apiUrl && controller.apiUrl.length > 0;
+            case 1:
+                return controller.apiUrl && controller.apiUrl.length > 0 &&
+                    controller.appId && controller.appId.length > 0 &&
+                    controller.appSecret && controller.appSecret.length > 0;
+            case 2:
+                return controller.apiUrl && controller.apiUrl.length > 0 &&
+                    controller.appId && controller.appId.length > 0 &&
+                    controller.pem && controller.pem.length > 0;
+        }
     }
 
     $scope.checkTestResult = function() {
@@ -752,6 +822,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
 
     $scope.parseInputFile = function(fileText) {
         controller.pem = fileText;
+        formSignature();
         ModalService.setPem(controller.pem);
     };
 
@@ -825,7 +896,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
         $scope.httpMethods = config.main.httpMethods;
         $scope.options_zone = config.main.callerZone;
         $scope.gatewayZoneOptions = config.main.providerGateway;
-        $scope.input_app_ver = config.main.appVer;
+        $scope.input_app_ver = config.main.appVersion;
         if (level === 1) {
             $scope.input_sigmethod = config.main.sigMethod.level1;
         } else {
@@ -1051,35 +1122,35 @@ function signatureValidatorController($scope, config, Notification, TestService,
     /**
      * Processes all fields on the form and generates base string
      */
-    function formSignature() {
-        formRealmUri(); // Sets $scope.realmUri
-        formUri(); // Sets $scope.uri
+    // function formSignature() {
+    //     formRealmUri(); // Sets $scope.realmUri
+    //     formUri(); // Sets $scope.uri
 
-        // Extract query params into $scope.extractedParams
-        $scope.extractedParams = [];
-        if ($scope.inputUri.indexOf('?') !== -1) {
-            extractQueryParams($scope.inputUri);
-        }
+    //     // Extract query params into $scope.extractedParams
+    //     $scope.extractedParams = [];
+    //     if ($scope.inputUri.indexOf('?') !== -1) {
+    //         extractQueryParams($scope.inputUri);
+    //     }
 
-        let params = {};
+    //     let params = {};
 
-        let authPrefix = controller.inputAuthPrefix || '';
+    //     let authPrefix = controller.inputAuthPrefix || '';
 
-        params['prefix'] = authPrefix.toLowerCase();
-        params['request'] = $scope.selectedRequest;
-        params['uri'] = $scope.uri;
-        params['realm'] = $scope.realmUri;
-        // Processed in base string
-        params['app_id'] = controller.appId;
-        params['signature_method'] = $scope.input_sigmethod;
-        params['version'] = $scope.input_app_ver;
-        params.timestamp = controller.timestamp === 'auto-generated' ? (new Date).getTime() : controller.timestamp;
-        params.nonce = controller.nonce === 'auto-generated' ? generateNonce() : controller.nonce;
+    //     params['prefix'] = authPrefix.toLowerCase();
+    //     params['request'] = $scope.selectedRequest;
+    //     params['uri'] = $scope.uri;
+    //     params['realm'] = $scope.realmUri;
+    //     // Processed in base string
+    //     params['app_id'] = controller.appId;
+    //     params['signature_method'] = $scope.input_sigmethod;
+    //     params['version'] = $scope.input_app_ver;
+    //     params.timestamp = controller.timestamp === 'auto-generated' ? (new Date).getTime() : controller.timestamp;
+    //     params.nonce = controller.nonce === 'auto-generated' ? generateNonce() : controller.nonce;
 
-        $scope.params = formFullParams(params, $scope.additionalParams.concat($scope.extractedParams));
+    //     $scope.params = formFullParams(params, $scope.additionalParams.concat($scope.extractedParams));
 
-        $scope.input_basestring = TestService.generateBasestring($scope.params);
-    }
+    //     $scope.input_basestring = TestService.generateBasestring($scope.params);
+    // }
 
     function validateParams() {
         let params = $scope.params;

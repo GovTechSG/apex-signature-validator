@@ -11,7 +11,7 @@ const constants = {
 export default {
     constants: constants,
     main: {
-        appVer: '1.0',
+        appVersion: '1.0',
         sigMethod: {
             level1: 'HMACSHA256',
             level2: 'SHA256withRSA'
