@@ -30,7 +30,7 @@ function testService($http, UtilityService) {
 
             // Remove port from url
             delete signatureUrl.port;
-            let basestringUrl = signatureUrl.origin;
+            let basestringUrl = signatureUrl.origin + signatureUrl.pathname;
 
             let defaultParams = {};
 
