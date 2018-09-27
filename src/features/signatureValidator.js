@@ -237,10 +237,10 @@ let signatureValidatorTemplate = `
 
                             <div class="row">
                                 <div class="col-md-12">
-                                    <label for="pkeySecret">Passphrase for private key (optional)</label>
+                                    <label for="pkeySecret">Password for private key (if encrypted)</label>
                                     <input type="password" class="form-control" name="pkeySecret" id="pkeySecret"
-                                            ng-model="$ctrl.pkeySecret">
-                                    <p ng-if="privateKeyError" class="fail">Error verifying private key: check that both private key and secret are correct</p>
+                                            ng-model="$ctrl.pkeySecret" ng-change=formSignature()>
+                                    <p ng-if="privateKeyError" class="fail">{{ config.main.errorMessages.pkeyInvalid }}</p>
                                 </div>
                             </div>
                         </div>
@@ -624,7 +624,10 @@ function signatureValidatorController($scope, config, Notification, TestService,
 
     $scope.add = add;
     $scope.compareBS = compareBS;
-    $scope.formSignature = formSignature;
+    $scope.formSignature = formSignature; // Main signature generation function
+    $scope.nonceGenChange = nonceGenChange;
+    $scope.timestampGenChange = timestampGenChange;
+    $scope.parseInputFile = parseInputFile;
     $scope.remove = remove;
     $scope.signAndTest = signAndTest;
 
@@ -728,8 +731,8 @@ function signatureValidatorController($scope, config, Notification, TestService,
     }
 
     function formSignature() {
-        controller.showBasestringComparison = false;        
-        let valid = validateForm(controller.selectedLevel);        
+        controller.showBasestringComparison = false;
+        let valid = validateForm(controller.selectedLevel);
         if (valid) {
             // 1. Base string generation
             // Process any POST body data
@@ -761,26 +764,22 @@ function signatureValidatorController($scope, config, Notification, TestService,
             if (controller.selectedLevel === 1) {
                 key = controller.appSecret;
             } else if (controller.selectedLevel === 2) {
-                let keyStart = controller.pem.search(config.sign.beginPrivateKeyHeader);
-                let keyEnd = controller.pem.search(config.sign.endPrivateKeyHeader);
                 try {
-                    key = KJUR.KEYUTIL.getKey(
-                        controller.pem.substring(
-                            keyStart,
-                            keyEnd + config.sign.endPrivateKeyHeader.toString().length - 2
-                        ),
-                        controller.pkeySecret
-                    );
+                    key = KJUR.KEYUTIL.getKey(controller.pem, controller.pkeySecret);
                 } catch (exception) {
                     $scope.privateKeyError = true;
                     controller.basestring = '';
                     controller.authHeader = '';
-                    throw new Error('Please check the validity of your private key.');
+                    Notification.error({
+                        title: '',
+                        message: config.main.errorMessages.pkeyInvalid,
+                        delay: config.notificationShowTime
+                    });
                 }
             }
             let signature = TestService.signBasestring(controller.selectedLevel, controller.basestring, key);
             let authHeader = TestService.genAuthHeader(basestringOptions, signature);
-            controller.authHeader = `Authorization: ${authHeader}`; 
+            controller.authHeader = `Authorization: ${authHeader}`;
         } else if (signatureGenerated()) {
             controller.basestring = '';
             controller.authHeader = '';
@@ -788,7 +787,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
     }
 
     /**
-     * 
+     * Checks whether all necessary inputs are present
      * @param {number} level Apex auth level
      * @returns {boolean} true if form is valid, false otherwise
      */
@@ -799,11 +798,15 @@ function signatureValidatorController($scope, config, Notification, TestService,
             case 1:
                 return controller.apiUrl && controller.apiUrl.length > 0 &&
                     controller.appId && controller.appId.length > 0 &&
-                    controller.appSecret && controller.appSecret.length > 0;
+                    controller.appSecret && controller.appSecret.length > 0 &&
+                    controller.nonce && controller.nonce.length > 0 &&
+                    controller.timestamp && controller.timestamp > 0;
             case 2:
                 return controller.apiUrl && controller.apiUrl.length > 0 &&
                     controller.appId && controller.appId.length > 0 &&
-                    controller.pem && controller.pem.length > 0;
+                    controller.pem && controller.pem.length > 0 &&
+                    controller.nonce && controller.nonce.length > 0 &&
+                    controller.timestamp && controller.timestamp > 0;
         }
     }
 
@@ -869,29 +872,32 @@ function signatureValidatorController($scope, config, Notification, TestService,
         }
     };
 
-    $scope.nonceGenChange = function() {
+    function nonceGenChange() {
         $scope.nonceDisabled = !$scope.nonceDisabled;
         if ($scope.nonceDisabled) {
             controller.nonce = 'auto-generated';
         } else {
             controller.nonce = '';
         }
+        formSignature();
     };
 
-    $scope.timestampGenChange = function() {
+    function timestampGenChange() {
         $scope.timestampDisabled = !$scope.timestampDisabled;
         if ($scope.timestampDisabled) {
             controller.timestamp = 'auto-generated';
         } else {
             controller.timestamp = '';
         }
+        formSignature();
     };
 
-    $scope.parseInputFile = function(fileText) {
+    function parseInputFile(fileText) {
         controller.pem = fileText;
         formSignature();
         ModalService.setPem(controller.pem);
     };
+
 
     function showOptions() {
         saveInputsToModalService();
