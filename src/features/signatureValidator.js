@@ -240,7 +240,7 @@ let signatureValidatorTemplate = `
                                     <label for="pkeySecret">Passphrase for private key (optional)</label>
                                     <input type="password" class="form-control" name="pkeySecret" id="pkeySecret"
                                             ng-model="$ctrl.pkeySecret">
-                                    <span ng-if="privateKeyError" class="fail">Please verify that both private key and secret are correct</span>
+                                    <p ng-if="privateKeyError" class="fail">Error verifying private key: check that both private key and secret are correct</p>
                                 </div>
                             </div>
                         </div>
@@ -272,7 +272,13 @@ let signatureValidatorTemplate = `
         </div>
         <div class="row">
             <div class="col-sm-12" ng-if="$ctrl.selectedLevel === 1 || $ctrl.selectedLevel === 2">
-                <div class="jumbotron"">
+                <div ng-if="!$ctrl.signatureGenerated()" style="text-align:center">
+                    <strong>
+                        Fill in all fields to generate base string and authorization header.
+                    </strong>
+                </div>
+                
+                <div class="jumbotron" ng-if="$ctrl.signatureGenerated()">
                     <div class="row">
                         <div class="col-md-12">
                             <label for="basestring">Generated Basestring</label>
@@ -613,6 +619,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
     controller.levelChange = levelChange;
     controller.removePostBody = removePostBody;
     controller.signatureMethod = signatureMethod;
+    controller.signatureGenerated = signatureGenerated;
     controller.showOptions = showOptions;
 
     $scope.add = add;
@@ -628,7 +635,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
         $scope.timestampDisabled = true;
         controller.timestamp = 'auto-generated';
         controller.nonce = 'auto-generated';
-        controller.selectedLevel = 1;
+        controller.selectedLevel = 2;
 
         controller.apiUrl = 'https://mygateway.api.gov.sg/myservice/api/v1/users?a=first&b=second&q=hello&thing=world'
 
@@ -721,7 +728,8 @@ function signatureValidatorController($scope, config, Notification, TestService,
     }
 
     function formSignature() {
-        let valid = validateForm(controller.selectedLevel);
+        controller.showBasestringComparison = false;        
+        let valid = validateForm(controller.selectedLevel);        
         if (valid) {
             // 1. Base string generation
             // Process any POST body data
@@ -749,6 +757,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
 
             // 2. Signature generation
             let key;
+            $scope.privateKeyError = false;
             if (controller.selectedLevel === 1) {
                 key = controller.appSecret;
             } else if (controller.selectedLevel === 2) {
@@ -764,12 +773,17 @@ function signatureValidatorController($scope, config, Notification, TestService,
                     );
                 } catch (exception) {
                     $scope.privateKeyError = true;
+                    controller.basestring = '';
+                    controller.authHeader = '';
                     throw new Error('Please check the validity of your private key.');
                 }
             }
             let signature = TestService.signBasestring(controller.selectedLevel, controller.basestring, key);
             let authHeader = TestService.genAuthHeader(basestringOptions, signature);
             controller.authHeader = `Authorization: ${authHeader}`; 
+        } else if (signatureGenerated()) {
+            controller.basestring = '';
+            controller.authHeader = '';
         }
     }
 
@@ -790,6 +804,56 @@ function signatureValidatorController($scope, config, Notification, TestService,
                 return controller.apiUrl && controller.apiUrl.length > 0 &&
                     controller.appId && controller.appId.length > 0 &&
                     controller.pem && controller.pem.length > 0;
+        }
+    }
+
+    function signatureGenerated() {
+        return controller.basestring && controller.basestring.length > 0 && controller.authHeader && controller.authHeader.length > 0
+    }
+
+    function compareBasestring(generated, input) {
+        if (input == null) {
+            input = '';
+        }
+        controller.showBasestringComparison = true;
+        let before = false;
+        let bsResults = '';
+        for (let i = 0; i < generated.length; i++) {
+            let gen = generated[i];
+            let own = input[i];
+            if (own == null) {
+                let stringToAdd = generated.substring(i);
+                bsResults += '<span class=\'missing-basestring-char\'>' + stringToAdd + '</span>';
+                break;
+            }
+            if (gen !== own && !before) {
+                own = '<span class=\'incorrect-basestring-char\'\'>' + own;
+                before = true;
+            } else if (gen === own && before) {
+                own = '</span>' + own;
+                before = false;
+            }
+            bsResults += own;
+        }
+        if (input.length > generated.length) {
+            if (before) {
+                bsResults += '</span>';
+            }
+            bsResults += '<span class = \'extra-basestring-char\'>' + input.substring(generated.length) + '</span>';
+        }
+        controller.basestringComparison = $sce.trustAsHtml(bsResults);
+        if (generated === input) {
+            Notification.success({
+                title: '',
+                message: 'Basestrings are the same',
+                delay: config.notificationShowTime
+            });
+        } else {
+            Notification.error({
+                title: '',
+                message: 'Basestrings are different',
+                delay: config.notificationShowTime
+            });
         }
     }
 
@@ -965,53 +1029,6 @@ function signatureValidatorController($scope, config, Notification, TestService,
         ModalService.setParams(paramsToSave);
         ModalService.setPem(controller.pem);
         ModalService.setPwd($scope.privSecret);
-    }
-
-
-    function compareBasestring(generated, input) {
-        if (input == null) {
-            input = '';
-        }
-        controller.showBasestringComparison = true;
-        let before = false;
-        let bsResults = '';
-        for (let i = 0; i < generated.length; i++) {
-            let gen = generated[i];
-            let own = input[i];
-            if (own == null) {
-                let stringToAdd = generated.substring(i);
-                bsResults += '<span class=\'missing-basestring-char\'>' + stringToAdd + '</span>';
-                break;
-            }
-            if (gen !== own && !before) {
-                own = '<span class=\'incorrect-basestring-char\'\'>' + own;
-                before = true;
-            } else if (gen === own && before) {
-                own = '</span>' + own;
-                before = false;
-            }
-            bsResults += own;
-        }
-        if (input.length > generated.length) {
-            if (before) {
-                bsResults += '</span>';
-            }
-            bsResults += '<span class = \'extra-basestring-char\'>' + input.substring(generated.length) + '</span>';
-        }
-        controller.basestringComparison = $sce.trustAsHtml(bsResults);
-        if (generated === input) {
-            Notification.success({
-                title: '',
-                message: 'Basestrings are the same',
-                delay: config.notificationShowTime
-            });
-        } else {
-            Notification.error({
-                title: '',
-                message: 'Basestrings are different',
-                delay: config.notificationShowTime
-            });
-        }
     }
 
     function compareBS(generatedBS, ownBS) {
