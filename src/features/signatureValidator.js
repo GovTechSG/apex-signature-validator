@@ -292,16 +292,16 @@ let signatureValidatorTemplate = `
                     <br>
                 
                     <div class="row">
-                        <div class="col-md-12 fx-fade-normal" ng-if="showBaseStringCompareResults">
+                        <div class="col-md-12 fx-fade-normal" ng-if="$ctrl.showBasestringComparison">
                             <label>Comparison Results</label>
-                            <pre ng-bind-html="bsResults"></pre>
+                            <pre ng-bind-html="$ctrl.basestringComparison"></pre>
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-12">
                             <span style="float:right; margin-top:5px">
-                                <button class="btn btn-default" ng-click="compareBS(input_basestring, input_basestring_tocompare)">Compare Basestrings</button>
+                                <button class="btn btn-default" ng-click="$ctrl.compareBasestring($ctrl.basestring, $ctrl.basestringToCompare)">Compare Basestrings</button>
                             </span>
                         </div>
                     </div>
@@ -607,6 +607,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
 
     controller.addPostBody = addPostBody;
     controller.changeLevel = changeLevel;
+    controller.compareBasestring = compareBasestring;
     controller.getAuthPrefix = getAuthPrefix;
     controller.getSignatureUrl = getSignatureUrl;
     controller.levelChange = levelChange;
@@ -627,7 +628,9 @@ function signatureValidatorController($scope, config, Notification, TestService,
         $scope.timestampDisabled = true;
         controller.timestamp = 'auto-generated';
         controller.nonce = 'auto-generated';
-        controller.selectedLevel = 2;
+        controller.selectedLevel = 1;
+
+        controller.apiUrl = 'https://mygateway.api.gov.sg/myservice/api/v1/users?a=first&b=second&q=hello&thing=world'
 
         $scope.sendingTestRequest = false;
         $scope.inputUri = '';
@@ -962,6 +965,53 @@ function signatureValidatorController($scope, config, Notification, TestService,
         ModalService.setParams(paramsToSave);
         ModalService.setPem(controller.pem);
         ModalService.setPwd($scope.privSecret);
+    }
+
+
+    function compareBasestring(generated, input) {
+        if (input == null) {
+            input = '';
+        }
+        controller.showBasestringComparison = true;
+        let before = false;
+        let bsResults = '';
+        for (let i = 0; i < generated.length; i++) {
+            let gen = generated[i];
+            let own = input[i];
+            if (own == null) {
+                let stringToAdd = generated.substring(i);
+                bsResults += '<span class=\'missing-basestring-char\'>' + stringToAdd + '</span>';
+                break;
+            }
+            if (gen !== own && !before) {
+                own = '<span class=\'incorrect-basestring-char\'\'>' + own;
+                before = true;
+            } else if (gen === own && before) {
+                own = '</span>' + own;
+                before = false;
+            }
+            bsResults += own;
+        }
+        if (input.length > generated.length) {
+            if (before) {
+                bsResults += '</span>';
+            }
+            bsResults += '<span class = \'extra-basestring-char\'>' + input.substring(generated.length) + '</span>';
+        }
+        controller.basestringComparison = $sce.trustAsHtml(bsResults);
+        if (generated === input) {
+            Notification.success({
+                title: '',
+                message: 'Basestrings are the same',
+                delay: config.notificationShowTime
+            });
+        } else {
+            Notification.error({
+                title: '',
+                message: 'Basestrings are different',
+                delay: config.notificationShowTime
+            });
+        }
     }
 
     function compareBS(generatedBS, ownBS) {
