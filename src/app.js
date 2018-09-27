@@ -3,8 +3,6 @@ import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
 import uinotification from 'angular-ui-notification';
 import uibootstrap from 'angular-ui-bootstrap';
-import ngfx from 'ng-fx';
-import angularanimate from 'angular-animate';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import 'angular-ui-notification/dist/angular-ui-notification.css';
@@ -20,7 +18,7 @@ import utilService from './service/utiityService';
 
 import './css/style.css';
 
-angular.module('app', [uibootstrap, uinotification, ngfx, angularanimate, uiRouter])
+angular.module('app', [uibootstrap, uinotification, uiRouter])
     .constant('config', config)
     .controller('mainController', mainController)
     .factory('ModalService', modalService)

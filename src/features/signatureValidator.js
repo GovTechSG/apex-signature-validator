@@ -123,11 +123,11 @@ let signatureValidatorTemplate = `
             <div class="col-sm-12" ng-if="$ctrl.selectedLevel === 0">
                 <strong style="text-align:center">No authentication required for L0</strong>
             </div>
-            <div class="col-sm-12"  ng-if="$ctrl.selectedLevel === 1 || $ctrl.selectedLevel === 2">
+            <div class="col-sm-12 "  ng-if="$ctrl.selectedLevel === 1 || $ctrl.selectedLevel === 2">
                 <form name="authParamsForm">
                     <h4 style="text-align:center">Required Parameters For L{{$ctrl.selectedLevel}} Authentication</h4>
 
-                    <div class="row fx-zoom-normal fx-speed-500">
+                    <div class="row">
                         <div ng-class="{'col-md-6': $ctrl.selectedLevel === 2, 'col-md-4': $ctrl.selectedLevel === 1}">
                             <label for="authPrefix">Auth Prefix</label>
 
@@ -166,7 +166,7 @@ let signatureValidatorTemplate = `
 
                     <br>
 
-                    <div class="row fx-zoom-normal fx-speed-500">
+                    <div class="row">
                         <div class="col-md-6">
                             <label for="signatureMethod">Signature Method</label>
                             <input type="text" class="form-control" name="signatureMethod" id="signatureMethod" disabled
@@ -182,7 +182,7 @@ let signatureValidatorTemplate = `
 
                     <br>
 
-                    <div class="row fx-zoom-normal fx-speed-500">
+                    <div class="row">
                         <div class="col-md-6">
                             <label for="timestamp">Timestamp</label>
                             <label style="float:right">
@@ -211,7 +211,7 @@ let signatureValidatorTemplate = `
 
                     <br>
 
-                    <div class="row fx-zoom-normal fx-speed-500" ng-if="$ctrl.selectedLevel === 2">
+                    <div class="row" ng-if="$ctrl.selectedLevel === 2">
                         <div class="col-sm-12">
                             <div class="row">
                                 <div class="col-sm-12">
@@ -298,7 +298,7 @@ let signatureValidatorTemplate = `
                     <br>
                 
                     <div class="row">
-                        <div class="col-md-12 fx-fade-normal" ng-if="$ctrl.showBasestringComparison">
+                        <div class="col-md-12" ng-if="$ctrl.showBasestringComparison">
                             <label>Comparison Results</label>
                             <pre ng-bind-html="$ctrl.basestringComparison"></pre>
                         </div>
@@ -325,13 +325,43 @@ let signatureValidatorTemplate = `
     </div>
 </div>
 
-<div class="row" style='text-align:center'>
-    <button type="button" class="btn btn-lg btn-default" ng-click="">
+<div style='text-align:center'>
+    <button type="button" class="btn btn-lg btn-default" ng-click="sendTestRequest()">
         <span class="glyphicon glyphicon-transfer"></span> Send Test Request
     </button>
 </div>
 
-<div style="text-align: center" ng-if="!sendingTestRequest">
+<br>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="row" style='text-align:center'>
+            <div class="col-sm-12">
+                <strong>API Test Response</strong>
+            </div>
+        </div>
+    </div>
+    <div class="panel-body">        
+        <div class="row">
+            <div class="col-sm-12">
+                <fieldset class="form-inline">
+                    <div class="form-group">
+                        <label for="apiTestStatus">API Test Status</label>
+                        <input type="number" name="apiTestStatus" id="apiTestStatus" disabled class="form-control" ng-model="$ctrl.apiTest.status">
+                    </div>
+                </fieldset>
+
+                <br>
+
+                <label for="apiTestResponse">API Test Response</label>
+                <textarea rows="3" name="apiTestResponse" id="apiTestResponse" class="form-control" disabled ng-model="$ctrl.apiTest.response"></textarea>
+            </div>            
+        </div>
+    </div>
+</div>
+
+
+<div style="text-align: center">
     <span>
         <b>Response:</b>
     </span>
@@ -424,7 +454,7 @@ let signatureValidatorTemplate = `
     </div>
     <div class="row">
         <div class="col-md-12">
-            <div ng-if="$ctrl.showLevel2 || $ctrl.showLevel1" class="row fx-zoom-normal fx-speed-500">
+            <div ng-if="$ctrl.showLevel2 || $ctrl.showLevel1" class="row">
                 <div ng-class="{'col-md-6': $ctrl.showLevel2, 'col-md-4': $ctrl.showLevel1}">
                     <b>Auth Prefix</b>
                     <input type="text" ng-model="$ctrl.inputAuthPrefix" class="form-control" name="authPrefix" required ng-keyup="formSignature()">
@@ -451,7 +481,7 @@ let signatureValidatorTemplate = `
 
             <br>
 
-            <div ng-if="$ctrl.showLevel2 || $ctrl.showLevel1" class="fx-zoom-normal fx-speed-500">
+            <div ng-if="$ctrl.showLevel2 || $ctrl.showLevel1" class="">
                 <div class="row">
                     <div class="col-md-6">
                         <b>Signature Method</b>
@@ -564,7 +594,7 @@ let signatureValidatorTemplate = `
 
                     <textarea rows="3" class="form-control code" ng-model="input_basestring_tocompare"></textarea>
                 </div>
-                <div class="col-md-12 fx-fade-normal" ng-if="showBaseStringCompareResults">
+                <div class="col-md-12" ng-if="showBaseStringCompareResults">
                     <h4>Comparison Results</h4>
                     <pre ng-bind-html="bsResults"></pre>
 
@@ -800,13 +830,13 @@ function signatureValidatorController($scope, config, Notification, TestService,
                     controller.appId && controller.appId.length > 0 &&
                     controller.appSecret && controller.appSecret.length > 0 &&
                     controller.nonce && controller.nonce.length > 0 &&
-                    controller.timestamp && controller.timestamp > 0;
+                    controller.timestamp && controller.timestamp.length > 0;
             case 2:
                 return controller.apiUrl && controller.apiUrl.length > 0 &&
                     controller.appId && controller.appId.length > 0 &&
                     controller.pem && controller.pem.length > 0 &&
                     controller.nonce && controller.nonce.length > 0 &&
-                    controller.timestamp && controller.timestamp > 0;
+                    controller.timestamp && controller.timestamp.length > 0;
         }
     }
 
