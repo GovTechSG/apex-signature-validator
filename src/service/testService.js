@@ -101,15 +101,6 @@ function testService($http, UtilityService) {
         genAuthHeader: function(basestringOptions, signature) {
             let realm = basestringOptions.realm || basestringOptions.appId;
             let authPrefix = basestringOptions.authPrefix;
-            console.log(
-                `${authPrefix.charAt(0).toUpperCase()}${authPrefix.slice(1)} realm="${realm}", ` +
-                `${authPrefix}_timestamp="${basestringOptions.timestamp}", ` +
-                `${authPrefix}_nonce="${basestringOptions.nonce}", ` +
-                `${authPrefix}_app_id="${basestringOptions.appId}", ` +
-                `${authPrefix}_signature_method="${basestringOptions.signatureMethod}", ` +
-                `${authPrefix}_signature="${signature}", ` +
-                `${authPrefix}_version="${basestringOptions.appVersion}"`
-            );
             return `${authPrefix.charAt(0).toUpperCase()}${authPrefix.slice(1)} realm="${realm}", ` +
                 `${authPrefix}_timestamp="${basestringOptions.timestamp}", ` +
                 `${authPrefix}_nonce="${basestringOptions.nonce}", ` +
@@ -118,6 +109,12 @@ function testService($http, UtilityService) {
                 `${authPrefix}_signature="${signature}", ` +
                 `${authPrefix}_version="${basestringOptions.appVersion}"`;
         },
+        /**
+         * @param url URL to call
+         * @param method HTTP method
+         * @param auth Apex authorization header
+         * @param level 0,1 or 2
+         */
         sendTestRequest: function(url, method, auth, level) {
             if (level === 0) {
                 return $http({
@@ -135,10 +132,6 @@ function testService($http, UtilityService) {
             }
         }
     };
-}
-
-function capitalizePrefix(prefix) {
-    return prefix.charAt(0).toUpperCase() + prefix.substring(1);
 }
 
 /**

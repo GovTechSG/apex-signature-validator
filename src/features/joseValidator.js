@@ -66,7 +66,7 @@ let joseValidatorTemplate = `
     </form>
 </div>`;
 
-function joseValidatorController($scope, JWTService, stateService, Notification) {
+function joseValidatorController(JWTService, stateService, Notification) {
     let controller = this;
 
     stateService.state = 'joseValidator';

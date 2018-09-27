@@ -326,7 +326,7 @@ let signatureValidatorTemplate = `
 </div>
 
 <div style='text-align:center'>
-    <button type="button" class="btn btn-lg btn-default" ng-click="sendTestRequest()">
+    <button type="button" class="btn btn-lg btn-default" ng-click="$ctrl.sendTestRequest()">
         <span class="glyphicon glyphicon-transfer"></span> Send Test Request
     </button>
 </div>
@@ -341,20 +341,25 @@ let signatureValidatorTemplate = `
             </div>
         </div>
     </div>
-    <div class="panel-body">        
+    <div class="panel-body" ng-class="{'bg-success': $ctrl.apiTest.status < 300, 'bg-warning': 300 < $ctrl.apiTest.status && $ctrl.apiTest.status < 400, 'bg-danger': (400 < $ctrl.apiTest.status && $ctrl.apiTest.status < 600) || $ctrl.apiTest.status === -1}">
+        <div ng-if="$ctrl.sendingTestRequest" class="spinner">
+            <div class="bounce1"></div>
+            <div class="bounce2"></div>
+            <div class="bounce3"></div>
+        </div>
+
         <div class="row">
             <div class="col-sm-12">
-                <fieldset class="form-inline">
-                    <div class="form-group">
-                        <label for="apiTestStatus">API Test Status</label>
-                        <input type="number" name="apiTestStatus" id="apiTestStatus" disabled class="form-control" ng-model="$ctrl.apiTest.status">
-                    </div>
-                </fieldset>
+                <strong>API Test Request Status:</strong> {{ $ctrl.apiTest.xhrStatus }}<span ng-if="$ctrl.apiTest.xhrStatus === 'error'">: the http request could not be completed</span>
 
                 <br>
 
-                <label for="apiTestResponse">API Test Response</label>
-                <textarea rows="3" name="apiTestResponse" id="apiTestResponse" class="form-control" disabled ng-model="$ctrl.apiTest.response"></textarea>
+                <strong>API Test Response Status:</strong> {{ $ctrl.apiTest.status }} {{ $ctrl.apiTest.statusText }}
+
+                <br>
+
+                <label for="apiTestResponse">API Test Response Data</label>
+                <textarea rows="4" name="apiTestResponse" id="apiTestResponse" class="form-control code" disabled>{{$ctrl.apiTest.data | json}}</textarea>
             </div>            
         </div>
     </div>
@@ -632,8 +637,7 @@ let signatureValidatorTemplate = `
 </div>
 </div>`;
 
-function signatureValidatorController($scope, config, Notification, TestService, ModalService, $sce,
-    $uibModal, stateService) {
+function signatureValidatorController($scope, config, Notification, TestService, ModalService, $sce, $uibModal, stateService) {
 
     const controller = this;
 
@@ -648,6 +652,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
     controller.getSignatureUrl = getSignatureUrl;
     controller.levelChange = levelChange;
     controller.removePostBody = removePostBody;
+    controller.sendTestRequest = sendTestRequest;
     controller.signatureMethod = signatureMethod;
     controller.signatureGenerated = signatureGenerated;
     controller.showOptions = showOptions;
@@ -670,7 +675,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
         controller.nonce = 'auto-generated';
         controller.selectedLevel = 2;
 
-        controller.apiUrl = 'https://mygateway.api.gov.sg/myservice/api/v1/users?a=first&b=second&q=hello&thing=world'
+        controller.apiUrl = 'https://training.api.lab/apex-dota/api'
 
         $scope.sendingTestRequest = false;
         $scope.inputUri = '';
@@ -877,17 +882,36 @@ function signatureValidatorController($scope, config, Notification, TestService,
         controller.basestringComparison = $sce.trustAsHtml(bsResults);
         if (generated === input) {
             Notification.success({
-                title: '',
                 message: 'Basestrings are the same',
                 delay: config.notificationShowTime
             });
         } else {
             Notification.error({
-                title: '',
                 message: 'Basestrings are different',
                 delay: config.notificationShowTime
             });
         }
+    }
+
+    function sendTestRequest() {
+        controller.sendingTestRequest = true;
+        controller.apiTest = null;
+        return TestService.sendTestRequest(controller.apiUrl, controller.httpMethod, controller.authHeader, controller.authLevel)
+            .then(response => {
+                controller.apiTest = response;
+            })
+            .catch(error => {
+                controller.apiTest = error;
+                if (error.xhrStatus === 'error' && error.status === -1) {
+                    Notification.error({
+                        message: config.main.errorMessages.httpRequestError,
+                        delay: config.notificationShowTime
+                    });
+                }
+            })
+            .finally(() => {
+                controller.sendingTestRequest = false;
+            })
     }
 
     $scope.checkTestResult = function() {
