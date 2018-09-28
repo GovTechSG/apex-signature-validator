@@ -1,4 +1,4 @@
-![APEX Logo](https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/color_apex_landscape.png)
+![APEX Logo](/assets/color_apex_landscape.png)
 ***
 # APEX Signature and JOSE Validator
 
@@ -6,8 +6,7 @@
 [![GitHub license](https://img.shields.io/github/license/GovTechSG/apex-signature-validator.svg)](https://github.com/GovTechSG/apex-signature-validator/blob/master/LICENSE)
 [![GitHub forks](https://img.shields.io/github/forks/GovTechSG/apex-signature-validator.svg)](https://github.com/GovTechSG/apex-signature-validator/network)
 
-
-The Apex Signature Validator is an AngularJS application that assists APEX API consumers in verifying whether signatures are generated correctly in their applications when making restful API calls to the APEX API Gateway. 
+The Apex Signature Validator is an AngularJS application that assists APEX API consumers in verifying whether signatures are generated correctly in their applications when making restful API calls to the APEX API Gateway. See it in action [here](https://govtechsg.github.io/apex-signature-validator/).
 
 You can find out more about Apex signature generation from our reference Node.js implementation at https://github.com/GovTechSG/node-apex-api-security.
 
@@ -37,15 +36,15 @@ You can find out more about Apex signature generation from our reference Node.js
 ## Running Apex Signature Validator
 Download and extract the latest [release](https://github.com/GovTechSG/apex-signature-validator/releases) and run `index.html` directly in your browser.
 
-![homepage_1.png](https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/homepage_1.png)
+![homepage_1.png](/assets/homepage_1.png)
 
 ### Apex base string verification tool
 
 A basestring verification tool is provided for L1 and L2 authentication. This allows users to verify that basestrings in their own applications are correctly generated. This tool also highlights differences between its own and user-generated basestrings.
 
-![basestring_correct.png](https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/basestring_correct.png)
+![basestring_correct.png](/assets/basestring_correct.png)
 
-![basestring_different.png](https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/basestring_different.png)
+![basestring_different.png](/assets/basestring_different.png)
 
 **Note**
 
@@ -108,7 +107,7 @@ Authorization: Apex realm="https://example.com/v1/helloworld/nocors",{prefix}_ap
 
 If you have request parameters that are reused often, you can load and save input request parameters in JSON files using the options menu located on the top right.
 
-![params_loading.png](https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/params_loading.png)
+![params_loading.png](/assets/params_loading.png)
 
 ## Building Apex Signature Validator
 From the root directory:
@@ -213,14 +212,14 @@ These scripts would automatically open the signature validator in a new Chrome w
 JOSE (Javascript Object Signing and Encryption) is an approach to signing and encrypting JSON content. If your API responses are packaged in any of the JOSE standards, you can use this client to further verify or decrpyt the corresponding API response.
 
 ### Verifying JWS
-![jose_jws_verified.png](https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/jose_jws_verified.png)
+![jose_jws_verified.png](/assets/jose_jws_verified.png)
 
 - Input : JWS API Response from the Gateway. As of now, we are only supporting it in JSON format.
 - Public Certificate/Key : Public certificate that will be used to verify the JSON Web Signature. 
 - Output : Data output upon successful verification.
 
 ### Decrypting JWE
-![jose_jwe_verified.png](https://github.com/GovTechSG/apex-signature-validator/blob/master/assets/jose_jwe_verified.png)
+![jose_jwe_verified.png](/assets/jose_jwe_verified.png)
 
 - Input : JWE API Response from the Gateway in JSON format.
 - Private Key : Private key that will be used to decrypt the JWE string.
