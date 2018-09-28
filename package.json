@@ -24,10 +24,10 @@
     "jsrsasign": "^8.0.7",
     "querystring": "^0.2.0",
     "randombytes": "^2.0.6",
-    "urlsafe-base64": "1.0.0",
-    "snyk": "^1.88.0"
+    "urlsafe-base64": "1.0.0"
   },
   "devDependencies": {
+    "snyk": "^1.88.0",
     "@babel/core": "^7.1.0",
     "@babel/preset-env": "^7.1.0",
     "babel-loader": "^8.0.0",
