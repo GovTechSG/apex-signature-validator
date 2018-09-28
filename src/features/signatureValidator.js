@@ -357,6 +357,13 @@ let signatureValidatorTemplate = `
 
         <div class="row">
             <div class="col-sm-12">
+                <label for="apiTestConfig">API Test Request Config </label> 
+                <textarea rows="4" name=apiTestConfig" id="apiTestConfig" class="form-control code" disabled>{{ $ctrl.apiTest.config.method }} {{ $ctrl.apiTest.config.url }}
+{{ $ctrl.getApiTestHeaders($ctrl.apiTest.config.headers) }}
+                </textarea>
+
+                <br>
+            
                 <strong>API Test Request Status:</strong> {{ $ctrl.apiTest.xhrStatus }}<span ng-if="$ctrl.apiTest.xhrStatus === 'error'">: the http request could not be completed</span>
 
                 <br>
@@ -373,7 +380,7 @@ let signatureValidatorTemplate = `
 </div>
 </div>`;
 
-function signatureValidatorController($scope, config, Notification, TestService, ModalService, $sce, $uibModal, stateService) {
+function signatureValidatorController($scope, config, Notification, TestService, $sce, $uibModal, stateService) {
     const controller = this;
 
     init();
@@ -383,6 +390,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
     controller.addPostBody = addPostBody;
     controller.authPrefix = authPrefix;
     controller.compareBasestring = compareBasestring;
+    controller.getApiTestHeaders = getApiTestHeaders;
     controller.getSignatureUrl = getSignatureUrl;
     controller.removePostBody = removePostBody;
     controller.sendTestRequest = sendTestRequest;
@@ -618,7 +626,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
     function sendTestRequest() {
         controller.sendingTestRequest = true;
         controller.apiTest = null;
-        return TestService.sendTestRequest(controller.apiUrl, controller.httpMethod, controller.authHeader, controller.authLevel)
+        return TestService.sendTestRequest(controller.apiUrl, controller.httpMethod, controller.authHeader, controller.selectedLevel)
             .then(response => {
                 controller.apiTest = response;
             })
@@ -660,7 +668,6 @@ function signatureValidatorController($scope, config, Notification, TestService,
     function parseInputFile(fileText) {
         controller.pem = fileText;
         formSignature();
-        ModalService.setPem(controller.pem);
     };
 
     function showOptions() {
@@ -713,11 +720,18 @@ function signatureValidatorController($scope, config, Notification, TestService,
         });
         formSignature();
     }
+
+    function getApiTestHeaders(headers) {
+        let headerString = '';
+        let headerKeys = Object.keys(headers);
+        for (let key of headerKeys) {
+            headerString += `${key}: ${headers[key]}\n`
+        }
+        return headerString;
+    }
 }
 
-signatureValidatorController.$inject = ['$scope', 'config', 'Notification', 'TestService', 'ModalService', '$sce',
-    '$uibModal', 'stateService'
-];
+signatureValidatorController.$inject = ['$scope', 'config', 'Notification', 'TestService', '$sce', '$uibModal', 'stateService'];
 
 export default {
     controller: signatureValidatorController,

@@ -13,7 +13,6 @@ import joseValidator from './features/joseValidator';
 import config from './service/config';
 import jwtService from './service/jwtService';
 import testService from './service/testService';
-import modalService from './service/modalService';
 import utilService from './service/utiityService';
 
 import './css/style.css';
@@ -21,7 +20,6 @@ import './css/style.css';
 angular.module('app', [uibootstrap, uinotification, uiRouter])
     .constant('config', config)
     .controller('mainController', mainController)
-    .factory('ModalService', modalService)
     .factory('TestService', testService)
     .factory('JWTService', jwtService)
     .factory('UtilityService', utilService)
