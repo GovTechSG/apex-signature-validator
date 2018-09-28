@@ -49,7 +49,7 @@ export default {
             noPemProvided: 'Please load or enter a valid PEM formatted private key',
             pemSecretInvalid: 'Please verify that both pem string and secret are correct',
             pkeyInvalid: 'Error verifying private key: check that both private key and its passphrase are correct',
-            httpRequestError: 'Error making HTTP request. Please make sure that your URL is correct.',
+            httpRequestError: 'Error making HTTP request. Please make sure that your URL is correct, or CORS is enabled on the API.',
             httpRequestFullError: 'Error encountered while making the request. Please refer to the readme at https://github.com/GovTechSG/apex-signature-validator for possible causes.'
         }
     },

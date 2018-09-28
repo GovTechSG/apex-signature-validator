@@ -408,7 +408,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
 
         controller.postBody = [];
 
-        $scope.sendingTestRequest = false;
+        controller.sendingTestRequest = false;
         $scope.nonceDisabled = true;
         $scope.timestampDisabled = true;
 
@@ -417,7 +417,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
 
         controller.selectedLevel = 0;
 
-        controller.apiUrl = 'https://training.api.lab/apex-dota/api'
+        controller.apiUrl = ''
 
         $scope.httpMethods = config.main.httpMethods;
         controller.httpMethod = $scope.httpMethods[0];
@@ -488,6 +488,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
     }
 
     function formSignature() {
+        if (controller.selectedLevel === 0) return;
         controller.showBasestringComparison = false;
         let valid = validateForm(controller.selectedLevel);
         if (valid) {
