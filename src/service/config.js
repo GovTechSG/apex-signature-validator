@@ -6,7 +6,7 @@ const constants = {
     strings: {
         signatureUrl: 'Apex API domains (api.gov.sg) need to have subdomains .i (intranet gateway) or .e (internet gateway) inserted for signing.'
     }
-}
+};
 
 export default {
     constants: constants,
@@ -38,7 +38,6 @@ export default {
             }
         },
         notificationShowTime: 5000,
-        domain: process.env.NODE_ENV === 'production' ? 'api.gov.sg' : 'api.dev',
         errorMessages: {
             noSelectedGateway: 'Gateway must be specified',
             noAuthPrefix: 'Auth prefix must be specified',

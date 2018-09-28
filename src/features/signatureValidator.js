@@ -60,6 +60,12 @@ let signatureValidatorTemplate = `
             <div class="row">
                 <div class="col-md-12">
                     <label for="signatureUrl">Signature URL</label> <span class="glyphicon glyphicon-info-sign" tooltip-placement="top" uib-tooltip="{{ config.constants.strings.signatureUrl }}"></span>
+                    
+                    <label style="float:right">
+                        <input type="checkbox"></input>    
+                        Custom signature URL                        
+                    </label>
+
                     <input type="text" name="signatureUrl" id="signatureUrl" class="form-control" placeholder="https://mygateway.api.gov.sg/myservice/api/v1/users"
                         ng-value="$ctrl.getSignatureUrl($ctrl.apiUrl)" disabled>
                 </div>
@@ -418,7 +424,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
 
         controller.selectedLevel = 0;
 
-        controller.apiUrl = ''
+        controller.apiUrl = '';
 
         $scope.httpMethods = config.main.httpMethods;
         controller.httpMethod = $scope.httpMethods[0];
@@ -433,33 +439,33 @@ function signatureValidatorController($scope, config, Notification, TestService,
 
     function signatureMethod() {
         switch (controller.selectedLevel) {
-            case 0:
-                return '';
-            case 1:
-                return config.main.sigMethod.level1;
-            case 2:
-                return config.main.sigMethod.level2;
+        case 0:
+            return '';
+        case 1:
+            return config.main.sigMethod.level1;
+        case 2:
+            return config.main.sigMethod.level2;
         }
     }
 
     function authPrefix() {
         if (controller.gatewayZone === config.constants.gatewayZones.internet) {
             switch (controller.selectedLevel) {
-                case 1:
-                    return 'apex_l1_eg';
-                case 2:
-                    return 'apex_l2_eg';
-                default:
-                    return '';
+            case 1:
+                return 'apex_l1_eg';
+            case 2:
+                return 'apex_l2_eg';
+            default:
+                return '';
             }
         } else if (controller.gatewayZone === config.constants.gatewayZones.intranet) {
             switch (controller.selectedLevel) {
-                case 1:
-                    return 'apex_l1_ig';
-                case 2:
-                    return 'apex_l2_ig';
-                default:
-                    return ''
+            case 1:
+                return 'apex_l1_ig';
+            case 2:
+                return 'apex_l2_ig';
+            default:
+                return '';
             }
         }
     }
@@ -468,7 +474,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
         controller.postBody.push({
             key: key,
             value: value
-        })
+        });
     }
 
     function canSendTestRequest() {
@@ -508,7 +514,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
                 formData = {};
                 controller.postBody.forEach(function(kvpair) {
                     formData[kvpair.key] = kvpair.value;
-                })
+                });
             }
             let basestringOptions = {
                 signatureUrl: getSignatureUrl(controller.apiUrl),
@@ -527,7 +533,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
             if (controller.postBody.length > 0) {
                 basestringOptions.formData = controller.postBody.reduce((finalObject, currentObject) => {
                     finalObject[currentObject.key] = currentObject.value;
-                    return finalObject
+                    return finalObject;
                 }, {});
             }
 
@@ -568,16 +574,16 @@ function signatureValidatorController($scope, config, Notification, TestService,
      */
     function validateForm(level) {
         switch (level) {
-            case 0:
-                return controller.apiUrl && controller.apiUrl.length > 0;
-            case 1:
-                return controller.apiUrl && controller.apiUrl.length > 0 &&
+        case 0:
+            return controller.apiUrl && controller.apiUrl.length > 0;
+        case 1:
+            return controller.apiUrl && controller.apiUrl.length > 0 &&
                     controller.appId && controller.appId.length > 0 &&
                     controller.appSecret && controller.appSecret.length > 0 &&
                     controller.nonce && controller.nonce.length > 0 &&
                     controller.timestamp && controller.timestamp.length > 0;
-            case 2:
-                return controller.apiUrl && controller.apiUrl.length > 0 &&
+        case 2:
+            return controller.apiUrl && controller.apiUrl.length > 0 &&
                     controller.appId && controller.appId.length > 0 &&
                     controller.pem && controller.pem.length > 0 &&
                     controller.nonce && controller.nonce.length > 0 &&
@@ -586,7 +592,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
     }
 
     function signatureGenerated() {
-        return controller.basestring && controller.basestring.length > 0 && controller.authHeader && controller.authHeader.length > 0
+        return controller.basestring && controller.basestring.length > 0 && controller.authHeader && controller.authHeader.length > 0;
     }
 
     function compareBasestring(generated, input) {
@@ -652,7 +658,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
             .finally(() => {
                 formSignature();
                 controller.sendingTestRequest = false;
-            })
+            });
     }
 
     function nonceGenChange() {
@@ -663,7 +669,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
             controller.nonce = '';
         }
         formSignature();
-    };
+    }
 
     function timestampGenChange() {
         $scope.timestampDisabled = !$scope.timestampDisabled;
@@ -673,12 +679,12 @@ function signatureValidatorController($scope, config, Notification, TestService,
             controller.timestamp = '';
         }
         formSignature();
-    };
+    }
 
     function parseInputFile(fileText) {
         controller.pem = fileText;
         formSignature();
-    };
+    }
 
     function showOptions() {
         $uibModal.open({
@@ -714,11 +720,11 @@ function signatureValidatorController($scope, config, Notification, TestService,
                 return {
                     key: kvpair.key,
                     value: kvpair.value
-                }
+                };
             });
         }
         if (controller.selectedLevel === 1) {
-            currentConfig.appSecret = controller.appSecret
+            currentConfig.appSecret = controller.appSecret;
         }
         return currentConfig;
     }
@@ -735,7 +741,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
         let headerString = '';
         let headerKeys = Object.keys(headers);
         for (let key of headerKeys) {
-            headerString += `${key}: ${headers[key]}\n`
+            headerString += `${key}: ${headers[key]}\n`;
         }
         return headerString;
     }
