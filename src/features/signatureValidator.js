@@ -333,7 +333,7 @@ let signatureValidatorTemplate = `
 </div>
 
 <div style='text-align:center'>
-    <button type="button" class="btn btn-lg btn-default" ng-click="$ctrl.sendTestRequest()">
+    <button type="button" class="btn btn-lg btn-default" ng-click="$ctrl.sendTestRequest()" ng-disabled="!$ctrl.canSendTestRequest()">
         <span class="glyphicon glyphicon-transfer"></span> Send Test Request
     </button>
 </div>
@@ -389,6 +389,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
 
     controller.addPostBody = addPostBody;
     controller.authPrefix = authPrefix;
+    controller.canSendTestRequest = canSendTestRequest;
     controller.compareBasestring = compareBasestring;
     controller.getApiTestHeaders = getApiTestHeaders;
     controller.getSignatureUrl = getSignatureUrl;
@@ -468,6 +469,14 @@ function signatureValidatorController($scope, config, Notification, TestService,
             key: key,
             value: value
         })
+    }
+
+    function canSendTestRequest() {
+        if (controller.selectedLevel === 0) {
+            return controller.apiUrl && controller.apiUrl.length > 0;
+        } else {
+            return controller.basestring && controller.authHeader;
+        }
     }
 
     function getSignatureUrl(apiUrl) {
