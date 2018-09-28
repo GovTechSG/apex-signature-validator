@@ -57,13 +57,23 @@ let signatureValidatorTemplate = `
 
             <br>
 
+            <div class="row">
+                <div class="col-md-12">
+                    <label for="signatureUrl">Signature URL</label> <span class="glyphicon glyphicon-info-sign" tooltip-placement="top" uib-tooltip="{{ config.constants.strings.signatureUrl }}"></span>
+                    <input type="text" name="signatureUrl" id="signatureUrl" class="form-control" placeholder="https://mygateway.api.gov.sg/myservice/api/v1/users"
+                        ng-value="$ctrl.getSignatureUrl($ctrl.apiUrl)" disabled>
+                </div>
+            </div>
+
+            <br>
+
             <div class="row" ng-if="$ctrl.httpMethod === 'POST'">
                 <div class="col-md-12">
                     <b>POST body (only if POST body encoding is application/x-www-form-urlencoded)</b> <a href ng-click="$ctrl.addPostBody('','')"> <span class="glyphicon glyphicon-plus"></span>Add</a>        
                 </div>
             </div>
 
-            <fieldset class="form-horizontal" ng-if="$ctrl.postBody">
+            <fieldset class="form-horizontal" ng-if="$ctrl.postBody.length > 0">
                 <br>
                 <div class="row" ng-repeat="kvpair in $ctrl.postBody">
                     <div class="col-sm-6">
@@ -90,15 +100,7 @@ let signatureValidatorTemplate = `
                         </button>
                     </div>
                 </div>
-            </fieldset>
-            
-            <div class="well uri-preview">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <strong>Signature URL</strong> <span class="glyphicon glyphicon-info-sign" tooltip-placement="top" uib-tooltip="{{ config.constants.strings.signatureUrl }}"></span>: {{ $ctrl.getSignatureUrl($ctrl.apiUrl) }}
-                    </div>
-                </div>       
-            </div>
+            </fieldset>        
         </form>
     </div>
 </div>
@@ -107,11 +109,11 @@ let signatureValidatorTemplate = `
     <div class="panel-heading">
         <div class="row">
             <div class="col-sm-12" style="text-align:center">
-                <h4><span class="label label-primary">2</span> Apex Authentication Level</h4>
+                <h4><span class="label label-primary">2</span> Apex Authentication Parameters</h4>
                 <div class="btn-group">
                     <button ng-repeat="level in $ctrl.authLevels" class="btn btn-default" 
                         ng-click="$ctrl.selectedLevel = level" ng-class="{active: $ctrl.selectedLevel === level}">
-                        {{level}}
+                        L{{level}}
                     </button>
                 </div>
             </div>
@@ -120,7 +122,7 @@ let signatureValidatorTemplate = `
 
     <div class="panel-body">
         <div class="row">
-            <div class="col-sm-12" ng-if="$ctrl.selectedLevel === 0">
+            <div class="col-sm-12" ng-if="$ctrl.selectedLevel === 0" style="text-align:center">
                 <strong style="text-align:center">No authentication required for L0</strong>
             </div>
             <div class="col-sm-12 "  ng-if="$ctrl.selectedLevel === 1 || $ctrl.selectedLevel === 2">
@@ -284,15 +286,7 @@ let signatureValidatorTemplate = `
                             <label for="basestring">Generated base string</label>
                             <textarea rows="4" disabled class="form-control immutable code" ng-model="$ctrl.basestring" name="basestring" id="basestring"></textarea>
                         </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            <span style="float:right; margin-top:5px">
-                                <button class="btn btn-default" ng-click="formSignature()">Regenerate Base String</button>
-                            </span>
-                        </div>
-                    </div>
+                    </div>                
 
                     <div class="row">
                         <div class="col-md-12">
@@ -324,6 +318,14 @@ let signatureValidatorTemplate = `
                                 ng-model="$ctrl.authHeader" disabled></textarea>
                         </div>
                     </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <span style="float:right; margin-top:5px">
+                                <button class="btn btn-default" ng-click="formSignature()">Regenerate Base String And Signature</button>
+                            </span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -338,7 +340,7 @@ let signatureValidatorTemplate = `
 
 <br>
 
-<div class="panel panel-default">
+<div class="panel panel-default" ng-if="$ctrl.apiTest">
     <div class="panel-heading">
         <div class="row" style='text-align:center'>
             <div class="col-sm-12">

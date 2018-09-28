@@ -4,7 +4,7 @@ const constants = {
         intranet: 'Intranet Gateway'
     },
     strings: {
-        signatureUrl: 'Apex API domains (api.gov.sg) need to have .i (intranet gateway) or .e (internet gateway) inserted for signing.'
+        signatureUrl: 'Apex API domains (api.gov.sg) need to have subdomains .i (intranet gateway) or .e (internet gateway) inserted for signing.'
     }
 }
 
