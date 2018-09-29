@@ -64,8 +64,3 @@ angular.module('app', [uibootstrap, uinotification, uiRouter])
             }
         };
     }])
-    .factory('stateService', function() {
-        return {
-            state: 'signatureValidator' // Default state is signature validator
-        };
-    });

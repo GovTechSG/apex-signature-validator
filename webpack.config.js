@@ -1,5 +1,4 @@
 const webpack = require('webpack');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
@@ -10,6 +9,7 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
     console.log('Building version: ' + version);
 
     let config = {
+        mode: env.production || env.devbuild || 'development',
         entry: {
             app: './src/app.js'
         },
@@ -54,9 +54,7 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
                 }
             ]
         },
-        plugins: [
-            new webpack.NoEmitOnErrorsPlugin()
-        ],
+        plugins: [],
         devServer: {
             contentBase: path.resolve(__dirname, 'dist')
         }
@@ -64,10 +62,8 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
     
     if (env.production) {
         // PRODUCTION
-        config.plugins.push(new UglifyJsPlugin()); // minify js
         config.plugins.push(new OptimizeCssAssetsPlugin()); // minify css
         config.plugins.push(new webpack.DefinePlugin({
-            'process.env.NODE_ENV': JSON.stringify('production'),
             'VERSION': JSON.stringify(version)
         }));
         config.plugins.push(new HtmlWebpackPlugin({
@@ -78,10 +74,8 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
         config.plugins.push(new HtmlWebpackInlineSourcePlugin());
     } else if (env.devbuild) {
         // DEV:MINIFIED/INLINED
-        config.plugins.push(new UglifyJsPlugin()); // minify js
         config.plugins.push(new OptimizeCssAssetsPlugin()); // minify css
         config.plugins.push(new webpack.DefinePlugin({
-            'process.env.NODE_ENV': JSON.stringify('development'),
             'VERSION': JSON.stringify(version)
         }));
         config.plugins.push(new HtmlWebpackPlugin({
@@ -93,7 +87,6 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
     } else {
         // DEV
         config.plugins.push(new webpack.DefinePlugin({
-            'process.env.NODE_ENV': JSON.stringify('development'),
             'VERSION': JSON.stringify(version)
         }));
         config.plugins.push(new HtmlWebpackPlugin({

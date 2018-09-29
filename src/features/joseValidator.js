@@ -66,10 +66,8 @@ let joseValidatorTemplate = `
     </form>
 </div>`;
 
-function joseValidatorController(JWTService, stateService, Notification) {
+function joseValidatorController(JWTService, Notification) {
     let controller = this;
-
-    stateService.state = 'joseValidator';
 
     controller.jwt_standards = ['JWS', 'JWE'];
     controller.selectedJWTStandard = controller.jwt_standards[0];
@@ -104,7 +102,7 @@ function joseValidatorController(JWTService, stateService, Notification) {
     }
 }
 
-joseValidatorController.$inject = ['$scope', 'JWTService', 'stateService', 'Notification'];
+joseValidatorController.$inject = ['$scope', 'JWTService', 'Notification'];
 
 export default {
     template: joseValidatorTemplate,

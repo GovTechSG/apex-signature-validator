@@ -387,7 +387,7 @@ let signatureValidatorTemplate = `
 </div>
 </div>`;
 
-function signatureValidatorController($scope, config, Notification, TestService, $sce, $uibModal, stateService) {
+function signatureValidatorController($scope, config, Notification, TestService, $sce, $uibModal) {
     const controller = this;
 
     init();
@@ -414,8 +414,6 @@ function signatureValidatorController($scope, config, Notification, TestService,
     $scope.parseInputFile = parseInputFile;
 
     function init() {
-        stateService.state = 'signatureValidator';
-
         controller.postBody = [];
 
         controller.sendingTestRequest = false;
@@ -524,15 +522,6 @@ function signatureValidatorController($scope, config, Notification, TestService,
         controller.showBasestringComparison = false;
         let valid = validateForm(controller.selectedLevel);
         if (valid) {
-            // 1. Base string generation
-            // Process any POST body data
-            let formData = null;
-            if (controller.postBody) {
-                formData = {};
-                controller.postBody.forEach(function(kvpair) {
-                    formData[kvpair.key] = kvpair.value;
-                });
-            }
             let basestringOptions = {
                 signatureUrl: controller.signatureUrl,
                 authPrefix: authPrefix(),
@@ -543,10 +532,9 @@ function signatureValidatorController($scope, config, Notification, TestService,
                 // Optional parameters
                 nonce: controller.nonce === 'auto-generated' ? randomBytes(32).toString('base64') : controller.nonce,
                 timestamp: controller.timestamp === 'auto-generated' ? (new Date).getTime() : controller.timestamp,
-                queryString: controller.queryString,
-                formData: controller.postBody
+                queryString: controller.queryString                
             };
-            // POST x-www-form-urlencoded body
+            // Process POST (x-www-form-urlencoded body)
             if (controller.postBody.length > 0) {
                 basestringOptions.formData = controller.postBody.reduce((finalObject, currentObject) => {
                     finalObject[currentObject.key] = currentObject.value;
@@ -764,7 +752,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
     }
 }
 
-signatureValidatorController.$inject = ['$scope', 'config', 'Notification', 'TestService', '$sce', '$uibModal', 'stateService'];
+signatureValidatorController.$inject = ['$scope', 'config', 'Notification', 'TestService', '$sce', '$uibModal'];
 
 export default {
     controller: signatureValidatorController,
