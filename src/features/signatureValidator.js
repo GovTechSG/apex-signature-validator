@@ -116,7 +116,8 @@ let signatureValidatorTemplate = `
     <div class="panel-heading">
         <div class="row">
             <div class="col-sm-12" style="text-align:center">
-                <h4><span class="label label-primary">2</span> Apex Authentication Parameters</h4>
+                <h4 style="display:inline-block"><span class="label label-primary">2</span> Apex Authentication Parameters</h4> <small><a href="http://docs.akana.com/docs-test/cm/learnmore/app_security.htm">Learn more</a></small>
+                <br>
                 <div class="btn-group">
                     <button ng-repeat="level in $ctrl.authLevels" class="btn btn-default" 
                         ng-click="$ctrl.changeAuthLevel(level)" ng-class="{active: $ctrl.selectedLevel === level}">
