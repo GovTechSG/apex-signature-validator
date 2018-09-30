@@ -677,7 +677,24 @@ function signatureValidatorController($scope, config, Notification, TestService,
     function sendTestRequest() {
         controller.sendingTestRequest = true;
         controller.apiTest = null;
-        return TestService.sendTestRequest(controller.apiUrl, controller.httpMethod, controller.authHeader, controller.selectedLevel)
+        let requestOptions = {};
+        if (controller.httpMethod !== 'GET') {
+            controller.requestBodyType = controller.requestBodyType;
+            if (controller.requestBodyType === 'application/x-www-form-urlencoded') {                
+                requestOptions.requestBody = controller.requestBody.urlencoded.reduce((finalObject, currentObject) => {
+                    if (currentObject.key && currentObject.value) { // false if any of them are empty strings
+                        finalObject[currentObject.key] = currentObject.value;
+                    }
+                    return finalObject;
+                }, {});
+            } else if (controller.requestBodyType === 'application/json') {
+                requestOptions.requestBody = JSON.parse(controller.requestBody);
+            }
+        }
+        if (controller.selectedLevel !== 0) {
+            requestOptions.authHeader = controller.authHeader;
+        }
+        return TestService.sendTestRequest(controller.apiUrl, controller.httpMethod, controller.selectedLevel, requestOptions)
             .then(response => {
                 controller.apiTest = response;
             })
