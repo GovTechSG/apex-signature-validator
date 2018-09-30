@@ -688,7 +688,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
                     return finalObject;
                 }, {});
             } else if (controller.requestBodyType === 'application/json') {
-                requestOptions.requestBody = JSON.parse(controller.requestBody);
+                requestOptions.requestBody = JSON.parse(controller.requestBody.json);
             }
         }
         if (controller.selectedLevel !== 0) {
