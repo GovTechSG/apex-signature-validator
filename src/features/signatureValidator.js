@@ -563,7 +563,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
                 queryString: controller.queryString                
             };
             // Process POST (x-www-form-urlencoded body)
-            if (controller.requestBody.urlencoded.length > 0) {
+            if (controller.httpMethod === 'POST' && controller.requestBody.urlencoded.length > 0) {
                 basestringOptions.formData = controller.requestBody.urlencoded.reduce((finalObject, currentObject) => {
                     if (currentObject.key && currentObject.value) { // false if any of them are empty strings
                         finalObject[currentObject.key] = currentObject.value;
@@ -750,7 +750,14 @@ function signatureValidatorController($scope, config, Notification, TestService,
             timestamp: controller.timestamp
         };
         if (controller.httpMethod !== 'GET') {
+            currentConfig.requestBodyType = controller.requestBodyType;
             currentConfig.requestBody = controller.requestBody;
+            currentConfig.requestBody.urlencoded = currentConfig.requestBody.urlencoded.map(urlencodedBody => {
+                return {
+                    key: urlencodedBody.key,
+                    value: urlencodedBody.value
+                }
+            })
         }        
         if (controller.selectedLevel === 1) {
             currentConfig.appSecret = controller.appSecret;
