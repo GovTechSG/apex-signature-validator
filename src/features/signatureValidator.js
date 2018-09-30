@@ -63,51 +63,64 @@ let signatureValidatorTemplate = `
                     <label for="signatureUrl">Signature URL</label> <span class="glyphicon glyphicon-info-sign" tooltip-placement="top" uib-tooltip="{{ config.constants.strings.signatureUrl }}"></span>
                     
                     <label style="float:right">
-                        <input type="checkbox" ng-model="$ctrl.customSignatureUrl" ng-change="$ctrl.onToggleCustomSignatureUrl()"></input>    
+                        <input type="checkbox" ng-model="$ctrl.allowCustomSignatureUrl" ng-change="$ctrl.onToggleCustomSignatureUrl()"></input>    
                         Custom signature URL
                     </label>
 
                     <input type="text" name="signatureUrl" id="signatureUrl" class="form-control" placeholder="https://mygateway.api.gov.sg/myservice/api/v1/users"
-                        ng-model="$ctrl.signatureUrl" ng-disabled="!$ctrl.customSignatureUrl" ng-change="formSignature()">
+                        ng-model="$ctrl.signatureUrl" ng-disabled="!$ctrl.allowCustomSignatureUrl" ng-change="formSignature()">
                 </div>
             </div>
 
             <br>
 
-            <div class="row" ng-if="$ctrl.httpMethod === 'POST'">
+            <div class="row" ng-if="$ctrl.httpMethod !== 'GET'">
                 <div class="col-md-12">
-                    <b>POST body (only if POST body encoding is application/x-www-form-urlencoded)</b> <a href ng-click="$ctrl.addPostBody('','')"> <span class="glyphicon glyphicon-plus"></span>Add</a>        
-                </div>
-            </div>
-
-            <fieldset class="form-horizontal" ng-if="$ctrl.postBody.length > 0">
-                <br>
-                <div class="row" ng-repeat="kvpair in $ctrl.postBody">
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label" for="{{ 'postBodyKey' + $index }}">Key</label>
-                            <div class="col-sm-10">
-                                <input type="text" id="{{ 'postBodyKey' + $index }}" class="form-control" ng-model="kvpair.key" ng-change="formSignature()">
-                            </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Request body</label>
+                            <label class="radio-inline" ng-repeat="requestBodyType in config.constants.requestBodyTypes">
+                                <input type="radio" name="requestBodyType" ng-model="$ctrl.requestBodyType" value="{{requestBodyType}}" 
+                                    ng-change="$ctrl.changeRequestBodyType(); formSignature()">
+                                {{requestBodyType}}
+                            </label>
+                            <a href ng-click="$ctrl.addUrlencodedBody('','')" ng-if="$ctrl.requestBodyType === 'application/x-www-form-urlencoded'"> <span class="glyphicon glyphicon-plus"></span> Add</a>
                         </div>
                     </div>
-                    
-                    <div class="col-sm-5">
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label" for="{{ 'postBodyValue' + $index }}">Value</label>
-                            <div class="col-sm-10">
-                                <input type="text" id="{{ 'postBodyValue' + $index }}" class="form-control" ng-model="kvpair.value" ng-change="formSignature()">
-                            </div>
+                    <div class="row" ng-if="$ctrl.requestBodyType !== config.constants.requestBodyTypes[0]">
+                        <div class="col-md-12">
+                            <textarea class="form-control code" ng-if="$ctrl.requestBodyType === 'application/json'" ng-model="$ctrl.requestBody.json"></textarea>
+                            <fieldset class="form-horizontal" ng-if="$ctrl.requestBodyType === 'application/x-www-form-urlencoded'">
+                                <div class="row" ng-repeat="kvpair in $ctrl.requestBody.urlencoded">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label" for="{{ 'urlencodedBodyKey' + $index }}">Key</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" id="{{ 'urlencodedBodyKey' + $index }}" class="form-control" ng-model="kvpair.key" ng-change="formSignature()">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-sm-5">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label" for="{{ 'urlencodedBodyValue' + $index }}">Value</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" id="{{ 'urlencodedBodyValue' + $index }}" class="form-control" ng-model="kvpair.value" ng-change="formSignature()">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-1">
+                                        <button type="button" class="btn btn-danger" ng-click="$ctrl.removeUrlencodedBody($index)">
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </fieldset>
                         </div>
                     </div>
-                    
-                    <div class="col-md-1">
-                        <button type="button" class="btn btn-danger" ng-click="$ctrl.removePostBody($index)">
-                            <span class="glyphicon glyphicon-remove"></span>
-                        </button>
-                    </div>
                 </div>
-            </fieldset>        
+            </div>             
         </form>
     </div>
 </div>
@@ -346,6 +359,12 @@ let signatureValidatorTemplate = `
     </button>
 </div>
 
+<div ng-if="$ctrl.sendingTestRequest" class="spinner">
+    <div class="bounce1"></div>
+    <div class="bounce2"></div>
+    <div class="bounce3"></div>
+</div>
+
 <br>
 
 <div class="panel panel-default" ng-if="$ctrl.apiTest">
@@ -357,12 +376,6 @@ let signatureValidatorTemplate = `
         </div>
     </div>
     <div class="panel-body" ng-class="{'bg-success': $ctrl.apiTest.status < 300, 'bg-warning': 300 <= $ctrl.apiTest.status && $ctrl.apiTest.status < 400, 'bg-danger': (400 <= $ctrl.apiTest.status && $ctrl.apiTest.status < 600) || $ctrl.apiTest.status === -1}">
-        <div ng-if="$ctrl.sendingTestRequest" class="spinner">
-            <div class="bounce1"></div>
-            <div class="bounce2"></div>
-            <div class="bounce3"></div>
-        </div>
-
         <div class="row">
             <div class="col-sm-12">
                 <label for="apiTestConfig">API Test Request Config </label> 
@@ -395,15 +408,16 @@ function signatureValidatorController($scope, config, Notification, TestService,
 
     $scope.config = config;
 
-    controller.addPostBody = addPostBody;
+    controller.addUrlencodedBody = addUrlencodedBody;
     controller.authPrefix = authPrefix;
     controller.canSendTestRequest = canSendTestRequest;
     controller.compareBasestring = compareBasestring;
     controller.changeAuthLevel = changeAuthLevel;
+    controller.changeRequestBodyType = changeRequestBodyType;
     controller.getApiTestHeaders = getApiTestHeaders;
     controller.formSignatureUrl = formSignatureUrl;
     controller.onToggleCustomSignatureUrl = onToggleCustomSignatureUrl;
-    controller.removePostBody = removePostBody;
+    controller.removeUrlencodedBody = removeUrlencodedBody;
     controller.sendTestRequest = sendTestRequest;
     controller.signatureMethod = signatureMethod;
     controller.signatureGenerated = signatureGenerated;
@@ -415,9 +429,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
     $scope.parseInputFile = parseInputFile;
 
     function init() {
-        controller.postBody = [];
-
-        controller.sendingTestRequest = false;
+        
         $scope.nonceDisabled = true;
         $scope.timestampDisabled = true;
 
@@ -426,7 +438,15 @@ function signatureValidatorController($scope, config, Notification, TestService,
 
         controller.selectedLevel = 0;
 
+        controller.sendingTestRequest = false;
+        
         controller.apiUrl = '';
+
+        controller.requestBodyType = config.constants.requestBodyTypes[0];
+        controller.requestBody = {
+            json: '',
+            urlencoded: []
+        }
 
         $scope.httpMethods = config.main.httpMethods;
         controller.httpMethod = $scope.httpMethods[0];
@@ -456,6 +476,13 @@ function signatureValidatorController($scope, config, Notification, TestService,
         formSignature();
     }
 
+    function changeRequestBodyType() {
+        if (controller.requestBodyType === 'application/x-www-form-urlencoded' && 
+            controller.requestBody.urlencoded.length === 0) {
+            addUrlencodedBody('', '');
+        }
+    }
+
     function authPrefix() {
         if (controller.gatewayZone === config.constants.gatewayZones.internet) {
             switch (controller.selectedLevel) {
@@ -478,8 +505,8 @@ function signatureValidatorController($scope, config, Notification, TestService,
         }
     }
 
-    function addPostBody(key, value) {
-        controller.postBody.push({
+    function addUrlencodedBody(key, value) {
+        controller.requestBody.urlencoded.push({
             key: key,
             value: value
         });
@@ -494,14 +521,14 @@ function signatureValidatorController($scope, config, Notification, TestService,
     }
 
     function onToggleCustomSignatureUrl() {
-        if (!controller.customSignatureUrl) {
+        if (!controller.allowCustomSignatureUrl) {
             controller.formSignatureUrl();
             formSignature();
         }
     }
 
     function formSignatureUrl() {
-        if (controller.customSignatureUrl) return;
+        if (controller.allowCustomSignatureUrl) return; // If user wants to set custom signature URL, don't check it
         if (controller.apiUrl === '' || !controller.apiUrl) return '';
 
         let apexDomain = controller.apiUrl.indexOf('.api.gov.sg');
@@ -513,8 +540,8 @@ function signatureValidatorController($scope, config, Notification, TestService,
         } else { controller.signatureUrl = controller.apiUrl; }
     }
 
-    function removePostBody(index) {
-        controller.postBody.splice(index, 1);
+    function removeUrlencodedBody(index) {
+        controller.requestBody.urlencoded.splice(index, 1);
         formSignature();
     }
 
@@ -536,9 +563,11 @@ function signatureValidatorController($scope, config, Notification, TestService,
                 queryString: controller.queryString                
             };
             // Process POST (x-www-form-urlencoded body)
-            if (controller.postBody.length > 0) {
-                basestringOptions.formData = controller.postBody.reduce((finalObject, currentObject) => {
-                    finalObject[currentObject.key] = currentObject.value;
+            if (controller.requestBody.urlencoded.length > 0) {
+                basestringOptions.formData = controller.requestBody.urlencoded.reduce((finalObject, currentObject) => {
+                    if (currentObject.key && currentObject.value) { // false if any of them are empty strings
+                        finalObject[currentObject.key] = currentObject.value;
+                    }
                     return finalObject;
                 }, {});
             }
@@ -714,21 +743,15 @@ function signatureValidatorController($scope, config, Notification, TestService,
             httpMethod: controller.httpMethod,
             apiUrl: controller.apiUrl,
             signatureUrl: controller.signatureUrl,
+            allowCustomSignatureUrl: controller.allowCustomSignatureUrl,
             selectedLevel: controller.selectedLevel,
             appId: controller.appId,
-            appSecret: controller.appSecret,
             nonce: controller.nonce,
             timestamp: controller.timestamp
         };
-        if (controller.httpMethod === 'POST' && controller.postBody.length > 0) {
-            // Need to map each parameter to get rid of angularjs internal $$hashkeys
-            currentConfig.postBody = controller.postBody.map(kvpair => {
-                return {
-                    key: kvpair.key,
-                    value: kvpair.value
-                };
-            });
-        }
+        if (controller.httpMethod !== 'GET') {
+            currentConfig.requestBody = controller.requestBody;
+        }        
         if (controller.selectedLevel === 1) {
             currentConfig.appSecret = controller.appSecret;
         }
