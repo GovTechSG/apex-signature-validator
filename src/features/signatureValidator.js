@@ -56,9 +56,8 @@ let signatureValidatorTemplate = `
                 </div>
             </div>
 
-            <br>
-
-            <div class="row">
+            <div class="row" ng-if="$ctrl.selectedLevel !== 0">
+                <br>
                 <div class="col-md-12">
                     <label for="signatureUrl">Signature URL</label> <span class="glyphicon glyphicon-info-sign" tooltip-placement="top" uib-tooltip="{{ config.constants.strings.signatureUrl }}"></span>
                     
@@ -679,7 +678,7 @@ function signatureValidatorController($scope, config, Notification, TestService,
         controller.apiTest = null;
         let requestOptions = {};
         if (controller.httpMethod !== 'GET') {
-            controller.requestBodyType = controller.requestBodyType;
+            requestOptions.requestBodyType = controller.requestBodyType;
             if (controller.requestBodyType === 'application/x-www-form-urlencoded') {                
                 requestOptions.requestBody = controller.requestBody.urlencoded.reduce((finalObject, currentObject) => {
                     if (currentObject.key && currentObject.value) { // false if any of them are empty strings
