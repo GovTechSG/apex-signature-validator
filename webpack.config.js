@@ -7,9 +7,12 @@ const path = require('path');
 
 module.exports = (env = {}) => { // set env as empty object if unset from cli
     console.log('Building version: ' + version);
+    let mode;
+    if (env.production || env.devbuild) { mode = 'production'; }
+    else { mode = 'development'; }
 
     let config = {
-        mode: env.production || env.devbuild || 'development',
+        mode: mode,
         entry: {
             app: './src/app.js'
         },
@@ -59,7 +62,7 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
             contentBase: path.resolve(__dirname, 'dist')
         }
     };
-    
+
     if (env.production) {
         // PRODUCTION
         config.plugins.push(new OptimizeCssAssetsPlugin()); // minify css
