@@ -561,8 +561,10 @@ function signatureValidatorController($scope, config, Notification, TestService,
                 timestamp: controller.timestamp === 'auto-generated' ? (new Date).getTime() : controller.timestamp,
                 queryString: controller.queryString                
             };
-            // Process POST (x-www-form-urlencoded body)
-            if (controller.httpMethod === 'POST' && controller.requestBody.urlencoded.length > 0) {
+            // Process x-www-form-urlencoded body
+            if (controller.httpMethod !== 'GET' && 
+                controller.requestBodyType === 'application/x-www-form-urlencoded' && 
+                controller.requestBody.urlencoded.length > 0) {
                 basestringOptions.formData = controller.requestBody.urlencoded.reduce((finalObject, currentObject) => {
                     if (currentObject.key && currentObject.value) { // false if any of them are empty strings
                         finalObject[currentObject.key] = currentObject.value;
