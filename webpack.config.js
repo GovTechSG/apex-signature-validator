@@ -1,5 +1,4 @@
 const webpack = require('webpack');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
@@ -8,8 +7,12 @@ const path = require('path');
 
 module.exports = (env = {}) => { // set env as empty object if unset from cli
     console.log('Building version: ' + version);
+    let mode;
+    if (env.production || env.devbuild) { mode = 'production'; }
+    else { mode = 'development'; }
 
     let config = {
+        mode: mode,
         entry: {
             app: './src/app.js'
         },
@@ -27,7 +30,7 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
                         options: {
                             presets: [
                                 [
-                                    'babel-preset-env',
+                                    '@babel/preset-env',
                                     {
                                         targets: {
                                             browsers: ['ie 11']
@@ -54,19 +57,16 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
                 }
             ]
         },
-        plugins: [
-            new webpack.NoEmitOnErrorsPlugin()
-        ],
+        plugins: [],
         devServer: {
             contentBase: path.resolve(__dirname, 'dist')
         }
     };
-    // Production only
+
     if (env.production) {
-        config.plugins.push(new UglifyJsPlugin()); // minify js
+        // PRODUCTION
         config.plugins.push(new OptimizeCssAssetsPlugin()); // minify css
         config.plugins.push(new webpack.DefinePlugin({
-            'process.env.NODE_ENV': JSON.stringify('production'),
             'VERSION': JSON.stringify(version)
         }));
         config.plugins.push(new HtmlWebpackPlugin({
@@ -76,10 +76,9 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
         }));
         config.plugins.push(new HtmlWebpackInlineSourcePlugin());
     } else if (env.devbuild) {
-        config.plugins.push(new UglifyJsPlugin()); // minify js
+        // DEV:MINIFIED/INLINED
         config.plugins.push(new OptimizeCssAssetsPlugin()); // minify css
         config.plugins.push(new webpack.DefinePlugin({
-            'process.env.NODE_ENV': JSON.stringify('development'),
             'VERSION': JSON.stringify(version)
         }));
         config.plugins.push(new HtmlWebpackPlugin({
@@ -89,8 +88,8 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
         }));
         config.plugins.push(new HtmlWebpackInlineSourcePlugin());
     } else {
+        // DEV
         config.plugins.push(new webpack.DefinePlugin({
-            'process.env.NODE_ENV': JSON.stringify('development'),
             'VERSION': JSON.stringify(version)
         }));
         config.plugins.push(new HtmlWebpackPlugin({

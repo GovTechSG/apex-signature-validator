@@ -1,16 +1,12 @@
 import apexLogo from './images/logo_apex.png';
 
-function mainController(stateService) {
+function mainController() {
     let controller = this;
 
     controller.apexLogo = apexLogo; // path to logo file
     controller.version = VERSION;
-
-    controller.isStateActive = function(stateName) {
-        return stateName === stateService.state;
-    };
 }
 
-mainController.$inject = ['stateService'];
+mainController.$inject = [];
 
 export default mainController;

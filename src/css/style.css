@@ -1,3 +1,7 @@
+.auth-level-buttons {
+    display: inline-block;
+}
+
 .pass {
     color: green;
 }

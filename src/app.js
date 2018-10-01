@@ -1,10 +1,8 @@
-import 'babel-polyfill';
+import '@babel/polyfill';
 import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
 import uinotification from 'angular-ui-notification';
 import uibootstrap from 'angular-ui-bootstrap';
-import ngfx from 'ng-fx';
-import angularanimate from 'angular-animate';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import 'angular-ui-notification/dist/angular-ui-notification.css';
@@ -15,15 +13,13 @@ import joseValidator from './features/joseValidator';
 import config from './service/config';
 import jwtService from './service/jwtService';
 import testService from './service/testService';
-import modalService from './service/modalService';
 import utilService from './service/utiityService';
 
 import './css/style.css';
 
-angular.module('app', [uibootstrap, uinotification, ngfx, angularanimate, uiRouter])
+angular.module('app', [uibootstrap, uinotification, uiRouter])
     .constant('config', config)
     .controller('mainController', mainController)
-    .factory('ModalService', modalService)
     .factory('TestService', testService)
     .factory('JWTService', jwtService)
     .factory('UtilityService', utilService)
@@ -68,8 +64,3 @@ angular.module('app', [uibootstrap, uinotification, ngfx, angularanimate, uiRout
             }
         };
     }])
-    .factory('stateService', function() {
-        return {
-            state: 'signatureValidator'
-        };
-    });

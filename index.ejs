@@ -19,11 +19,11 @@
                         <img ng-src="{{ mainCtrl.apexLogo }}" alt="APEX Signature Validation Tool" />
                     </div>
                     <ul class="nav navbar-nav">
-                        <li ng-class="{active: mainCtrl.isStateActive('signatureValidator')}">
-                            <a ui-sref="signatureValidator">Signature Validator</a>
+                        <li ui-sref-active="active">
+                            <a ui-sref="signatureValidator" >Signature Validator</a>
                         </li>
-                        <li ng-class="{active: mainCtrl.isStateActive('joseValidator')}">
-                            <a ui-sref="joseValidator">JOSE Validator</a>
+                        <li ui-sref-active="active">
+                            <a ui-sref="joseValidator" >JOSE Validator</a>
                         </li>
                     </ul>
                 </div>
