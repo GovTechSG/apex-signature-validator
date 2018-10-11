@@ -8,42 +8,38 @@ let signatureValidatorTemplate = `
 
 <h3 style="display: inline-block">Apex Signature Validator</h3>
 <h5 ng-click="$ctrl.showOptions()" style="float: right">
-        <a href><span class="glyphicon glyphicon-cog"></span> Load/save From JSON</a>
+    <a href><i class="fas fa-cogs"></i> Load/save From JSON</a>
 </h5>
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <div class="row">
-            <div class="col-sm-12" style="text-align:center">
-                <h4><span class="label label-primary">1</span> HTTP Request parameters</h4>                
-            </div>
-        </div>
-    </div>
+<div class="card">
+    <h4 class="card-header text-center">        
+        <span class="badge badge-primary">1</span> HTTP Request parameters           
+    </h4>
 
-    <div class="panel-body">
+    <div class="card-body">
         <form name="httpRequestForm">
-            <div class="row">
-                <div class="col-md-6">
-                    <label>API Gateway Zone</label>
-                    <label class="radio-inline" ng-repeat="gatewayZone in gatewayZoneOptions">
-                        <input type="radio" name="gatewayZoneOptions" ng-model="$ctrl.gatewayZone" value="{{gatewayZone}}" 
-                            ng-change="$ctrl.formSignatureUrl(); formSignature()">
-                        {{gatewayZone}}
-                    </label>
-                </div>
+            <label>Gateway zone </label>
+            <div class="form-check form-check-inline" ng-repeat="gatewayZone in gatewayZoneOptions">
+                <label class="form-check-label">
+                    <input type="radio" name="gatewayZoneOptions" class="form-check-input"
+                        ng-model="$ctrl.gatewayZone" value="{{gatewayZone}}" 
+                        ng-change="$ctrl.formSignatureUrl(); formSignature()">
+                    {{gatewayZone}}
+                </label>
             </div>
-            
+
             <br>
         
-            <div class="row">
-                <div class="col-md-2">
+            <div class="form-row">
+                <div class="form-group col-sm-2">
                     <label for="httpMethodSelector">Request</label>
                     <select id="httpMethodSelector" ng-change="formSignature()" ng-options="httpMethod for httpMethod in httpMethods" 
                             ng-model="$ctrl.httpMethod" class="form-control">
                     </select>
                 </div>
+            
 
-                <div class="col-md-10">
+                <div class="form-group col-sm-10">
                     <label for="apiUrl">API URL</label>
 
                     <input type="text" autocomplete="off" class="form-control" name="apiUrl" id="apiUrl"
@@ -56,21 +52,6 @@ let signatureValidatorTemplate = `
                 </div>
             </div>
 
-            <div class="row" ng-if="$ctrl.selectedLevel !== 0">
-                <br>
-                <div class="col-md-12">
-                    <label for="signatureUrl">Signature URL</label> <span class="glyphicon glyphicon-info-sign" tooltip-placement="top" uib-tooltip="{{ config.constants.strings.signatureUrl }}"></span>
-                    
-                    <label style="float:right">
-                        <input type="checkbox" ng-model="$ctrl.allowCustomSignatureUrl" ng-change="$ctrl.onToggleCustomSignatureUrl()"></input>    
-                        Custom signature URL
-                    </label>
-
-                    <input type="text" name="signatureUrl" id="signatureUrl" class="form-control" placeholder="https://mygateway.api.gov.sg/myservice/api/v1/users"
-                        ng-model="$ctrl.signatureUrl" ng-disabled="!$ctrl.allowCustomSignatureUrl" ng-change="formSignature()">
-                </div>
-            </div>
-
             <br>
 
             <div class="row" ng-if="$ctrl.httpMethod !== 'GET'">
@@ -78,22 +59,26 @@ let signatureValidatorTemplate = `
                     <div class="row">
                         <div class="col-md-12">
                             <label>Request body</label>
-                            <label class="radio-inline" ng-repeat="requestBodyType in config.constants.requestBodyTypes">
-                                <input type="radio" name="requestBodyType" ng-model="$ctrl.requestBodyType" value="{{requestBodyType}}" 
-                                    ng-change="$ctrl.changeRequestBodyType(); formSignature()">
-                                {{requestBodyType}}
-                            </label>
+                            
+                            <div class="form-check form-check-inline" ng-repeat="requestBodyType in config.constants.requestBodyTypes">
+                                <label class="form-check-label">
+                                    <input type="radio" class="form-check-input" name="requestBodyType" 
+                                        ng-model="$ctrl.requestBodyType" value="{{requestBodyType}}" 
+                                        ng-change="$ctrl.changeRequestBodyType(); formSignature()">
+                                    {{requestBodyType}}
+                                </label>
+                            </div>
                             <a href ng-click="$ctrl.addUrlencodedBody('','')" ng-if="$ctrl.requestBodyType === 'application/x-www-form-urlencoded'"> <span class="glyphicon glyphicon-plus"></span> Add</a>
                         </div>
                     </div>
                     <div class="row" ng-if="$ctrl.requestBodyType !== config.constants.requestBodyTypes[0]">
                         <div class="col-md-12">
                             <textarea class="form-control code" ng-if="$ctrl.requestBodyType === 'application/json'" ng-model="$ctrl.requestBody.json"></textarea>
-                            <fieldset class="form-horizontal" ng-if="$ctrl.requestBodyType === 'application/x-www-form-urlencoded'">
+                            <fieldset class="form-group" ng-if="$ctrl.requestBodyType === 'application/x-www-form-urlencoded'">
                                 <div class="row" ng-repeat="kvpair in $ctrl.requestBody.urlencoded">
                                     <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label class="col-sm-2 control-label" for="{{ 'urlencodedBodyKey' + $index }}">Key</label>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label" for="{{ 'urlencodedBodyKey' + $index }}">Key</label>
                                             <div class="col-sm-10">
                                                 <input type="text" id="{{ 'urlencodedBodyKey' + $index }}" class="form-control" ng-model="kvpair.key" ng-change="formSignature()">
                                             </div>
@@ -101,8 +86,8 @@ let signatureValidatorTemplate = `
                                     </div>
                                     
                                     <div class="col-sm-5">
-                                        <div class="form-group">
-                                            <label class="col-sm-2 control-label" for="{{ 'urlencodedBodyValue' + $index }}">Value</label>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label" for="{{ 'urlencodedBodyValue' + $index }}">Value</label>
                                             <div class="col-sm-10">
                                                 <input type="text" id="{{ 'urlencodedBodyValue' + $index }}" class="form-control" ng-model="kvpair.value" ng-change="formSignature()">
                                             </div>
@@ -111,7 +96,7 @@ let signatureValidatorTemplate = `
                                     
                                     <div class="col-md-1">
                                         <button type="button" class="btn btn-danger" ng-click="$ctrl.removeUrlencodedBody($index)">
-                                            <span class="glyphicon glyphicon-remove"></span>
+                                            <i class="fas fa-times"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -148,6 +133,20 @@ let signatureValidatorTemplate = `
             <div class="col-sm-12 "  ng-if="$ctrl.selectedLevel === 1 || $ctrl.selectedLevel === 2">
                 <form name="authParamsForm">
                     <h4 style="text-align:center">Required Parameters For L{{$ctrl.selectedLevel}} Authentication</h4>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="signatureUrl">Signature URL</label> <span class="glyphicon glyphicon-info-sign" tooltip-placement="top" uib-tooltip="{{ config.constants.strings.signatureUrl }}"></span>
+                            
+                            <label style="float:right">
+                                <input type="checkbox" ng-model="$ctrl.allowCustomSignatureUrl" ng-change="$ctrl.onToggleCustomSignatureUrl()"></input>    
+                                Custom signature URL
+                            </label>
+
+                            <input type="text" name="signatureUrl" id="signatureUrl" class="form-control" placeholder="https://mygateway.api.gov.sg/myservice/api/v1/users"
+                                ng-model="$ctrl.signatureUrl" ng-disabled="!$ctrl.allowCustomSignatureUrl" ng-change="formSignature()">
+                        </div>
+                    </div>
 
                     <div class="row">
                         <div ng-class="{'col-md-6': $ctrl.selectedLevel === 2, 'col-md-4': $ctrl.selectedLevel === 1}">
