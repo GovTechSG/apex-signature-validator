@@ -110,7 +110,7 @@ let signatureValidatorTemplate = `
 </div>
 
 <div class="card">
-    <div class="card-header text-center">
+    <div class="card-header">
         <div class="row">
             <div class="col-sm-12" style="text-align:center">
                 <h4 style="display:inline-block"><span class="label label-primary">2</span> Apex Authentication Parameters</h4> <small><a href="http://docs.akana.com/docs-test/cm/learnmore/app_security.htm">Learn more</a></small>
@@ -136,12 +136,13 @@ let signatureValidatorTemplate = `
 
                     <div class="row">
                         <div class="col-md-12">
-                            <label for="signatureUrl">Signature URL</label> <span class="glyphicon glyphicon-info-sign" tooltip-placement="top" uib-tooltip="{{ config.constants.strings.signatureUrl }}"></span>
+                            <label for="signatureUrl">Signature URL</label> <i class="fas fa-info-circle" tooltip-placement="top" uib-tooltip="{{ config.constants.strings.signatureUrl }}"></i>
                             
-                            <label style="float:right">
-                                <input type="checkbox" ng-model="$ctrl.allowCustomSignatureUrl" ng-change="$ctrl.onToggleCustomSignatureUrl()"></input>    
-                                Custom signature URL
-                            </label>
+                            <div class="form-check" style="display:inline-block; float:right">
+                                <input name="allowCustomSignatureUrl" id="allowCustomSignatureUrl" type="checkbox" class="form-check-input" 
+                                    ng-model="$ctrl.allowCustomSignatureUrl" ng-change="$ctrl.onToggleCustomSignatureUrl()">
+                                <label for="allowCustomSignatureUrl" class="form-check-label">Custom signature URL</label>
+                            </div>
 
                             <input type="text" name="signatureUrl" id="signatureUrl" class="form-control" placeholder="https://mygateway.api.gov.sg/myservice/api/v1/users"
                                 ng-model="$ctrl.signatureUrl" ng-disabled="!$ctrl.allowCustomSignatureUrl" ng-change="formSignature()">
@@ -206,10 +207,13 @@ let signatureValidatorTemplate = `
                     <div class="row">
                         <div class="col-md-6">
                             <label for="timestamp">Timestamp</label>
-                            <label style="float:right">
-                                <small>auto-generate:</small>
-                                <input type="checkbox" ng-model="timestampDisabled" ng-change="timestampGenChange()">
-                            </label>
+
+                            <div class="form-check" style="display:inline-block; float:right">
+                                <input class="form-check-input" type="checkbox" name="timestampDisabledCheck" id="timestampDisabledCheck"
+                                    ng-model="timestampDisabled" ng-change="timestampGenChange()">
+                                <label for="timestampDisabledCheck">auto-generate</label>
+                            </div>
+
                             <input type="text" class="form-control" required name="timestamp" id="timestamp"
                                 ng-model="$ctrl.timestamp" ng-disabled="timestampDisabled" ng-change="formSignature()">
                             <span ng-show="authParamsForm.timestamp.$touched && authParamsForm.timestamp.$invalid" class="fail">
@@ -218,10 +222,13 @@ let signatureValidatorTemplate = `
                         </div>
                         <div class="col-md-6">
                             <label for="nonce">Nonce</label>
-                            <label style="float:right">
-                                <small>auto-generate:</small>
-                                <input type="checkbox" ng-model="nonceDisabled" ng-change="nonceGenChange()">
-                            </label>
+
+                            <div class="form-check" style="display:inline-block; float:right">
+                                <input class="form-check-input" type="checkbox" name="nonceDisabled" id="nonceDisabled"
+                                    ng-model="nonceDisabled" ng-change="nonceGenChange()">
+                                <label for="nonceDisabled">auto-generate</label>
+                            </div>
+                            
                             <input type="text" class="form-control" required name="nonce" id="nonce"
                                 ng-model="$ctrl.nonce" ng-disabled="nonceDisabled" ng-change="formSignature()">
                             <span ng-show="authParamsForm.nonce.$touched && authParamsForm.nonce.$invalid" class="fail">
@@ -272,20 +279,16 @@ let signatureValidatorTemplate = `
     </div>
 </div>
 
-<div class="panel panel-default">
-    <div class="panel-heading">
+<div class="card">
+    <div class="card-header">
         <div class="row">
             <div class="col-sm-12" style="text-align:center">
-                <h4><span class="label label-primary">3</span> Signature base string and headers</h4>
-                <!-- <button type="button" class="btn btn-default" ng-if="$ctrl.selectedLevel === 1 || $ctrl.selectedLevel === 2" 
-                        ng-click="$ctrl.showBasestring = true; $ctrl.showAuthHeader = true">
-                    <span class="glyphicon glyphicon-eye-open"></span> Show Basestring and Header
-                </button> -->
+                <h4><span class="label label-primary">3</span> Signature base string and headers</h4>                
             </div>
         </div> 
     </div>
 
-    <div class="panel-body">
+    <div class="card-body">
         <div class="row" style="text-align:center">
             <div class="col-sm-12" ng-if="$ctrl.selectedLevel === 0">
                 <strong>No authentication required for L0</strong>
@@ -325,7 +328,7 @@ let signatureValidatorTemplate = `
                     <div class="row">
                         <div class="col-md-12">
                             <span style="float:right; margin-top:5px">
-                                <button class="btn btn-default" ng-click="$ctrl.compareBasestring($ctrl.basestring, $ctrl.basestringToCompare)">Compare Base Strings</button>
+                                <button class="btn btn-secondary" ng-click="$ctrl.compareBasestring($ctrl.basestring, $ctrl.basestringToCompare)">Compare Base Strings</button>
                             </span>
                         </div>
                     </div>
@@ -341,7 +344,7 @@ let signatureValidatorTemplate = `
                     <div class="row">
                         <div class="col-md-12">
                             <span style="float:right; margin-top:5px">
-                                <button class="btn btn-default" ng-click="formSignature()">Regenerate Base String And Signature</button>
+                                <button class="btn btn-secondary" ng-click="formSignature()">Regenerate Base String And Signature</button>
                             </span>
                         </div>
                     </div>
@@ -351,8 +354,10 @@ let signatureValidatorTemplate = `
     </div>
 </div>
 
+<br>
+
 <div style='text-align:center'>
-    <button type="button" class="btn btn-lg btn-default" ng-click="$ctrl.sendTestRequest()" ng-disabled="!$ctrl.canSendTestRequest()">
+    <button type="button" class="btn btn-lg btn-success" ng-click="$ctrl.sendTestRequest()" ng-disabled="!$ctrl.canSendTestRequest()">
         <span class="glyphicon glyphicon-transfer"></span> Send Test Request
     </button>
 </div>
@@ -365,15 +370,15 @@ let signatureValidatorTemplate = `
 
 <br>
 
-<div class="panel panel-default" ng-if="$ctrl.apiTest">
-    <div class="panel-heading">
+<div class="card" ng-if="$ctrl.apiTest">
+    <div class="card-header">
         <div class="row" style='text-align:center'>
             <div class="col-sm-12">
                 <strong>API Test Response</strong>
             </div>
         </div>
     </div>
-    <div class="panel-body" ng-class="{'bg-success': $ctrl.apiTest.status < 300, 'bg-warning': 300 <= $ctrl.apiTest.status && $ctrl.apiTest.status < 400, 'bg-danger': (400 <= $ctrl.apiTest.status && $ctrl.apiTest.status < 600) || $ctrl.apiTest.status === -1}">
+    <div class="card-body" ng-class="{'bg-success': $ctrl.apiTest.status < 300, 'bg-warning': 300 <= $ctrl.apiTest.status && $ctrl.apiTest.status < 400, 'bg-danger': (400 <= $ctrl.apiTest.status && $ctrl.apiTest.status < 600) || $ctrl.apiTest.status === -1}">
         <div class="row">
             <div class="col-sm-12">
                 <label for="apiTestConfig">API Test Request Config </label> 
