@@ -113,7 +113,7 @@ let signatureValidatorTemplate = `
     <div class="card-header">
         <div class="row">
             <div class="col-sm-12" style="text-align:center">
-                <h4 style="display:inline-block"><span class="label label-primary">2</span> Apex Authentication Parameters</h4> <small><a href="http://docs.akana.com/docs-test/cm/learnmore/app_security.htm">Learn more</a></small>
+                <h4 style="display:inline-block"><span class="badge badge-primary">2</span> Apex Authentication Parameters</h4> <small><a href="http://docs.akana.com/docs-test/cm/learnmore/app_security.htm">Learn more</a></small>
                 <br>
                 <div class="btn-group">
                     <button ng-repeat="level in $ctrl.authLevels" class="btn btn-primary" 
@@ -283,7 +283,7 @@ let signatureValidatorTemplate = `
     <div class="card-header">
         <div class="row">
             <div class="col-sm-12" style="text-align:center">
-                <h4><span class="label label-primary">3</span> Signature base string and headers</h4>                
+                <h4><span class="badge badge-primary">3</span> Signature base string and headers</h4>                
             </div>
         </div> 
     </div>
