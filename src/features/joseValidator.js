@@ -1,7 +1,7 @@
 let joseValidatorTemplate = `
 <div class="container-fluid main-content">
 
-<h2>Apex JOSE Validator</h2>
+<h3>Apex JOSE Validator</h3>
 
     <form name="joseForm">
 
@@ -50,7 +50,7 @@ let joseValidatorTemplate = `
 
         <div class="row">
             <div class="col-md-12" style="text-align: center; margin: 5px;">
-                <input type="button" value="Verify JWT" class="btn btn-default btn-lg" ng-disabled="joseForm.$invalid"
+                <input type="button" value="Verify JWT" class="btn btn-primary btn-lg" ng-disabled="joseForm.$invalid"
                         ng-click="$ctrl.verifyJOSE($ctrl.selectedJWTStandard, $ctrl.input, $ctrl.key)">
             </div>
         </div>
