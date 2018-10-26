@@ -380,7 +380,7 @@ let signatureValidatorTemplate = `
     </div>
     <div class="card-body" ng-class="{'bg-success': $ctrl.apiTest.status < 300, 'bg-warning': 300 <= $ctrl.apiTest.status && $ctrl.apiTest.status < 400, 'bg-danger': (400 <= $ctrl.apiTest.status && $ctrl.apiTest.status < 600) || $ctrl.apiTest.status === -1}">
         <div class="row">
-            <div class="col-sm-12">
+            <div class="col-sm-12 test-response">
                 <label for="apiTestConfig">API Test Request Config </label> 
                 <textarea rows="4" name=apiTestConfig" id="apiTestConfig" class="form-control code" disabled>{{ $ctrl.apiTest.config.method }} {{ $ctrl.apiTest.config.url }}
 {{ $ctrl.getApiTestHeaders($ctrl.apiTest.config.headers) }}
