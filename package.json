@@ -1,6 +1,6 @@
 {
   "name": "apex-signature-validator",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "APEX micro service and dev tool for testing level 0 - 2 requests and verifying JOSE (JSON Object Signing and Encryption) response",
   "scripts": {
     "build": "rm -rf ./dist/; webpack --progress --colors --env.production",
