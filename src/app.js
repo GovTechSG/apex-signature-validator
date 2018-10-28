@@ -1,11 +1,13 @@
-import '@babel/polyfill';
+// import '@babel/polyfill';
 import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
-import uinotification from 'angular-ui-notification';
-import uibootstrap from 'angular-ui-bootstrap';
+import uiBootstrap from 'ui-bootstrap4';
+import uiNotification from 'angular-ui-notification';
+import 'bootstrap';
 
-import 'bootstrap/dist/css/bootstrap.css';
-import 'angular-ui-notification/dist/angular-ui-notification.css';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'angular-ui-notification/dist/angular-ui-notification.min.css';
 
 import mainController from './mainController';
 import signatureValidator from './features/signatureValidator';
@@ -17,7 +19,7 @@ import utilService from './service/utiityService';
 
 import './css/style.css';
 
-angular.module('app', [uibootstrap, uinotification, uiRouter])
+angular.module('app', [uiRouter, uiBootstrap, uiNotification])
     .constant('config', config)
     .controller('mainController', mainController)
     .factory('TestService', testService)

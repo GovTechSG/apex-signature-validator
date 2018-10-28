@@ -121,7 +121,8 @@ function testService($http, UtilityService, $httpParamSerializerJQLike) {
             let requestOptions = {
                 method: method,
                 url: url,
-                headers: {}
+                headers: {},
+                timeout: 10000
             }
             if (method !== 'GET' && options.requestBody) {
                 if (options.requestBodyType === 'application/x-www-form-urlencoded') {

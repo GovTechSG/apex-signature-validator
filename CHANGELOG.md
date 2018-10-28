@@ -3,6 +3,14 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.1.0 - 2018-10-27
+- Moved from Bootstrap 3 to 4.
+
+## 1.0.0 - 2018-10-01
+- Major refactor and redesign. API URLs can directly be used.
+- Test requests can be made with GET, PUT, POST or DELETE.
+- Request bodies can be attached with type application/json or application/x-www-form-urlencoded.
+
 ## [0.3.7] - 2018-07-04
 - Set-up snyk cli for patching
 - Update vulnerable node dependency

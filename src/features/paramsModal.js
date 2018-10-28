@@ -7,14 +7,17 @@ let paramsModalTemplate = `
     <input type="file" on-read-file="parseInputFile($fileContents)" style="display:inline-block">
     <textarea rows="20" cols="65" name="currentConfigString" id="currentConfigString" class="form-control code" ng-model="$ctrl.currentConfigString"></textarea>
 </div>
-<div class="modal-footer">
-        <button class="btn btn-primary" type="button" style="float:left" ng-click="saveConfigAsJson()">
-            <span class="glyphicon glyphicon-save"></span>
+<div class="modal-footer" style="justify-content:space-between">
+    <span>
+        <button class="btn btn-primary" type="button" ng-click="saveConfigAsJson()">
+            <i class="fas fa-save"></i>
             Save as JSON
         </button>
+    </span>
+    
+    <span ng-if="$ctrl.currentConfig.selectedLevel === 1" class="fail" style="">Warning! App secret will be saved in this config.</span>
 
-        <span ng-if="$ctrl.currentConfig.selectedLevel === 1" class="fail" style="float:left">Warning! App secret will be saved in this config.</span>
-
+    <span>
         <button class="btn btn-primary" type="button" ng-click="set()">
             <span class="glyphicon glyphicon-ok"></span>
             Set current config
@@ -24,7 +27,8 @@ let paramsModalTemplate = `
             <span class="glyphicon glyphicon-remove"></span>
             Cancel
         </button>
-    </div>
+    </span>
+    
 </div>`;
 
 function paramsModalController($scope, $uibModalInstance, currentConfig) {

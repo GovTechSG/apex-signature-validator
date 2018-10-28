@@ -1,3 +1,8 @@
+.test-response textarea {
+    min-height: 8em;
+    max-height: 30em;
+}
+
 .auth-level-buttons {
     display: inline-block;
 }

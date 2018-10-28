@@ -46,7 +46,7 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
                     use: [{
                         loader: 'url-loader',
                         options: {
-                            limit: 1000000, // byte limit to inline files as data URL
+                            limit: 8192, // byte limit to inline files as data URL
                             name: 'assets/[name].[ext]' // path to file for file-loader fallback
                         }
                     }]
@@ -57,7 +57,15 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
                 }
             ]
         },
-        plugins: [],
+        plugins: [
+            new webpack.DefinePlugin({
+                'VERSION': JSON.stringify(version)
+            }),
+            new HtmlWebpackPlugin({
+                title: 'Apex Signature Validator',
+                template: 'index.ejs',
+            })
+        ],
         devServer: {
             contentBase: path.resolve(__dirname, 'dist')
         }
@@ -66,36 +74,7 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
     if (env.production) {
         // PRODUCTION
         config.plugins.push(new OptimizeCssAssetsPlugin()); // minify css
-        config.plugins.push(new webpack.DefinePlugin({
-            'VERSION': JSON.stringify(version)
-        }));
-        config.plugins.push(new HtmlWebpackPlugin({
-            title: 'Apex Signature Validator',
-            template: 'index.ejs',
-            inlineSource: '.js$'
-        }));
         config.plugins.push(new HtmlWebpackInlineSourcePlugin());
-    } else if (env.devbuild) {
-        // DEV:MINIFIED/INLINED
-        config.plugins.push(new OptimizeCssAssetsPlugin()); // minify css
-        config.plugins.push(new webpack.DefinePlugin({
-            'VERSION': JSON.stringify(version)
-        }));
-        config.plugins.push(new HtmlWebpackPlugin({
-            title: 'Apex Signature Validator',
-            template: 'index.ejs',
-            inlineSource: '.js$'
-        }));
-        config.plugins.push(new HtmlWebpackInlineSourcePlugin());
-    } else {
-        // DEV
-        config.plugins.push(new webpack.DefinePlugin({
-            'VERSION': JSON.stringify(version)
-        }));
-        config.plugins.push(new HtmlWebpackPlugin({
-            title: 'Apex Signature Validator',
-            template: 'index.ejs'
-        }));
     }
     return config;
 };
