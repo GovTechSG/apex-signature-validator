@@ -1,11 +1,12 @@
-// import '@babel/polyfill';
+import '@babel/polyfill';
 import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
 import uiBootstrap from 'ui-bootstrap4';
 import uiNotification from 'angular-ui-notification';
 import 'bootstrap';
 
-import '@fortawesome/fontawesome-free/css/all.min.css';
+import '@fortawesome/fontawesome-free/css/fontawesome.min.css';
+import '@fortawesome/fontawesome-free/css/solid.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'angular-ui-notification/dist/angular-ui-notification.min.css';
 

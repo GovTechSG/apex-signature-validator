@@ -1,68 +1,22 @@
 ![APEX Logo](/assets/color_apex_landscape.png)
-***
+
 # APEX Signature and JOSE Validator
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a20b2416cc2547e9ab6b3ef5669d82ec)](https://app.codacy.com/app/robincher/apex-signature-validator?utm_source=github.com&utm_medium=referral&utm_content=GovTechSG/apex-signature-validator&utm_campaign=badger)
-[![GitHub license](https://img.shields.io/github/license/GovTechSG/apex-signature-validator.svg)](https://github.com/GovTechSG/apex-signature-validator/blob/master/LICENSE)
-[![GitHub forks](https://img.shields.io/github/forks/GovTechSG/apex-signature-validator.svg)](https://github.com/GovTechSG/apex-signature-validator/network)
 
 The Apex Signature Validator is an AngularJS application that assists APEX API consumers in verifying whether signatures are generated correctly in their applications when making restful API calls to the APEX API Gateway. See it in action [here](https://govtechsg.github.io/apex-signature-validator/).
 
 You can find out more about Apex signature generation from our reference Node.js implementation at https://github.com/GovTechSG/node-apex-api-security.
 
-## Table of contents
-- [APEX Signature Validator](#apex-signature-validator)
-  * [Running Apex Signature Validator](#running-apex-signature-validator)
-  * [Apex signatures explained](#apex-signatures-explained)
-    + [Basestring](#basestring)
-    + [Signature](#signature)
-    + [Authorization Header](#authorization-header)
-  * [Saving and loading request parameters](#saving-and-loading-request-parameters)
-  * [Building Apex Signature Validator](#building-apex-signature-validator)
-  * [Developing Apex Signature Validator](#developing-apex-signature-validator)
-      - [Using the development server through a browser](#using-the-development-server-through-a-browser)
-      - [Executing test requests on the development server](#executing-test-requests-on-the-development-server)
-  * [Application Structure](#application-structure)
-    + [package.json](#packagejson)
-    + [webpack.config.js](#webpackconfigjs)
-    + [app.js](#appjs)
-  * [Code Base](#code-base)
-    + [controllers](#controllers)
-    + [service](#service)
-  * [JSRSASIGN](#jsrsasign)
-  * [Sending test requests with the signature validator](#sending-test-requests-with-the-signature-validator)
-- [JOSE (Javascript Object Signing and Encryption) Validator](#jose)
+## Important
 
-## Running Apex Signature Validator
-Download and extract the latest [release](https://github.com/GovTechSG/apex-signature-validator/releases) and run `index.html` directly in your browser.
+- If you are having trouble with [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) when testing your API endpoints, use the [server backed signature validator](https://github.com/govTechSG/apex-signature-validator-server) at https://apex-signature-validator.app.gov.sg. See [the section below for more details](#sending-test-requests-with-the-signature-validator)
 
-![homepage_1.png](/assets/homepage_1.png)
-
-### Apex base string verification tool
-
-A basestring verification tool is provided for L1 and L2 authentication. This allows users to verify that basestrings in their own applications are correctly generated. This tool also highlights differences between its own and user-generated basestrings.
-
-![basestring_correct.png](/assets/basestring_correct.png)
-
-![basestring_different.png](/assets/basestring_different.png)
-
-**Note**
-
-1. To to use the **Send Test Request** function, make sure that your Apex endpoint has a [CORS](https://enable-cors.org/) policy configured. For L1/L2 endpoints, this policy should _at least_ have the following configuration:
-
-```
-Allow Origin: *
-Allow Headers: Authorization
-```
-
-2. If you _really_ need to call an endpoint that does not have CORS enabled, use one of the provided OS-appropriate scripts to open Google Chrome with web security disabled. _You will likely need to have administrator rights on your computer to do this._ This means running Google Chrome with the `--disable-web-security` and `--ignore-certificate-errors` flags. See [Sending test requests with the signature validator](#sending-test-requests-with-the-signature-validator) for more details.
-
-    - `launch-chrome-macos.command`
-    - `launch-chrome-windows.bat or launch-chrome-windows.lnk`
-
-2. Apex Signature Validator has been tested on Google Chrome, Firefox and Internet Explorer 11.
+- Apex Signature Validator has been tested on Google Chrome, Firefox and Internet Explorer 11.
 
 ## Apex signatures explained
+
+[Full documentation for APEX App security](http://docs.akana.com/docs-test/cm/learnmore/app_security.htm)
 
 There are three components that are of importance when it comes to formulating the correct authorization header: basestring, signature, authorization header.
 
@@ -106,8 +60,6 @@ Authorization: Apex realm="https://example.com/v1/helloworld/nocors",{prefix}_ap
 ## Saving and loading request parameters
 
 If you have request parameters that are reused often, you can load and save input request parameters in JSON files using the options menu located on the top right.
-
-![params_loading.png](/assets/params_loading.png)
 
 ## Building Apex Signature Validator
 From the root directory:
@@ -195,15 +147,6 @@ When sending test requests to Apex's gateways, eg. to `api.gov.sg` endpoints, th
 If you are getting a response code of -1 when sending a test request, your browser could be rejecting your cross-origin request.
 
 In order for cross-origin requests to be ignored on browser clients, web browsers such as Chrome would have to be launched with web security disabled.
-
-To simplify this process, Google Chrome launch scripts are included in the `browser-scripts` directory:
-
-
-1. `launch-chrome-macos.command`
-2. `launch-chrome-windows.lnk or launch-chrome-windows.bat`
-
-
-These scripts would automatically open the signature validator in a new Chrome window with web security disabled. The browser would then allow cross-origin requests to be sent from the browser.
 
 **Only use Google Chrome instances launched from these scripts to use the signature validator, do not access sites on the internet with them.**
 

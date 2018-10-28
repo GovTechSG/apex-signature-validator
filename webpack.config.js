@@ -1,12 +1,10 @@
 const webpack = require('webpack');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
 const version = require('./package.json').version;
 const path = require('path');
 
 module.exports = (env = {}) => { // set env as empty object if unset from cli
-    console.log('Building version: ' + version);
     let mode;
     if (env.production || env.devbuild) { mode = 'production'; }
     else { mode = 'development'; }
@@ -66,6 +64,11 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
                 template: 'index.ejs',
             })
         ],
+        optimization: {
+            splitChunks: {
+                chunks: 'all'
+            }
+        },
         devServer: {
             contentBase: path.resolve(__dirname, 'dist')
         }
@@ -74,7 +77,6 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
     if (env.production) {
         // PRODUCTION
         config.plugins.push(new OptimizeCssAssetsPlugin()); // minify css
-        config.plugins.push(new HtmlWebpackInlineSourcePlugin());
     }
     return config;
 };
