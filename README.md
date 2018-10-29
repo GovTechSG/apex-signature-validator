@@ -86,14 +86,6 @@ This spins up a [Webpack Dev Server](https://github.com/webpack/webpack-dev-serv
 
 You can then access the development build on your browser at `http://localhost:8080` by default.
 
-#### Executing test requests on the development server
-
-To send test requests using the signature validator in development, you will need to access it using Google Chrome with web security disabled. See [Sending test requests with the signature validator](#sending-test-requests-with-the-signature-validator) for more details.
-
-For Windows, open Google Chrome with web security disabled by opening the `browser-scripts/launch-chrome-windows.lnk` shortcut.
-
-For macOS, open Google chrome with web security disabled by opening the `browser-scripts/launch-chrome-macos.command` file.
-
 ## Application Structure
 ```
 - src
@@ -145,10 +137,6 @@ operations. Refer to http://kjur.github.io/jsrsasign/ for more information inclu
 When sending test requests to Apex's gateways, eg. to `api.gov.sg` endpoints, the signature validator's **Send Test Request** function would need to make cross-origin requests. For security reasons, browsers restrict cross-origin HTTP requests initiated using Javascript.
 
 If you are getting a response code of -1 when sending a test request, your browser could be rejecting your cross-origin request.
-
-In order for cross-origin requests to be ignored on browser clients, web browsers such as Chrome would have to be launched with web security disabled.
-
-**Only use Google Chrome instances launched from these scripts to use the signature validator, do not access sites on the internet with them.**
 
 ## JOSE 
 
