@@ -1,0 +1,531 @@
+<div class="container-fluid main-content">
+
+    <h3 style="display: inline-block">Apex Signature Validator</h3>
+    <h5 ng-click="$ctrl.showOptions()" style="float: right">
+        <a href><i class="fas fa-cogs"></i> Load/save From JSON</a>
+    </h5>
+    
+    <div class="card">
+        <h4 class="card-header text-center">        
+            <span class="badge badge-primary">1</span> HTTP Request parameters           
+        </h4>
+    
+        <div class="card-body">
+            <form name="httpRequestForm">        
+                <div class="form-row">
+                    <div class="form-group col-sm-2">
+                        <label for="httpMethodSelector">Request</label>
+                        <select id="httpMethodSelector"
+                            ng-change="formSignature()"
+                            ng-options="httpMethod for httpMethod in $ctrl.httpMethods" 
+                            ng-model="$ctrl.httpMethod"
+                            class="form-control">
+                        </select>
+                    </div>
+
+                    <div class="form-group col-sm-10">
+                        <label for="apiUrl">API URL</label>
+    
+                        <input type="text" 
+                            autocomplete="off" 
+                            class="form-control" 
+                            name="apiUrl" 
+                            id="apiUrl"
+                            ng-change="$ctrl.formSignatureUrl(); formSignature()" 
+                            ng-model="$ctrl.apiUrl" 
+                            required
+                            placeholder="https://mygateway.api.gov.sg/myservice/api/v1/users">
+                        
+                        <span ng-show="httpRequestForm.apiUrl.$touched && httpRequestForm.apiUrl.$invalid" 
+                            class="fail">
+                            API URL is required.
+                        </span>
+                    </div>
+                </div>
+    
+                <br>
+    
+                <div class="row" ng-if="$ctrl.httpMethod !== 'GET'">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label>Request body</label>
+                                
+                                <div class="form-check form-check-inline" ng-repeat="requestBodyType in config.constants.requestBodyTypes">
+                                    <label class="form-check-label">
+                                        <input type="radio" class="form-check-input" name="requestBodyType" 
+                                            ng-model="$ctrl.requestBodyType" value="{{requestBodyType}}" 
+                                            ng-change="$ctrl.changeRequestBodyType(); formSignature()">
+                                        {{requestBodyType}}
+                                    </label>
+                                </div>
+                                <a href ng-click="$ctrl.addUrlencodedBody('','')" ng-if="$ctrl.requestBodyType === 'application/x-www-form-urlencoded'"> <span class="glyphicon glyphicon-plus"></span> Add</a>
+                            </div>
+                        </div>
+                        <div class="row" ng-if="$ctrl.requestBodyType !== config.constants.requestBodyTypes[0]">
+                            <div class="col-md-12">
+                                <textarea class="form-control code" ng-if="$ctrl.requestBodyType === 'application/json'" ng-model="$ctrl.requestBody.json"></textarea>
+                                <fieldset class="form-group" ng-if="$ctrl.requestBodyType === 'application/x-www-form-urlencoded'">
+                                    <div class="row" ng-repeat="kvpair in $ctrl.requestBody.urlencoded">
+                                        <div class="col-sm-6">
+                                            <div class="form-group row">
+                                                <label class="col-sm-2 col-form-label" for="{{ 'urlencodedBodyKey' + $index }}">Key</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" id="{{ 'urlencodedBodyKey' + $index }}" class="form-control" ng-model="kvpair.key" ng-change="formSignature()">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-sm-5">
+                                            <div class="form-group row">
+                                                <label class="col-sm-2 col-form-label" for="{{ 'urlencodedBodyValue' + $index }}">Value</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" id="{{ 'urlencodedBodyValue' + $index }}" class="form-control" ng-model="kvpair.value" ng-change="formSignature()">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-1">
+                                            <button type="button" class="btn btn-danger" ng-click="$ctrl.removeUrlencodedBody($index)">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                </div>             
+            </form>
+        </div>
+    </div>
+    
+    <br>
+    
+    <div class="card">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-sm-12" style="text-align:center">
+                    <h4 style="display:inline-block"><span class="badge badge-primary">2</span> Apex Signatures</h4> <small><a href="http://docs.akana.com/docs-test/cm/learnmore/app_security.htm">Learn more</a></small>
+                    <br>
+                    <div class="btn-group">
+                        <button ng-repeat="level in $ctrl.authLevels" class="btn btn-primary" 
+                            ng-click="$ctrl.changeAuthLevel(level)" ng-class="{active: $ctrl.selectedLevel === level}">
+                            L{{level}}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="card-body">
+            <div ng-repeat="signature in $ctrl.signatures">
+                <div class="card signature">
+                    <div class="card-header">
+                        Signature {{$index + 1}}
+                        <button 
+                            class="btn btn-danger"
+                            ng-click="$ctrl.removeSignature($index)"
+                            >
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <form name="auth-params-form-{{$index}}">
+                            <div class="row">
+                                <div class="col">
+                                    <label>Authentication level</label>
+                                    <div class="form-check form-check-inline" ng-repeat="level in $ctrl.authLevels">
+                                        <input
+                                            class="form-check-input" 
+                                            type="radio"
+                                            id="signature-{{$parent.$index}}-auth-level-{{level}}"
+                                            name="signature-{{$parent.$index}}-auth-level-{{level}}" 
+                                            ng-value="level" 
+                                            ng-model="signature.authLevel">
+                                        
+                                        <label class="form-check-label" 
+                                            for="signature-{{$parent.$index}}-auth-level-{{level}}">
+                                            {{level}}
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+    
+                            <div class="row">
+                                <div class="col">
+                                    <label>Gateway zone </label>
+                                    <div class="form-check form-check-inline" ng-repeat="gatewayZone in $ctrl.gatewayZoneOptions">
+                                        <input
+                                            class="form-check-input"
+                                            type="radio"
+                                            id="signature-{{$parent.$index}}-gateway-zone-{{gatewayZone}}"
+                                            name="signature-{{$parent.$index}}-gateway-zone-{{gatewayZone}}"
+                                            ng-value="gatewayZone"
+                                            ng-model="signature.gatewayZone">
+    
+                                        <label class="form-check-label" 
+                                            for="signature-{{$parent.$index}}-gateway-zone-{{gatewayZone}}">
+                                            {{gatewayZone}}
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+    
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label for="signature-url-{{$index}}">Signature URL</label> <i class="fas fa-info-circle" tooltip-placement="top" uib-tooltip="{{ config.constants.strings.signatureUrl }}"></i>
+    
+                                    <div class="form-check" style="float:right">
+                                        <input
+                                            name="signature-url-{{$index}}-allow-custom"
+                                            id="signature-url-{{$index}}-allow-custom"
+                                            type="checkbox" 
+                                            class="form-check-input" 
+                                            ng-model="signature.allowCustomSignatureUrl" 
+                                            ng-change="signature.allowCustomSignatureUrlChange($ctrl.apiUrl)">
+                                        <label for="signature-url-{{$index}}-allow-custom" class="form-check-label">Custom signature URL</label>
+                                    </div>
+    
+                                    <input 
+                                        type="text" 
+                                        name="signature-url-{{$index}}" 
+                                        id="signature-url-{{$index}}" 
+                                        class="form-control" 
+                                        placeholder="https://mygateway.api.gov.sg/myservice/api/v1/users"
+                                        ng-model="signature.signatureUrl" 
+                                        ng-disabled="!signature.allowCustomSignatureUrl" 
+                                        ng-change="signature.formSignature()">
+                                </div>
+                            </div>
+    
+                            <div class="row">
+                                <div ng-class="{'col-md-6': signature.authLevel === 2, 'col-md-4': signature.authLevel === 1}">
+                                    <label for="signature-auth-prefix-{{$index}}">Auth Prefix</label>
+    
+                                    <input type="text" 
+                                        required 
+                                        disabled
+                                        class="form-control"
+                                        name="signature-auth-prefix-{{$index}}" 
+                                        id="signature-auth-prefix-{{$index}}" 
+                                        ng-model="signature.authPrefix"
+                                        ng-model-options="{ getterSetter: true }"
+                                        ng-change="signature.formSignature()">
+    
+                                    <span class="fail"
+                                        ng-show="auth-params-form-{{$index}}['signature-auth-prefix-{{$index}}'].$touched && 
+                                                 auth-params-form-{{$index}}['signature-auth-prefix-{{$index}}'].$invalid">
+                                        Auth Prefix is required.
+                                    </span>
+                                </div>
+    
+                                <div ng-class="{'col-md-6': signature.authLevel === 2, 'col-md-4': signature.authLevel === 1}">
+                                    <label for="signature-app-id-{{$index}}">Application ID</label>
+    
+                                    <input type="text" 
+                                        name="signature-app-id-{{$index}}" 
+                                        id="signature-app-id-{{$index}}" 
+                                        class="form-control" 
+                                        required
+                                        ng-model="signature.appId" 
+                                        ng-change="signature.formSignature()">
+    
+                                    <span class="fail"
+                                        ng-show="auth-params-form-{{$index}}['signature-app-id-{{$index}}'].$touched && 
+                                                 auth-params-form-{{$index}}['signature-app-id-{{$index}}'].$invalid">
+                                        App Id is required.
+                                    </span>
+                                </div>
+    
+                                <div class="col-md-4" ng-if="signature.authLevel === 1">
+                                    <label for="signature-app-secret-{{$index}}">Application Secret</label>
+    
+                                    <input type="text" 
+                                        name="signature-app-secret-{{$index}}" 
+                                        id="signature-app-secret-{{$index}}" 
+                                        required 
+                                        class="form-control"
+                                        ng-model="signature.appSecret" 
+                                        ng-change="signature.formSignature()">
+    
+                                    <span class="fail"
+                                        ng-show="auth-params-form-{{$index}}['signature-app-secret-{{$index}}'].$touched && 
+                                                 auth-params-form-{{$index}}['signature-app-secret-{{$index}}'].$invalid">
+                                        App Secret is required.
+                                    </span>
+                                </div>
+                            </div>
+    
+                            <br>
+    
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="signature-type-{{$index}}">Signature Type</label>
+                                    <input type="text"
+                                        class="form-control" 
+                                        name="signature-type-{{$index}}" 
+                                        id="signature-type-{{$index}}" 
+                                        disabled
+                                        ng-model="signature.signatureType"
+                                        ng-model-options="{ getterSetter: true }">
+                                </div>
+    
+                                <div class="col-md-6">
+                                    <label for="signature-app-version-{{$index}}">App Version</label>
+                                    <input type="text" 
+                                        class="form-control" 
+                                        name="signature-app-version-{{$index}}" 
+                                        id="signature-app-version-{{$index}}" 
+                                        ng-model="signature.appVersion"
+                                        disabled>
+                                </div>
+                            </div>
+    
+                            <br>
+    
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="signature-timestamp-{{$index}}">Timestamp</label>
+    
+                                    <div class="form-check" style="float:right">
+                                        <input class="form-check-input" 
+                                            type="checkbox" 
+                                            name="signature-timestamp-{{$index}}-auto-gen"
+                                            id="signature-timestamp-{{$index}}-auto-gen"
+                                            ng-model="signature.timestampAutoGen"
+                                            ng-change="signature.timestampAutoGenChange()">
+                                        <label for="signature-timestamp-{{$index}}-auto-gen">auto-generate</label>
+                                    </div>
+    
+                                    <input type="text"
+                                        class="form-control" 
+                                        required 
+                                        name="signature-timestamp-{{$index}}" 
+                                        id="signature-timestamp-{{$index}}"
+                                        ng-model="signature.timestamp"
+                                        ng-disabled="signature.timestampAutoGen" 
+                                        ng-change="signature.formSignature()">
+                                    <span ng-show="auth-params-form-{{$index}}['signature-timestamp-{{$index}}'].$touched && 
+                                                   auth-params-form-{{$index}}['signature-timestamp-{{$index}}'].$invalid" 
+                                        class="fail">
+                                        Timestamp is required.
+                                    </span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="nonce">Nonce</label>
+    
+                                    <div class="form-check" style="float:right">
+                                        <input class="form-check-input" 
+                                            type="checkbox" 
+                                            name="signature-nonce-{{$index}}-auto-gen" 
+                                            id="signature-nonce-{{$index}}-auto-gen"
+                                            ng-model="signature.nonceAutoGen" 
+                                            ng-change="signature.nonceAutoGenChange()">
+                                        <label for="signature-nonce-{{$index}}-auto-gen">auto-generate</label>
+                                    </div>
+                                    
+                                    <input type="text" 
+                                        class="form-control" 
+                                        required 
+                                        name="signature-nonce-{{$index}}" 
+                                        id="signature-nonce-{{$index}}"
+                                        ng-model="signature.nonce" 
+                                        ng-disabled="signature.nonceAutoGen" 
+                                        ng-change="signature.formSignature()">
+                                    <span ng-show="auth-params-form-{{$index}}['signature-nonce-{{$index}}'].$touched && 
+                                                   auth-params-form-{{$index}}['signature-nonce-{{$index}}'].$invalid" 
+                                        class="fail">
+                                        Nonce is required.
+                                    </span>
+                                </div>
+                            </div>
+    
+                            <br>
+    
+                            <div class="row" ng-if="$ctrl.selectedLevel === 2">
+                                <div class="col-sm-12">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <label for="pem">Pem File</label>
+                                            <small>
+                                                Load pem file: <input type="file" on-read-file="parseInputFile($fileContents)" style="display:inline">
+                                            </small>
+                                        </div>                              
+                                    </div>
+    
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <textarea rows="10" cols="65" class="form-control code" name="pem" id="pem" required
+                                                ng-model="$ctrl.pem" ng-change="formSignature()">
+                                            </textarea>
+                                            <span ng-show="auth-params-form-{{$index}}.pem.$touched && auth-params-form-{{$index}}.pem.$invalid" class="fail">
+                                                Pem string is required.
+                                            </span>
+                                        </div>
+                                    </div>
+    
+                                    <br>
+    
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label for="pkeySecret">Password for private key (if encrypted)</label>
+                                            <input type="password" class="form-control" name="pkeySecret" id="pkeySecret"
+                                                    ng-model="$ctrl.pkeySecret" ng-change=formSignature()>
+                                            <p ng-if="privateKeyError" class="fail">{{ config.main.errorMessages.pkeyInvalid }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+    
+                        <div>{{signature}}</div>
+                    </div>
+                </div>
+                <br>
+            </div>
+            
+            <div style="text-align:center">
+                <button class="btn btn-success" ng-click="$ctrl.addSignature($ctrl.signatures.length)">
+                    <i class="fas fa-plus"></i> Add signature
+                </button>
+            </div>
+    
+    
+            <div class="row">
+                <div class="col-sm-12" ng-if="$ctrl.selectedLevel === 0" style="text-align:center">
+                    <strong style="text-align:center">No authentication required for L0</strong>
+                </div>
+                <div class="col-sm-12 "  ng-if="$ctrl.selectedLevel === 1 || $ctrl.selectedLevel === 2">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <br>
+    
+    <div class="card">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-sm-12" style="text-align:center">
+                    <h4><span class="badge badge-primary">3</span> Signature base string and headers</h4>                
+                </div>
+            </div> 
+        </div>
+    
+        <div class="card-body">
+            <div class="row" style="text-align:center">
+                <div class="col-sm-12" ng-if="$ctrl.selectedLevel === 0">
+                    <strong>No authentication required for L0</strong>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12" ng-if="$ctrl.selectedLevel === 1 || $ctrl.selectedLevel === 2">
+                    <div ng-if="!$ctrl.signatureGenerated()" style="text-align:center">
+                        <strong>
+                            Fill in all fields to generate base string and authorization header.
+                        </strong>
+                    </div>
+                    
+                    <div class="jumbotron" ng-if="$ctrl.signatureGenerated()">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="basestring">Generated base string</label>
+                                <textarea rows="4" disabled class="form-control immutable code" ng-model="$ctrl.basestring" name="basestring" id="basestring"></textarea>
+                            </div>
+                        </div>                
+    
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="basestringToCompare">Base string to Compare</label>
+                                <textarea rows="4" class="form-control code" ng-model="$ctrl.basestringToCompare" name="basestringToCompare" id="basestringToCompare"></textarea>
+                            </div>
+                        </div>
+                    
+                        <div class="row" ng-if="$ctrl.showBasestringComparison">
+                            <br>
+                            <div class="col-md-12">
+                                <label>Comparison Results</label>
+                                <pre ng-bind-html="$ctrl.basestringComparison"></pre>
+                            </div>
+                        </div>
+    
+                        <div class="row">
+                            <div class="col-md-12">
+                                <span style="float:right; margin-top:5px">
+                                    <button class="btn btn-secondary" ng-click="$ctrl.compareBasestring($ctrl.basestring, $ctrl.basestringToCompare)">Compare Base Strings</button>
+                                </span>
+                            </div>
+                        </div>
+                
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="authHeader">Request Authorization Header</label>
+                                <textarea rows="6" class="form-control immutable code" name="authHeader" id="authHeader"
+                                    ng-model="$ctrl.authHeader" disabled></textarea>
+                            </div>
+                        </div>
+    
+                        <div class="row">
+                            <div class="col-md-12">
+                                <span style="float:right; margin-top:5px">
+                                    <button class="btn btn-secondary" ng-click="formSignature()">Regenerate Base String And Signature</button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <br>
+    
+    <div style='text-align:center'>
+        <button type="button" class="btn btn-lg btn-success" ng-click="$ctrl.sendTestRequest()" ng-disabled="!$ctrl.canSendTestRequest()">
+            <span class="glyphicon glyphicon-transfer"></span> Send Test Request
+        </button>
+    </div>
+    
+    <div ng-if="$ctrl.sendingTestRequest" class="spinner">
+        <div class="bounce1"></div>
+        <div class="bounce2"></div>
+        <div class="bounce3"></div>
+    </div>
+    
+    <br>
+    
+    <div class="card" ng-if="$ctrl.apiTest">
+        <div class="card-header">
+            <div class="row" style='text-align:center'>
+                <div class="col-sm-12">
+                    <strong>API Test Response</strong>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" ng-class="{'bg-success': $ctrl.apiTest.status < 300, 'bg-warning': 300 <= $ctrl.apiTest.status && $ctrl.apiTest.status < 400, 'bg-danger': (400 <= $ctrl.apiTest.status && $ctrl.apiTest.status < 600) || $ctrl.apiTest.status === -1}">
+            <div class="row">
+                <div class="col-sm-12 test-response">
+                    <label for="apiTestConfig">API Test Request Config </label> 
+                    <textarea rows="4" name=apiTestConfig" id="apiTestConfig" class="form-control code" disabled>{{ $ctrl.apiTest.config.method }} {{ $ctrl.apiTest.config.url }}
+    {{ $ctrl.getApiTestHeaders($ctrl.apiTest.config.headers) }}
+                    </textarea>
+    
+                    <br>
+                
+                    <strong>API Test Request Status:</strong> {{ $ctrl.apiTest.xhrStatus }}<span ng-if="$ctrl.apiTest.xhrStatus === 'error'">: the http request could not be completed</span>
+    
+                    <br>
+    
+                    <strong>API Test Response Status:</strong> {{ $ctrl.apiTest.status }} {{ $ctrl.apiTest.statusText }}
+    
+                    <br>
+    
+                    <label for="apiTestResponse">API Test Response Data</label>
+                    <textarea rows="4" name="apiTestResponse" id="apiTestResponse" class="form-control code" disabled>{{$ctrl.apiTest.data | json}}</textarea>
+                </div>            
+            </div>
+        </div>
+    </div>
+</div>

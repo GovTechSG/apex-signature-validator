@@ -27,9 +27,8 @@ export default {
             'PUT',
             'DELETE'
         ],
-        callerZone: ['WWW', 'Internet Zone', 'Intranet Zone', 'SGNet'],
         providerGateway: [constants.gatewayZones.internet, constants.gatewayZones.intranet],
-        authLevels: [0, 1, 2],
+        authLevels: [1, 2],
         defaultGateway: 'apex_example_gateway',
         defaultUri: '/apex/example/path',
         authPrefix: {
