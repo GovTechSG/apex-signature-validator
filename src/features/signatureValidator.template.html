@@ -31,8 +31,8 @@
                             class="form-control" 
                             name="apiUrl" 
                             id="apiUrl"
-                            ng-change="$ctrl.formSignatureUrl(); formSignature()" 
-                            ng-model="$ctrl.apiUrl" 
+                            ng-change="$ctrl.formSignatureUrls()" 
+                            ng-model="$ctrl.apiUrl"
                             required
                             placeholder="https://mygateway.api.gov.sg/myservice/api/v1/users">
                         
@@ -162,7 +162,8 @@
                                             id="signature-{{$parent.$index}}-gateway-zone-{{gatewayZone}}"
                                             name="signature-{{$parent.$index}}-gateway-zone-{{gatewayZone}}"
                                             ng-value="gatewayZone"
-                                            ng-model="signature.gatewayZone">
+                                            ng-model="signature.gatewayZone"
+                                            ng-change="signature.formSignatureUrl($ctrl.apiUrl)">
     
                                         <label class="form-check-label" 
                                             for="signature-{{$parent.$index}}-gateway-zone-{{gatewayZone}}">
@@ -182,8 +183,8 @@
                                             id="signature-url-{{$index}}-allow-custom"
                                             type="checkbox" 
                                             class="form-check-input" 
-                                            ng-model="signature.allowCustomSignatureUrl" 
-                                            ng-change="signature.allowCustomSignatureUrlChange($ctrl.apiUrl)">
+                                            ng-model="signature.allowCustomSignatureUrl"
+                                            ng-change="signature.formSignatureUrl($ctrl.apiUrl)">
                                         <label for="signature-url-{{$index}}-allow-custom" class="form-check-label">Custom signature URL</label>
                                     </div>
     
@@ -198,6 +199,8 @@
                                         ng-change="signature.formSignature()">
                                 </div>
                             </div>
+
+                            <br>
     
                             <div class="row">
                                 <div ng-class="{'col-md-6': signature.authLevel === 2, 'col-md-4': signature.authLevel === 1}">

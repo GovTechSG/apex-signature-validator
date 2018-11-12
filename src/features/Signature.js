@@ -3,27 +3,30 @@ import randomBytes from 'randombytes';
 import config from '../service/config';
 
 /**
- * 
+ * @param {string} apiUrl
  * @param {object} options
  * @param {boolean} options.allowCustomSignatureUrl
  * @param {string} options.appId
  * @param {string} options.appVersion
  * @param {number} options.authLevel
  * @param {string} options.gatewayZone
- * @param {string} options.signatureUrl
  */
-function Signature(options) {
+function Signature(apiUrl, options) {
     // Initialization
-    this.allowCustomSignatureUrl = options.allowCustomSignatureUrl;
-    this.appId = options.appId;
-    this.appVersion = options.appVersion;
-    this.authLevel = options.authLevel;
-    this.gatewayZone = options.gatewayZone;
-    this.signatureUrl = options.signatureUrl;
+    if (!options) {
+        options = {};
+    }
+    this.formSignatureUrl(apiUrl); // Initialize signature URL
+    this.allowCustomSignatureUrl = options.allowCustomSignatureUrl || false;
+    this.appId = options.appId || '';
+    this.appVersion = options.appVersion || config.main.appVersion;
+    this.authLevel = options.authLevel || config.main.authLevels[0];
+    this.gatewayZone = options.gatewayZone || config.constants.gatewayZones.internet;
 
     // Checkbox for timestamp and nonce auto-generation
     this.timestampAutoGen = true;
     this.nonceAutoGen = true;
+
     // Initial values
     this.timestamp = (new Date).getTime();
     this.nonce = randomBytes(32).toString('base64');
@@ -56,35 +59,24 @@ Signature.prototype.nonceAutoGenChange = function() {
     }
 }
 
-Signature.prototype.allowCustomSignatureUrlChange = function(apiUrl) {
-    if (!this.allowCustomSignatureUrl) {
+Signature.prototype.formSignatureUrl = function(apiUrl) {
+    let signature = this;
+    if (!signature.allowCustomSignatureUrl) {
         // Set signature url to an auto-generated one.
         if (apiUrl === '' || !apiUrl) { 
-            this.signatureUrl = '';
+            signature.signatureUrl = '';
         } else {
             let apexDomain = apiUrl.indexOf('.api.gov.sg');
             if (apexDomain !== -1) {
                 let right = apiUrl.substring(apexDomain);
                 let left = apiUrl.substring(0, apexDomain);
-                let domainIdentifier = this.gatewayZone === config.constants.gatewayZones.internet ? 'e' : 'i';
-                this.signatureUrl = `${left}.${domainIdentifier}${right}`;
+                let domainIdentifier = signature.gatewayZone === config.constants.gatewayZones.internet ? 'e' : 'i';
+                signature.signatureUrl = `${left}.${domainIdentifier}${right}`;
             } else {
-                this.signatureUrl = apiUrl;
+                signature.signatureUrl = apiUrl;
             }
         }
     }
-}
-
-function formSignatureUrl() {
-    if (controller.apiUrl === '' || !controller.apiUrl) return '';
-
-    let apexDomain = controller.apiUrl.indexOf('.api.gov.sg');
-    if (apexDomain !== -1) {
-        let right = controller.apiUrl.substring(apexDomain);
-        let left = controller.apiUrl.substring(0, apexDomain);
-        let domainIdentifier = controller.gatewayZone === config.constants.gatewayZones.internet ? 'e' : 'i';
-        return `${left}.${domainIdentifier}${right}`;
-    } else { return controller.apiUrl; }
 }
 
 function signatureType(signature) {

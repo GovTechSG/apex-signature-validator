@@ -22,8 +22,7 @@ function signatureValidatorController($scope, Notification, TestService, $sce, $
     controller.changeAuthLevel = changeAuthLevel;
     controller.changeRequestBodyType = changeRequestBodyType;
     controller.getApiTestHeaders = getApiTestHeaders;
-    controller.formSignatureUrl = formSignatureUrl;
-    controller.onToggleCustomSignatureUrl = onToggleCustomSignatureUrl;
+    controller.formSignatureUrls = formSignatureUrls;
     controller.removeSignature = removeSignature;
     controller.removeUrlencodedBody = removeUrlencodedBody;
     controller.sendTestRequest = sendTestRequest;
@@ -71,14 +70,7 @@ function signatureValidatorController($scope, Notification, TestService, $sce, $
     }
 
     function addSignature() {
-        controller.signatures.push(new Signature({
-            allowCustomSignatureUrl: false,
-            appId: '',
-            appVersion: config.main.appVersion,
-            authLevel: 1,
-            gatewayZone: config.constants.gatewayZones.internet,
-            signatureUrl: '',
-        }))
+        controller.signatures.push(new Signature(controller.apiUrl))
     }
 
     function signatureMethod() {
@@ -142,11 +134,9 @@ function signatureValidatorController($scope, Notification, TestService, $sce, $
         }
     }
 
-    function onToggleCustomSignatureUrl(signature) {
-        if (!signature.allowCustomSignatureUrl) {
-            signature.signatureUrl = formSignatureUrl();
-            // controller.formSignatureUrl();
-            // formSignature();
+    function formSignatureUrls() {
+        for (let signature of controller.signatures) {
+            signature.formSignatureUrl(controller.apiUrl);
         }
     }
 
