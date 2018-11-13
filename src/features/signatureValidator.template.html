@@ -106,14 +106,7 @@
         <div class="card-header">
             <div class="row">
                 <div class="col-sm-12" style="text-align:center">
-                    <h4 style="display:inline-block"><span class="badge badge-primary">2</span> Apex Signatures</h4> <small><a href="http://docs.akana.com/docs-test/cm/learnmore/app_security.htm">Learn more</a></small>
-                    <br>
-                    <div class="btn-group">
-                        <button ng-repeat="level in $ctrl.authLevels" class="btn btn-primary" 
-                            ng-click="$ctrl.changeAuthLevel(level)" ng-class="{active: $ctrl.selectedLevel === level}">
-                            L{{level}}
-                        </button>
-                    </div>
+                    <h4 style="display:inline-block"><span class="badge badge-primary">2</span> Apex Signatures</h4> <small><a href="http://docs.akana.com/docs-test/cm/learnmore/app_security.htm">Learn more</a></small>            
                 </div>
             </div>
         </div>
@@ -389,19 +382,9 @@
             </div>
             
             <div style="text-align:center">
-                <button class="btn btn-success" ng-click="$ctrl.addSignature($ctrl.signatures.length)">
+                <button class="btn btn-success btn-lg" ng-click="$ctrl.addSignature($ctrl.signatures.length)">
                     <i class="fas fa-plus"></i> Add signature
                 </button>
-            </div>
-    
-    
-            <div class="row">
-                <div class="col-sm-12" ng-if="$ctrl.selectedLevel === 0" style="text-align:center">
-                    <strong style="text-align:center">No authentication required for L0</strong>
-                </div>
-                <div class="col-sm-12 "  ng-if="$ctrl.selectedLevel === 1 || $ctrl.selectedLevel === 2">
-                    
-                </div>
             </div>
         </div>
     </div>
@@ -487,7 +470,7 @@
     
     <div style='text-align:center'>
         <button type="button" class="btn btn-lg btn-success" ng-click="$ctrl.sendTestRequest()" ng-disabled="!$ctrl.canSendTestRequest()">
-            <span class="glyphicon glyphicon-transfer"></span> Send Test Request
+            <span class="fas fa-exchange-alt"></span> Send Test Request
         </button>
     </div>
     
