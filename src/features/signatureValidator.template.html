@@ -16,7 +16,7 @@
                     <div class="form-group col-sm-2">
                         <label for="httpMethodSelector">Request</label>
                         <select id="httpMethodSelector"
-                            ng-change="formSignature()"
+                            ng-change="$ctrl.onHttpMethodChanged()"
                             ng-options="httpMethod for httpMethod in $ctrl.httpMethods" 
                             ng-model="$ctrl.httpMethod"
                             class="form-control">
@@ -42,60 +42,62 @@
                         </span>
                     </div>
                 </div>
-    
-                <br>
-    
-                <div class="row" ng-if="$ctrl.httpMethod !== 'GET'">
+                        
+                <div class="row">
                     <div class="col-md-12">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label>Request body</label>
-                                
-                                <div class="form-check form-check-inline" ng-repeat="requestBodyType in config.constants.requestBodyTypes">
-                                    <label class="form-check-label">
-                                        <input type="radio" class="form-check-input" name="requestBodyType" 
-                                            ng-model="$ctrl.requestBodyType" value="{{requestBodyType}}" 
-                                            ng-change="$ctrl.changeRequestBodyType(); formSignature()">
-                                        {{requestBodyType}}
-                                    </label>
-                                </div>
-                                <a href ng-click="$ctrl.addUrlencodedBody('','')" ng-if="$ctrl.requestBodyType === 'application/x-www-form-urlencoded'"> <span class="glyphicon glyphicon-plus"></span> Add</a>
-                            </div>
+                        <label>Request body</label>
+
+                        <div class="form-check form-check-inline" 
+                            ng-repeat="requestBodyType in config.constants.requestBodyTypes">
+                            <label class="form-check-label">
+                                <input type="radio"
+                                    class="form-check-input"
+                                    name="requestBodyType" 
+                                    ng-model="$ctrl.requestBodyType" 
+                                    value="{{requestBodyType}}"
+                                    ng-disabled="$ctrl.httpMethod === 'GET'">
+                                {{requestBodyType}}
+                            </label>
                         </div>
-                        <div class="row" ng-if="$ctrl.requestBodyType !== config.constants.requestBodyTypes[0]">
-                            <div class="col-md-12">
-                                <textarea class="form-control code" ng-if="$ctrl.requestBodyType === 'application/json'" ng-model="$ctrl.requestBody.json"></textarea>
-                                <fieldset class="form-group" ng-if="$ctrl.requestBodyType === 'application/x-www-form-urlencoded'">
-                                    <div class="row" ng-repeat="kvpair in $ctrl.requestBody.urlencoded">
-                                        <div class="col-sm-6">
-                                            <div class="form-group row">
-                                                <label class="col-sm-2 col-form-label" for="{{ 'urlencodedBodyKey' + $index }}">Key</label>
-                                                <div class="col-sm-10">
-                                                    <input type="text" id="{{ 'urlencodedBodyKey' + $index }}" class="form-control" ng-model="kvpair.key" ng-change="formSignature()">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-sm-5">
-                                            <div class="form-group row">
-                                                <label class="col-sm-2 col-form-label" for="{{ 'urlencodedBodyValue' + $index }}">Value</label>
-                                                <div class="col-sm-10">
-                                                    <input type="text" id="{{ 'urlencodedBodyValue' + $index }}" class="form-control" ng-model="kvpair.value" ng-change="formSignature()">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-md-1">
-                                            <button type="button" class="btn btn-danger" ng-click="$ctrl.removeUrlencodedBody($index)">
-                                                <i class="fas fa-times"></i>
-                                            </button>
+                        <a href
+                            ng-click="$ctrl.addUrlencodedBody('','')"
+                            ng-if="$ctrl.requestBodyType === 'application/x-www-form-urlencoded'"> 
+                            <i class="fas fa-plus"></i> Add
+                        </a>
+                    </div>
+                </div>
+                <div class="row" ng-if="$ctrl.requestBodyType !== config.constants.requestBodyTypes[0]">
+                    <div class="col-md-12">
+                        <textarea class="form-control code" ng-if="$ctrl.requestBodyType === 'application/json'" ng-model="$ctrl.requestBody.json"></textarea>
+                        <fieldset class="form-group" ng-if="$ctrl.requestBodyType === 'application/x-www-form-urlencoded'">
+                            <div class="row" ng-repeat="kvpair in $ctrl.requestBody.urlencoded">
+                                <div class="col-sm-6">
+                                    <div class="form-group row">
+                                        <label class="col-sm-2 col-form-label" for="{{ 'urlencodedBodyKey' + $index }}">Key</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" id="{{ 'urlencodedBodyKey' + $index }}" class="form-control" ng-model="kvpair.key" ng-change="formSignature()">
                                         </div>
                                     </div>
-                                </fieldset>
+                                </div>
+                                
+                                <div class="col-sm-5">
+                                    <div class="form-group row">
+                                        <label class="col-sm-2 col-form-label" for="{{ 'urlencodedBodyValue' + $index }}">Value</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" id="{{ 'urlencodedBodyValue' + $index }}" class="form-control" ng-model="kvpair.value" ng-change="formSignature()">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-1">
+                                    <button type="button" class="btn btn-danger" ng-click="$ctrl.removeUrlencodedBody($index)">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
+                        </fieldset>
                     </div>
-                </div>             
+                </div>                             
             </form>
         </div>
     </div>
@@ -469,8 +471,12 @@
     <br>
     
     <div style='text-align:center'>
-        <button type="button" class="btn btn-lg btn-success" ng-click="$ctrl.sendTestRequest()" ng-disabled="!$ctrl.canSendTestRequest()">
-            <span class="fas fa-exchange-alt"></span> Send Test Request
+        <button type="button" 
+            class="btn btn-lg btn-success" 
+            ng-click="$ctrl.sendTestRequest()" 
+            ng-disabled="!$ctrl.canSendTestRequest()">
+            <span class="fas fa-exchange-alt"></span>
+            Send Test Request
         </button>
     </div>
     

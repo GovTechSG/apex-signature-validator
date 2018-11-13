@@ -23,6 +23,7 @@ function signatureValidatorController($scope, Notification, TestService, $sce, $
     controller.changeRequestBodyType = changeRequestBodyType;
     controller.getApiTestHeaders = getApiTestHeaders;
     controller.formSignatureUrls = formSignatureUrls;
+    controller.onHttpMethodChanged = onHttpMethodChanged;
     controller.removeSignature = removeSignature;
     controller.removeUrlencodedBody = removeUrlencodedBody;
     controller.sendTestRequest = sendTestRequest;
@@ -67,6 +68,12 @@ function signatureValidatorController($scope, Notification, TestService, $sce, $
         controller.signatures = [
 
         ];
+    }
+
+    function onHttpMethodChanged() {
+        if (controller.httpMethod === config.main.httpMethods[0]) { // GET
+            controller.requestBodyType = config.constants.requestBodyTypes[0]; // none
+        }
     }
 
     function addSignature() {
