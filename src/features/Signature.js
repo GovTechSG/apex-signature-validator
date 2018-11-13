@@ -79,6 +79,10 @@ Signature.prototype.formSignatureUrl = function(apiUrl) {
     }
 }
 
+Signature.prototype.loadPkey = function(fileText) {
+        this.pem = fileText;
+}
+
 function signatureType(signature) {
     return function() {
         switch (signature.authLevel) {

@@ -167,9 +167,9 @@
                                     </div>
                                 </div>
                             </div>
-    
+
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col">
                                     <label for="signature-url-{{$index}}">Signature URL</label> <i class="fas fa-info-circle" tooltip-placement="top" uib-tooltip="{{ config.constants.strings.signatureUrl }}"></i>
     
                                     <div class="form-check" style="float:right">
@@ -183,7 +183,7 @@
                                         <label for="signature-url-{{$index}}-allow-custom" class="form-check-label">Custom signature URL</label>
                                     </div>
     
-                                    <input 
+                                    <input required
                                         type="text" 
                                         name="signature-url-{{$index}}" 
                                         id="signature-url-{{$index}}" 
@@ -341,48 +341,105 @@
     
                             <br>
     
-                            <div class="row" ng-if="$ctrl.selectedLevel === 2">
-                                <div class="col-sm-12">
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <label for="pem">Pem File</label>
-                                            <small>
-                                                Load pem file: <input type="file" on-read-file="parseInputFile($fileContents)" style="display:inline">
-                                            </small>
-                                        </div>                              
+                            <div ng-if="signature.authLevel === 2">
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="signature-pem-{{$index}}">Private key (PEM)</label>
+                                        <small>
+                                            Load pem file: <input type="file" on-read-file="signature.loadPkey($fileContents)" style="display:inline">
+                                        </small>
                                     </div>
-    
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <textarea rows="10" cols="65" class="form-control code" name="pem" id="pem" required
-                                                ng-model="$ctrl.pem" ng-change="formSignature()">
-                                            </textarea>
-                                            <span ng-show="auth-params-form-{{$index}}.pem.$touched && auth-params-form-{{$index}}.pem.$invalid" class="fail">
-                                                Pem string is required.
-                                            </span>
-                                        </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <textarea 
+                                            rows="10"
+                                            cols="65"
+                                            class="form-control code" 
+                                            name="signature-pem-{{$index}}" 
+                                            id="signature-pem-{{$index}}" 
+                                            required
+                                            ng-model="signature.pem">
+                                        </textarea>
+                                        <span ng-show="auth-params-form-{{$index}}['signature-pem-{{$index}}'].$touched && 
+                                                       auth-params-form-{{$index}}['signature-pem-{{$index}}'].$invalid" 
+                                            class="fail">
+                                            Pem string is required.
+                                        </span>
                                     </div>
-    
-                                    <br>
-    
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <label for="pkeySecret">Password for private key (if encrypted)</label>
-                                            <input type="password" class="form-control" name="pkeySecret" id="pkeySecret"
-                                                    ng-model="$ctrl.pkeySecret" ng-change=formSignature()>
-                                            <p ng-if="privateKeyError" class="fail">{{ config.main.errorMessages.pkeyInvalid }}</p>
+                                </div>
+
+                                <br>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="signature-pem-secret-{{$index}}">Password for private key (if encrypted)</label>
+                                        <input type="password" 
+                                            class="form-control" 
+                                            name="signature-pem-secret-{{$index}}" 
+                                            id="signature-pem-secret-{{$index}}"
+                                            ng-model="$ctrl.pkeySecret">
+                                        <p ng-if="signature.privateKeyError" 
+                                            class="fail">{{ config.main.errorMessages.pkeyInvalid }}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="jumbotron">
+                                        <div class="row">
+                                            <div class="col">
+                                                <label for="signature-basestring-{{$index}}">Generated base string</label>
+                                                <textarea 
+                                                    rows="4" 
+                                                    disabled 
+                                                    class="form-control immutable code" 
+                                                    ng-model="signature.basestring" 
+                                                    name="signature-basestring-{{$index}}" 
+                                                    id="signature-basestring-{{$index}}"></textarea>
+                                            </div>
+                                        </div>                
+                    
+                                        <div class="row">
+                                            <div class="col">
+                                                <label for="signature-basestring-to-compare-{{$index}}">Base string to Compare</label>
+                                                <textarea rows="4" 
+                                                    class="form-control code" 
+                                                    ng-model="signature.basestringToCompare" 
+                                                    name="signature-basestring-to-compare-{{$index}}" 
+                                                    id="signature-basestring-to-compare-{{$index}}"></textarea>
+                                            </div>
                                         </div>
+                                    
+                                        <div class="row" ng-if="signature.showBasestringComparison">
+                                            <div class="col">
+                                                <label>Comparison Results</label>
+                                                <pre ng-bind-html="signature.basestringComparison"></pre>
+                                            </div>
+                                        </div>
+                    
+                                        <div class="row">
+                                            <div class="col">
+                                                <span style="float:right; margin-top:5px">
+                                                    <button class="btn btn-secondary" 
+                                                        ng-click="signature.compareBasestring(signature.basestring, signature.basestringToCompare)">
+                                                        Compare Base Strings
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        </div>                                                    
                                     </div>
                                 </div>
                             </div>
                         </form>
-    
                         <div>{{signature}}</div>
                     </div>
                 </div>
                 <br>
             </div>
-            
+
             <div style="text-align:center">
                 <button class="btn btn-success btn-lg" ng-click="$ctrl.addSignature($ctrl.signatures.length)">
                     <i class="fas fa-plus"></i> Add signature
