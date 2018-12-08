@@ -16,7 +16,7 @@
                     <div class="form-group col-sm-2">
                         <label for="httpMethodSelector">Request</label>
                         <select id="httpMethodSelector"
-                            ng-change="$ctrl.onHttpMethodChanged()"
+                            ng-change="$ctrl.onHttpMethodChange()"
                             ng-options="httpMethod for httpMethod in $ctrl.httpMethods" 
                             ng-model="$ctrl.httpMethod"
                             class="form-control">
@@ -31,7 +31,7 @@
                             class="form-control" 
                             name="apiUrl" 
                             id="apiUrl"
-                            ng-change="$ctrl.formSignatureUrls()" 
+                            ng-change="$ctrl.onApiUrlChange()"
                             ng-model="$ctrl.apiUrl"
                             required
                             placeholder="https://mygateway.api.gov.sg/myservice/api/v1/users">
@@ -117,7 +117,7 @@
             <div ng-repeat="signature in $ctrl.signatures">
                 <div class="card signature">
                     <div class="card-header">
-                        Signature {{$index + 1}}
+                        <h5>Signature {{$index + 1}}</h5>
                         <button type="button"
                             class="btn btn-danger"
                             ng-click="$ctrl.removeSignature($index)"
@@ -137,7 +137,8 @@
                                             id="signature-{{$parent.$index}}-auth-level-{{level}}"
                                             name="signature-{{$parent.$index}}-auth-level-{{level}}" 
                                             ng-value="level" 
-                                            ng-model="signature.authLevel">
+                                            ng-model="signature.authLevel"
+                                            ng-change="$ctrl.onSignatureParameterChange(signature)">
                                         
                                         <label class="form-check-label" 
                                             for="signature-{{$parent.$index}}-auth-level-{{level}}">
@@ -158,7 +159,7 @@
                                             name="signature-{{$parent.$index}}-gateway-zone-{{gatewayZone}}"
                                             ng-value="gatewayZone"
                                             ng-model="signature.gatewayZone"
-                                            ng-change="signature.formSignatureUrl($ctrl.apiUrl)">
+                                            ng-change="$ctrl.onSignatureParameterChange(signature)">
     
                                         <label class="form-check-label" 
                                             for="signature-{{$parent.$index}}-gateway-zone-{{gatewayZone}}">
@@ -183,7 +184,7 @@
                                             placeholder="https://mygateway.api.gov.sg/myservice/api/v1/users"
                                             ng-model="signature.signatureUrl" 
                                             ng-disabled="!signature.allowCustomSignatureUrl" 
-                                            ng-change="signature.formSignature()">
+                                            ng-change="$ctrl.onSignatureParameterChange(signature)">
                                         <div class="input-group-append">   
                                             <div class="input-group-text">
                                                 <input name="signature-url-{{$index}}-allow-custom"
@@ -216,7 +217,7 @@
                                         id="signature-auth-prefix-{{$index}}" 
                                         ng-model="signature.authPrefix"
                                         ng-model-options="{ getterSetter: true }"
-                                        ng-change="signature.formSignature()">
+                                        ng-change="$ctrl.onSignatureParameterChange(signature)">
     
                                     <span class="fail"
                                         ng-show="auth-params-form-{{$index}}['signature-auth-prefix-{{$index}}'].$touched && 
@@ -234,7 +235,7 @@
                                         class="form-control" 
                                         required
                                         ng-model="signature.appId" 
-                                        ng-change="signature.formSignature()">
+                                        ng-change="$ctrl.onSignatureParameterChange(signature)">
     
                                     <span class="fail"
                                         ng-show="auth-params-form-{{$index}}['signature-app-id-{{$index}}'].$touched && 
@@ -251,8 +252,7 @@
                                         id="signature-app-secret-{{$index}}" 
                                         required 
                                         class="form-control"
-                                        ng-model="signature.appSecret" 
-                                        ng-change="signature.formSignature()">
+                                        ng-model="signature.appSecret">
     
                                     <span class="fail"
                                         ng-show="auth-params-form-{{$index}}['signature-app-secret-{{$index}}'].$touched && 
@@ -294,13 +294,13 @@
                                     <label for="signature-timestamp-{{$index}}">Timestamp</label>
 
                                     <div class="input-group">
-                                        <input type="text"
+                                        <input type="number"
                                             class="form-control" 
                                             required 
                                             name="signature-timestamp-{{$index}}" 
                                             id="signature-timestamp-{{$index}}"
                                             ng-model="signature.timestamp"
-                                            ng-change="signature.formSignature()">
+                                            ng-change="$ctrl.onSignatureParameterChange(signature)">
                                         <div class="input-group-append">
                                             <button class="btn btn-primary btn-sm"
                                                 ng-click="signature.generateTimestamp()"
@@ -325,8 +325,8 @@
                                             required
                                             name="signature-nonce-{{$index}}" 
                                             id="signature-nonce-{{$index}}"
-                                            ng-model="signature.nonce" 
-                                            ng-change="signature.formSignature()">
+                                            ng-model="signature.nonce"
+                                            ng-change="$ctrl.onSignatureParameterChange(signature)">
                                         <div class="input-group-append">
                                             <button class="btn btn-primary btn-sm"
                                                 ng-click="signature.generateNonce()"
@@ -350,9 +350,7 @@
                                 <div class="row">
                                     <div class="col">
                                         <label for="signature-pem-{{$index}}">Private key (PEM)</label>
-                                        <small>
-                                            Load pem file: <input type="file" on-read-file="signature.loadPkey($fileContents)" style="display:inline">
-                                        </small>
+                                        <small><input type="file" on-read-file="signature.loadPkey($fileContents)" style="display:inline"></small>
                                     </div>
                                 </div>
 
@@ -392,70 +390,52 @@
 
                                 <br>
                             </div>
-
-                            <div class="row">
-                                <div class="col">
-                                    <div class="jumbotron">
-                                        <div class="row">
-                                            <div class="col">
-                                                <div class="d-flex justify-content-between">
-                                                    <label for="signature-basestring-{{$index}}">Base String</label>
-                                                    
-                                                </div>
-                                                <div class="input-group">
-                                                    <textarea 
-                                                        rows="4" 
-                                                        disabled 
-                                                        class="form-control immutable code" 
-                                                        ng-model="signature.basestring" 
-                                                        name="signature-basestring-{{$index}}" 
-                                                        id="signature-basestring-{{$index}}">
-                                                    </textarea>
-                                                    <div class="input-group-append">
-                                                        <button class="btn btn-primary btn-sm"
-                                                            type="button">
-                                                            Generate
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                
+                            
+                            <div class="jumbotron">
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="signature-base-string-{{$index}}">Base string</label>                                        
+                                            <textarea rows="4" 
+                                                disabled 
+                                                class="form-control immutable code" 
+                                                ng-model="signature.baseString"
+                                                name="signature-base-string-{{$index}}" 
+                                                id="signature-base-string-{{$index}}">
+                                            </textarea>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="d-flex justify-content-between">
+                                            <label for="signature-base-string-to-compare-{{$index}}">Compare base strings</label>
+                                        </div>
+                                        <div class="input-group">
+                                            <textarea rows="4" 
+                                                class="form-control code" 
+                                                ng-model="signature.baseStringToCompare" 
+                                                name="signature-base-string-to-compare-{{$index}}" 
+                                                id="signature-base-string-to-compare-{{$index}}"></textarea>
+                                            <div class="input-group-append">
+                                                <button class="btn btn-secondary btn-sm"
+                                                    type="button"
+                                                    ng-click="signature.compareBaseString(signature.baseString, signature.baseStringToCompare)">
+                                                    Compare
+                                                </button>
                                             </div>
                                         </div>
                                         
-                                        <div class="row">
-                                            <div class="col">
-                                                <div class="d-flex justify-content-between">
-                                                    <label for="signature-basestring-to-compare-{{$index}}">Compare base strings</label>
-                                                </div>
-                                                <div class="input-group">
-                                                    <textarea rows="4" 
-                                                        class="form-control code" 
-                                                        ng-model="signature.basestringToCompare" 
-                                                        name="signature-basestring-to-compare-{{$index}}" 
-                                                        id="signature-basestring-to-compare-{{$index}}"></textarea>
-                                                    <div class="input-group-append">
-                                                        <button class="btn btn-secondary btn-sm"
-                                                            type="button"
-                                                            ng-click="signature.compareBasestring(signature.basestring, signature.basestringToCompare)">
-                                                            Compare
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                
-                                            </div>
-                                        </div>
-                                    
-                                        <div class="row" ng-if="signature.showBasestringComparison">
-                                            <div class="col">
-                                                <label>Comparison Results</label>
-                                                <pre ng-bind-html="signature.basestringComparison"></pre>
-                                            </div>
-                                        </div>                                                        
                                     </div>
                                 </div>
+                            
+                                <div class="row" ng-if="signature.showBaseStringComparison">
+                                    <div class="col">
+                                        <label>Comparison Results</label>
+                                        <pre ng-bind-html="signature.baseStringComparison"></pre>
+                                    </div>
+                                </div>                                                        
                             </div>
                         </form>
-                        <div>{{signature}}</div>
                     </div>
                 </div>
                 <br>

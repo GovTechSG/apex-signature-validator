@@ -5,8 +5,6 @@ import Signature from './Signature';
 import paramsModal from './paramsModal';
 import config from '../service/config';
 
-import signatureValidatorTemplate from './signatureValidator.template.html';
-
 function signatureValidatorController($scope, Notification, TestService, $sce, $uibModal) {
     const controller = this;
 
@@ -23,7 +21,9 @@ function signatureValidatorController($scope, Notification, TestService, $sce, $
     controller.changeRequestBodyType = changeRequestBodyType;
     controller.getApiTestHeaders = getApiTestHeaders;
     controller.formSignatureUrls = formSignatureUrls;
-    controller.onHttpMethodChanged = onHttpMethodChanged;
+    controller.onApiUrlChange = onApiUrlChange;
+    controller.onHttpMethodChange = onHttpMethodChange;
+    controller.onSignatureParameterChange = onSignatureParameterChange;
     controller.removeSignature = removeSignature;
     controller.removeUrlencodedBody = removeUrlencodedBody;
     controller.sendTestRequest = sendTestRequest;
@@ -47,16 +47,20 @@ function signatureValidatorController($scope, Notification, TestService, $sce, $
 
         controller.sendingTestRequest = false;
 
-        controller.apiUrl = '';
-
+        controller.apiUrl = 'https://api.example.com/abc/def';
+        
+        controller.httpMethods = config.main.httpMethods;
+        controller.httpMethod = controller.httpMethods[0];
         controller.requestBodyType = config.constants.requestBodyTypes[0];
         controller.requestBody = {
             json: '',
             urlencoded: []
-        }
-
-        controller.httpMethods = config.main.httpMethods;
-        controller.httpMethod = controller.httpMethods[0];
+        };
+        controller.httpRequestOptions = {
+            httpMethod: controller.httpMethod,
+            requestBodyType: controller.requestBodyType,
+            requestBody: controller.requestBody
+        };
 
         controller.gatewayZoneOptions = config.main.providerGateway;
         controller.gatewayZone = controller.gatewayZoneOptions[0];
@@ -65,29 +69,58 @@ function signatureValidatorController($scope, Notification, TestService, $sce, $
 
         controller.appVersion = config.main.appVersion;
 
-        controller.signatures = [
-
-        ];
+        controller.signatures = [];
     }
 
-    function onHttpMethodChanged() {
-        if (controller.httpMethod === config.main.httpMethods[0]) { // GET
-            controller.requestBodyType = config.constants.requestBodyTypes[0]; // none
+    function formSignatureUrls() {
+        for (let signature of controller.signatures) {
+            signature.formSignatureUrl(controller.apiUrl);
         }
     }
 
+    function generateBaseStrings() {
+        for (let signature of controller.signatures) {
+            signature.generateBaseString(controller.httpRequestOptions);
+        }
+    }
+
+    function onApiUrlChange() {
+        formSignatureUrls(); // Generate signature URL for each signature
+        generateBaseStrings(); // Generate base string for each signature
+    }
+
+    function onHttpMethodChange() {
+        // If changing to GET, change request body type to none
+        if (controller.httpMethod === config.main.httpMethods[0]) { // GET
+            controller.requestBodyType = config.constants.requestBodyTypes[0]; // none
+        }
+        // Change base string for signatures
+        generateBaseStrings();
+        // Change auth headers
+    }
+
+    function onSignatureParameterChange(signature) {
+        signature.generateBaseString(controller.httpRequestOptions);
+    }
+
     function addSignature() {
-        controller.signatures.push(new Signature(controller.apiUrl))
+        controller.signatures.push(new Signature(controller.apiUrl, {
+            allowCustomSignatureUrl: false,
+            appId: '',
+            appVersion: config.main.appVersion,
+            authLevel: config.main.authLevels[0],
+            gatewayZone: config.constants.gatewayZones.internet
+        }));
     }
 
     function signatureMethod() {
         switch (controller.selectedLevel) {
-            case 0:
-                return '';
-            case 1:
-                return config.main.sigMethod.level1;
-            case 2:
-                return config.main.sigMethod.level2;
+        case 0:
+            return '';
+        case 1:
+            return config.main.sigMethod.level1;
+        case 2:
+            return config.main.sigMethod.level2;
         }
     }
 
@@ -107,21 +140,21 @@ function signatureValidatorController($scope, Notification, TestService, $sce, $
     function authPrefix() {
         if (controller.gatewayZone === config.constants.gatewayZones.internet) {
             switch (controller.selectedLevel) {
-                case 1:
-                    return 'apex_l1_eg';
-                case 2:
-                    return 'apex_l2_eg';
-                default:
-                    return '';
+            case 1:
+                return 'apex_l1_eg';
+            case 2:
+                return 'apex_l2_eg';
+            default:
+                return '';
             }
         } else if (controller.gatewayZone === config.constants.gatewayZones.intranet) {
             switch (controller.selectedLevel) {
-                case 1:
-                    return 'apex_l1_ig';
-                case 2:
-                    return 'apex_l2_ig';
-                default:
-                    return '';
+            case 1:
+                return 'apex_l1_ig';
+            case 2:
+                return 'apex_l2_ig';
+            default:
+                return '';
             }
         }
     }
@@ -141,27 +174,21 @@ function signatureValidatorController($scope, Notification, TestService, $sce, $
         }
     }
 
-    function formSignatureUrls() {
-        for (let signature of controller.signatures) {
-            signature.formSignatureUrl(controller.apiUrl);
-        }
-    }
-
     /**
      * Automatically generates signature URL if the API is at api.gov.sg. Only runs when custom signature is unchecked.
      * @returns {string} Signature URL, with .e or .i optionally injected depending on the API domain and gateway zone.
      */
-    function formSignatureUrl() {
-        if (controller.apiUrl === '' || !controller.apiUrl) return '';
+    // function formSignatureUrl() {
+    //     if (controller.apiUrl === '' || !controller.apiUrl) return '';
 
-        let apexDomain = controller.apiUrl.indexOf('.api.gov.sg');
-        if (apexDomain !== -1) {
-            let right = controller.apiUrl.substring(apexDomain);
-            let left = controller.apiUrl.substring(0, apexDomain);
-            let domainIdentifier = controller.gatewayZone === config.constants.gatewayZones.internet ? 'e' : 'i';
-            return `${left}.${domainIdentifier}${right}`;
-        } else { return controller.apiUrl; }
-    }
+    //     let apexDomain = controller.apiUrl.indexOf('.api.gov.sg');
+    //     if (apexDomain !== -1) {
+    //         let right = controller.apiUrl.substring(apexDomain);
+    //         let left = controller.apiUrl.substring(0, apexDomain);
+    //         let domainIdentifier = controller.gatewayZone === config.constants.gatewayZones.internet ? 'e' : 'i';
+    //         return `${left}.${domainIdentifier}${right}`;
+    //     } else { return controller.apiUrl; }
+    // }
 
     /**
      * Removes signature at given position
@@ -242,16 +269,16 @@ function signatureValidatorController($scope, Notification, TestService, $sce, $
      */
     function validateForm(level) {
         switch (level) {
-            case 0:
-                return controller.apiUrl && controller.apiUrl.length > 0;
-            case 1:
-                return controller.apiUrl && controller.apiUrl.length > 0 &&
+        case 0:
+            return controller.apiUrl && controller.apiUrl.length > 0;
+        case 1:
+            return controller.apiUrl && controller.apiUrl.length > 0 &&
                     controller.appId && controller.appId.length > 0 &&
                     controller.appSecret && controller.appSecret.length > 0 &&
                     controller.nonce && controller.nonce.length > 0 &&
                     controller.timestamp && controller.timestamp.length > 0;
-            case 2:
-                return controller.apiUrl && controller.apiUrl.length > 0 &&
+        case 2:
+            return controller.apiUrl && controller.apiUrl.length > 0 &&
                     controller.appId && controller.appId.length > 0 &&
                     controller.pem && controller.pem.length > 0 &&
                     controller.nonce && controller.nonce.length > 0 &&
@@ -406,8 +433,8 @@ function signatureValidatorController($scope, Notification, TestService, $sce, $
                 return {
                     key: urlencodedBody.key,
                     value: urlencodedBody.value
-                }
-            })
+                };
+            });
         }
         if (controller.selectedLevel === 1) {
             currentConfig.appSecret = controller.appSecret;
@@ -435,7 +462,4 @@ function signatureValidatorController($scope, Notification, TestService, $sce, $
 
 signatureValidatorController.$inject = ['$scope', 'config', 'Notification', 'TestService', '$sce', '$uibModal'];
 
-export default {
-    controller: signatureValidatorController,
-    template: signatureValidatorTemplate
-};
+export default signatureValidatorController;

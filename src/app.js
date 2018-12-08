@@ -11,10 +11,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'angular-ui-notification/dist/angular-ui-notification.min.css';
 
 import mainController from './mainController';
-import signatureValidator from './features/signatureValidator';
-import joseValidator from './features/joseValidator';
+import signatureValidatorController from './features/signatureValidator.controller';
+import signatureValidatorTemplate from './features/signatureValidator.template.html';
+import joseValidatorController from './features/joseValidator.controller';
+import joseValidatorTemplate from './features/joseValidator.template.html';
+
 import config from './service/config';
-import jwtService from './service/jwtService';
 import testService from './service/testService';
 import utilService from './service/utiityService';
 
@@ -24,23 +26,22 @@ angular.module('app', [uiRouter, uiBootstrap, uiNotification])
     .constant('config', config)
     .controller('mainController', mainController)
     .factory('TestService', testService)
-    .factory('JWTService', jwtService)
     .factory('UtilityService', utilService)
     .config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
         $stateProvider
             .state({
                 name: 'signatureValidator',
                 url: '/signature-validator',
-                controller: signatureValidator.controller,
+                controller: signatureValidatorController,
                 controllerAs: '$ctrl',
-                template: signatureValidator.template
+                template: signatureValidatorTemplate
             })
             .state({
                 name: 'joseValidator',
                 url: '/jose-validator',
-                controller: joseValidator.controller,
+                controller: joseValidatorController,
                 controllerAs: '$ctrl',
-                template: joseValidator.template
+                template: joseValidatorTemplate
             });
         $urlRouterProvider.otherwise('/signature-validator');
     }])
@@ -66,4 +67,4 @@ angular.module('app', [uiRouter, uiBootstrap, uiNotification])
                 });
             }
         };
-    }])
+    }]);
