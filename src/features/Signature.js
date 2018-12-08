@@ -1,4 +1,5 @@
 import randomBytes from 'randombytes';
+import isEmpty from 'lodash/isEmpty';
 
 import config from '../service/config';
 import qs from 'querystring';
@@ -50,6 +51,11 @@ Signature.prototype.formSignature = function() {
  * @param {object} httpRequestOptions.requestBody { json: JSON string, urlencoded: array of {key, value} objects }
  */
 Signature.prototype.generateBaseString = function(httpRequestOptions) {
+    if (isEmpty(this.signatureUrl) || isEmpty(this.appId || 
+        isEmpty(this.timestamp) || isEmpty(this.nonce))) {
+        this.baseString = '';
+        return;
+    }
     let baseStringOptions = {
         signatureUrl: this.signatureUrl,
         authPrefix: this.authPrefix(),

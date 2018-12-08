@@ -302,8 +302,9 @@
                                             ng-model="signature.timestamp"
                                             ng-change="$ctrl.onSignatureParameterChange(signature)">
                                         <div class="input-group-append">
+                                            <!-- ng-click calls onSignatureParameterChange manually; ng-change for timestamp only listens to input change. -->
                                             <button class="btn btn-primary btn-sm"
-                                                ng-click="signature.generateTimestamp()"
+                                                ng-click="signature.generateTimestamp(); $ctrl.onSignatureParameterChange(signature)"
                                                 type="button">
                                                 Generate
                                             </button>
@@ -328,8 +329,9 @@
                                             ng-model="signature.nonce"
                                             ng-change="$ctrl.onSignatureParameterChange(signature)">
                                         <div class="input-group-append">
+                                            <!-- ng-click calls onSignatureParameterChange manually; ng-change for nonce only listens to input change. -->
                                             <button class="btn btn-primary btn-sm"
-                                                ng-click="signature.generateNonce()"
+                                                ng-click="signature.generateNonce(); $ctrl.onSignatureParameterChange(signature)"
                                                 type="button">
                                                 Generate
                                             </button>
