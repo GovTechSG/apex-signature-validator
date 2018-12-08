@@ -51,6 +51,9 @@ Signature.prototype.formSignature = function() {
  * @param {object} httpRequestOptions.requestBody { json: JSON string, urlencoded: array of {key, value} objects }
  */
 Signature.prototype.generateBaseString = function(httpRequestOptions) {
+    if (!httpRequestOptions) {
+        throw new Error('Error generating base string: http request options required.');
+    }
     if (isEmpty(this.signatureUrl) || isEmpty(this.appId || 
         isEmpty(this.timestamp) || isEmpty(this.nonce))) {
         this.baseString = '';

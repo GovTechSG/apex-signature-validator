@@ -23,6 +23,7 @@ function signatureValidatorController($scope, Notification, TestService, $sce, $
     controller.formSignatureUrls = formSignatureUrls;
     controller.onApiUrlChange = onApiUrlChange;
     controller.onHttpMethodChange = onHttpMethodChange;
+    controller.onRequestBodyChange = onRequestBodyChange;
     controller.onSignatureParameterChange = onSignatureParameterChange;
     controller.removeSignature = removeSignature;
     controller.removeUrlencodedBody = removeUrlencodedBody;
@@ -48,18 +49,13 @@ function signatureValidatorController($scope, Notification, TestService, $sce, $
         controller.sendingTestRequest = false;
 
         controller.apiUrl = 'https://api.example.com/abc/def';
-        
+
         controller.httpMethods = config.main.httpMethods;
         controller.httpMethod = controller.httpMethods[0];
         controller.requestBodyType = config.constants.requestBodyTypes[0];
         controller.requestBody = {
             json: '',
             urlencoded: []
-        };
-        controller.httpRequestOptions = {
-            httpMethod: controller.httpMethod,
-            requestBodyType: controller.requestBodyType,
-            requestBody: controller.requestBody
         };
 
         controller.gatewayZoneOptions = config.main.providerGateway;
@@ -80,8 +76,16 @@ function signatureValidatorController($scope, Notification, TestService, $sce, $
 
     function generateBaseStrings() {
         for (let signature of controller.signatures) {
-            signature.generateBaseString(controller.httpRequestOptions);
+            signature.generateBaseString({
+                httpMethod: controller.httpMethod,
+                requestBodyType: controller.requestBodyType,
+                requestBody: controller.requestBody
+            });
         }
+    }
+
+    function onRequestBodyChange() {
+        generateBaseStrings();
     }
 
     function onApiUrlChange() {
@@ -100,7 +104,11 @@ function signatureValidatorController($scope, Notification, TestService, $sce, $
     }
 
     function onSignatureParameterChange(signature) {
-        signature.generateBaseString(controller.httpRequestOptions);
+        signature.generateBaseString({
+            httpMethod: controller.httpMethod,
+            requestBodyType: controller.requestBodyType,
+            requestBody: controller.requestBody
+        });
     }
 
     function addSignature() {

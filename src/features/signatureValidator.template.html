@@ -68,23 +68,43 @@
                 </div>
                 <div class="row" ng-if="$ctrl.requestBodyType !== config.constants.requestBodyTypes[0]">
                     <div class="col-md-12">
-                        <textarea class="form-control code" ng-if="$ctrl.requestBodyType === 'application/json'" ng-model="$ctrl.requestBody.json"></textarea>
-                        <fieldset class="form-group" ng-if="$ctrl.requestBodyType === 'application/x-www-form-urlencoded'">
-                            <div class="row" ng-repeat="kvpair in $ctrl.requestBody.urlencoded">
-                                <div class="col-sm-6">
+                        <textarea class="form-control code" 
+                            ng-if="$ctrl.requestBodyType === 'application/json'"
+                            ng-model="$ctrl.requestBody.json">
+                        </textarea>
+
+                        <fieldset class="form-group" 
+                            ng-if="$ctrl.requestBodyType === 'application/x-www-form-urlencoded'">
+                            <div class="row" 
+                                ng-repeat="kvpair in $ctrl.requestBody.urlencoded">
+                                <div class="col-6">
                                     <div class="form-group row">
-                                        <label class="col-sm-2 col-form-label" for="{{ 'urlencodedBodyKey' + $index }}">Key</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" id="{{ 'urlencodedBodyKey' + $index }}" class="form-control" ng-model="kvpair.key" ng-change="formSignature()">
+                                        <label class="col-2 col-form-label" 
+                                            for="{{ 'urlencodedBodyKey' + $index }}">
+                                            Key
+                                        </label>
+                                        <div class="col-10">
+                                            <input type="text" 
+                                                id="{{ 'urlencodedBodyKey' + $index }}" 
+                                                class="form-control" 
+                                                ng-model="kvpair.key"
+                                                ng-change="$ctrl.onRequestBodyChange()">
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <div class="col-sm-5">
+                                <div class="col-5">
                                     <div class="form-group row">
-                                        <label class="col-sm-2 col-form-label" for="{{ 'urlencodedBodyValue' + $index }}">Value</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" id="{{ 'urlencodedBodyValue' + $index }}" class="form-control" ng-model="kvpair.value" ng-change="formSignature()">
+                                        <label class="col-2 col-form-label" 
+                                            for="{{ 'urlencodedBodyValue' + $index }}">
+                                            Value
+                                        </label>
+                                        <div class="col-10">
+                                            <input type="text" 
+                                                id="{{ 'urlencodedBodyValue' + $index }}"
+                                                class="form-control" 
+                                                ng-model="kvpair.value" 
+                                                ng-change="$ctrl.onRequestBodyChange()">
                                         </div>
                                     </div>
                                 </div>
