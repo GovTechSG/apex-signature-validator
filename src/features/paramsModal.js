@@ -31,6 +31,8 @@ let paramsModalTemplate = `
     
 </div>`;
 
+paramsModalController.$inject = ['$scope', '$uibModalInstance', 'currentConfig'];
+
 function paramsModalController($scope, $uibModalInstance, currentConfig) {
     const controller = this;
 
@@ -60,8 +62,6 @@ function paramsModalController($scope, $uibModalInstance, currentConfig) {
         controller.currentConfigString = JSON.stringify(JSON.parse(fileText), null, 2);
     };
 }
-
-paramsModalController.$inject = ['$scope', '$uibModalInstance', 'currentConfig'];
 
 export default {
     template: paramsModalTemplate,

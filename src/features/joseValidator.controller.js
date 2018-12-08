@@ -1,5 +1,7 @@
 import jwtService from '../service/jwtService';
 
+joseValidatorController.$inject = ['Notification'];
+
 function joseValidatorController(Notification) {
     let controller = this;
 
@@ -35,7 +37,5 @@ function joseValidatorController(Notification) {
         }
     }
 }
-
-joseValidatorController.$inject = ['Notification'];
 
 export default joseValidatorController;

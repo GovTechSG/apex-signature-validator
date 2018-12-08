@@ -5,6 +5,8 @@ import Signature from './Signature';
 import paramsModal from './paramsModal';
 import config from '../service/config';
 
+signatureValidatorController.$inject = ['$scope', 'Notification', 'TestService', '$sce', '$uibModal'];
+
 function signatureValidatorController($scope, Notification, TestService, $sce, $uibModal) {
     const controller = this;
 
@@ -16,7 +18,7 @@ function signatureValidatorController($scope, Notification, TestService, $sce, $
     controller.addUrlencodedBody = addUrlencodedBody;
     controller.authPrefix = authPrefix;
     controller.canSendTestRequest = canSendTestRequest;
-    controller.compareBasestring = compareBasestring;
+    controller.compareBaseString = compareBaseString;
     controller.changeAuthLevel = changeAuthLevel;
     controller.changeRequestBodyType = changeRequestBodyType;
     controller.getApiTestHeaders = getApiTestHeaders;
@@ -298,11 +300,11 @@ function signatureValidatorController($scope, Notification, TestService, $sce, $
         return controller.basestring && controller.basestring.length > 0 && controller.authHeader && controller.authHeader.length > 0;
     }
 
-    function compareBasestring(generated, input) {
-        if (input == null) {
+    function compareBaseString(signature, generated, input) {
+        if (!input) {
             input = '';
         }
-        controller.showBasestringComparison = true;
+        signature.showBaseStringComparison = true;
         let before = false;
         let bsResults = '';
         for (let i = 0; i < generated.length; i++) {
@@ -328,7 +330,7 @@ function signatureValidatorController($scope, Notification, TestService, $sce, $
             }
             bsResults += '<span class = \'extra-basestring-char\'>' + input.substring(generated.length) + '</span>';
         }
-        controller.basestringComparison = $sce.trustAsHtml(bsResults);
+        signature.baseStringComparison = $sce.trustAsHtml(bsResults);
         if (generated === input) {
             Notification.success({
                 message: 'Basestrings are the same',
@@ -467,7 +469,5 @@ function signatureValidatorController($scope, Notification, TestService, $sce, $
         return headerString;
     }
 }
-
-signatureValidatorController.$inject = ['$scope', 'config', 'Notification', 'TestService', '$sce', '$uibModal'];
 
 export default signatureValidatorController;
