@@ -43,6 +43,14 @@ Signature.prototype.formSignature = function() {
     this.signature = '';
 }
 
+Signature.prototype.generateTimestamp = function() {
+    this.timestamp = (new Date).getTime();
+}
+
+Signature.prototype.generateNonce = function() {
+    this.nonce = randomBytes(32).toString('base64');
+}
+
 Signature.prototype.timestampAutoGenChange = function() {
     if (this.timestampAutoGen) {
         this.timestamp = (new Date).getTime();
