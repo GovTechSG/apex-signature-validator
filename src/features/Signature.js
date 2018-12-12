@@ -32,6 +32,7 @@ function Signature(apiUrl, options) {
     // Initial values
     this.timestamp = (new Date).getTime();
     this.nonce = randomBytes(32).toString('base64');
+    this.showBaseString = false;
 
     // Need to attach directly to the object, not prototype for angular's model getterSetter
     // variables are getters/setters, hence they return functions

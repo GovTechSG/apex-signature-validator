@@ -412,50 +412,50 @@
 
                                 <br>
                             </div>
-                            
-                            <div class="jumbotron">
-                                <div class="row">
-                                    <div class="col">
-                                        <label for="signature-base-string-{{$index}}">Base string</label>                                        
-                                            <textarea rows="4" 
-                                                disabled 
-                                                class="form-control immutable code" 
-                                                ng-model="signature.baseString"
-                                                name="signature-base-string-{{$index}}" 
-                                                id="signature-base-string-{{$index}}">
-                                            </textarea>
-                                    </div>
-                                </div>
-                                
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="d-flex justify-content-between">
-                                            <label for="signature-base-string-to-compare-{{$index}}">Compare base strings</label>
+
+                            <uib-accordion>
+                                <div uib-accordion-group>
+                                    <uib-accordion-heading>
+                                        <h5 ng-click="signature.showBaseString = !signature.showBaseString">
+                                            Base string
+                                            <i ng-show="signature.showBaseString" class="fas fa-angle-double-up"></i>
+                                            <i ng-show="!signature.showBaseString" class="fas fa-angle-double-down"></i>
+                                        </h5>
+                                    </uib-accordion-heading>
+
+                                    <textarea rows="4" 
+                                        disabled 
+                                        class="form-control immutable code" 
+                                        ng-model="signature.baseString"
+                                        name="signature-base-string-{{$index}}" 
+                                        id="signature-base-string-{{$index}}">
+                                    </textarea>
+
+                                    
+                                    <label for="signature-base-string-to-compare-{{$index}}">Compare base strings</label>
+                                    <div class="input-group">
+                                        <textarea rows="4" 
+                                            class="form-control code" 
+                                            ng-model="signature.baseStringToCompare" 
+                                            name="signature-base-string-to-compare-{{$index}}" 
+                                            id="signature-base-string-to-compare-{{$index}}"></textarea>
+                                        <div class="input-group-append">
+                                            <button class="btn btn-secondary btn-sm"
+                                                type="button"
+                                                ng-click="$ctrl.compareBaseString(signature, signature.baseString, signature.baseStringToCompare)">
+                                                Compare
+                                            </button>
                                         </div>
-                                        <div class="input-group">
-                                            <textarea rows="4" 
-                                                class="form-control code" 
-                                                ng-model="signature.baseStringToCompare" 
-                                                name="signature-base-string-to-compare-{{$index}}" 
-                                                id="signature-base-string-to-compare-{{$index}}"></textarea>
-                                            <div class="input-group-append">
-                                                <button class="btn btn-secondary btn-sm"
-                                                    type="button"
-                                                    ng-click="$ctrl.compareBaseString(signature, signature.baseString, signature.baseStringToCompare)">
-                                                    Compare
-                                                </button>
-                                            </div>
-                                        </div>                                        
+                                    </div>
+
+                                    <div class="row" ng-if="signature.showBaseStringComparison">
+                                        <div class="col">
+                                            <label>Comparison Results</label>
+                                            <pre ng-bind-html="signature.baseStringComparison"></pre>
+                                        </div>
                                     </div>
                                 </div>
-                            
-                                <div class="row" ng-if="signature.showBaseStringComparison">
-                                    <div class="col">
-                                        <label>Comparison Results</label>
-                                        <pre ng-bind-html="signature.baseStringComparison"></pre>
-                                    </div>
-                                </div>                                                        
-                            </div>
+                            </uib-accordion>
                         </form>
                     </div>
                 </div>
@@ -478,7 +478,10 @@
         <div class="card-header">
             <div class="row">
                 <div class="col-sm-12" style="text-align:center">
-                    <h4><span class="badge badge-primary">3</span> Signature base string and headers</h4>                
+                    <h4>
+                        <span class="badge badge-primary">3</span>
+                        HTTP Authorization Header
+                    </h4>
                 </div>
             </div> 
         </div>
