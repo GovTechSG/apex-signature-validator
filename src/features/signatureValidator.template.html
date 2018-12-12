@@ -487,9 +487,28 @@
         </div>
     
         <div class="card-body">
-            <div class="row" style="text-align:center">
-                <div class="col-sm-12" ng-if="$ctrl.selectedLevel === 0">
-                    <strong>No authentication required for L0</strong>
+            <div class="row" style="text-align:center" ng-if="$ctrl.signatures.length === 0">
+                <div class="col">
+                    <strong>Add a signature to view HTTP Authorization headers.</strong>
+                </div>
+            </div>
+            <div class="row" ng-if="$ctrl.signatures.length > 0">
+                <div class="col">
+                    <label for="authHeader">Request Authorization Header</label>
+                    <div class="input-group">
+                        <textarea rows="6" name="authHeader" id="authHeader"
+                            class="form-control immutable code" 
+                            ng-model="$ctrl.authHeader" disabled></textarea>
+                        <div class="input-group-append">
+                            <button type="button"
+                                class="btn btn-primary"
+                                ng-click="$ctrl.generateAuthHeader()"
+                                ng-disabled="!$ctrl.allBaseStringsFormed()">
+                                Generate
+                            </button>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
             <div class="row">

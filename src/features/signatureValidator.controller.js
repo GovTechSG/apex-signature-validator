@@ -1,5 +1,6 @@
 import KJUR from 'jsrsasign';
 import randomBytes from 'randombytes';
+import isEmpty from 'lodash/isEmpty';
 
 import Signature from './Signature';
 import paramsModal from './paramsModal';
@@ -16,6 +17,7 @@ function signatureValidatorController($scope, Notification, TestService, $sce, $
 
     controller.addSignature = addSignature;
     controller.addUrlencodedBody = addUrlencodedBody;
+    controller.allBaseStringsFormed = allBaseStringsFormed;
     controller.authPrefix = authPrefix;
     controller.canSendTestRequest = canSendTestRequest;
     controller.compareBaseString = compareBaseString;
@@ -58,7 +60,7 @@ function signatureValidatorController($scope, Notification, TestService, $sce, $
         controller.requestBody = {
             json: '',
             urlencoded: []
-        };
+        };        
 
         controller.gatewayZoneOptions = config.main.providerGateway;
         controller.gatewayZone = controller.gatewayZoneOptions[0];
@@ -68,6 +70,15 @@ function signatureValidatorController($scope, Notification, TestService, $sce, $
         controller.appVersion = config.main.appVersion;
 
         controller.signatures = [];
+    }
+
+    function allBaseStringsFormed() {
+        return controller.signatures.reduce(function(accumm, currentSignature) {
+            if (isEmpty(currentSignature.baseString)) {
+                accumm = false;
+            }
+            return accumm;
+        }, true);
     }
 
     function formSignatureUrls() {
