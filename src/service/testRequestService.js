@@ -1,4 +1,4 @@
-function testService($http, $httpParamSerializerJQLike) {
+function testRequestService($http, $httpParamSerializerJQLike) {
     return {
         /**
          * @param url URL to call
@@ -33,6 +33,6 @@ function testService($http, $httpParamSerializerJQLike) {
     };
 }
 
-testService.$inject = ['$http', '$httpParamSerializerJQLike'];
+testRequestService.$inject = ['$http', '$httpParamSerializerJQLike'];
 
-export default testService;
+export default testRequestService;

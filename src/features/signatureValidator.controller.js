@@ -7,9 +7,9 @@ import paramsModal from './paramsModal';
 import config from '../service/config';
 import utilities from '../service/utilities';
 
-signatureValidatorController.$inject = ['$scope', 'Notification', 'testService', '$sce', '$uibModal'];
+signatureValidatorController.$inject = ['$scope', 'Notification', 'testRequestService', '$sce', '$uibModal'];
 
-function signatureValidatorController($scope, Notification, testService, $sce, $uibModal) {
+function signatureValidatorController($scope, Notification, testRequestService, $sce, $uibModal) {
     const controller = this;
 
     init();
@@ -26,6 +26,7 @@ function signatureValidatorController($scope, Notification, testService, $sce, $
     controller.changeRequestBodyType = changeRequestBodyType;
     controller.generateAuthHeader = generateAuthHeader;
     controller.getApiTestHeaders = getApiTestHeaders;
+    controller.getApiTestResponseClass = getApiTestResponseClass;
     controller.isEmpty = isEmpty;
     controller.formSignatureUrls = formSignatureUrls;
     controller.onAllowCustomSignatureUrlChange = onAllowCustomSignatureUrlChange;
@@ -56,7 +57,7 @@ function signatureValidatorController($scope, Notification, testService, $sce, $
 
         controller.sendingTestRequest = false;
 
-        controller.apiUrl = 'https://api.example.com/abc/def';
+        controller.apiUrl = 'https://reqres.in/api/users/1';
 
         controller.httpMethods = config.main.httpMethods;
         controller.httpMethod = controller.httpMethods[0];
@@ -304,7 +305,7 @@ function signatureValidatorController($scope, Notification, testService, $sce, $
                 }, {});
             }
 
-            controller.basestring = testService.generateBasestring(basestringOptions);
+            controller.basestring = testRequestService.generateBasestring(basestringOptions);
 
             // 2. Signature generation
             let key;
@@ -325,8 +326,8 @@ function signatureValidatorController($scope, Notification, testService, $sce, $
                     });
                 }
             }
-            let signature = testService.signBasestring(controller.selectedLevel, controller.basestring, key);
-            let authHeader = testService.genAuthHeader(basestringOptions, signature);
+            let signature = testRequestService.signBasestring(controller.selectedLevel, controller.basestring, key);
+            let authHeader = testRequestService.genAuthHeader(basestringOptions, signature);
             controller.authHeader = authHeader;
         } else if (signatureGenerated()) {
             controller.basestring = '';
@@ -413,6 +414,7 @@ function signatureValidatorController($scope, Notification, testService, $sce, $
         if (controller.httpMethod !== 'GET') {
             requestOptions.requestBodyType = controller.requestBodyType;
             if (controller.requestBodyType === 'application/x-www-form-urlencoded') {
+                // Reduce from array of [{key, value}, ...] to {key: value, ...}
                 requestOptions.requestBody = controller.requestBody.urlencoded.reduce((finalObject, currentObject) => {
                     if (currentObject.key && currentObject.value) { // false if any of them are empty strings
                         finalObject[currentObject.key] = currentObject.value;
@@ -423,10 +425,10 @@ function signatureValidatorController($scope, Notification, testService, $sce, $
                 requestOptions.requestBody = JSON.parse(controller.requestBody.json);
             }
         }
-        if (controller.selectedLevel !== 0) {
+        if (controller.signatures.length > 0) {
             requestOptions.authHeader = controller.authHeader;
         }
-        return testService.sendTestRequest(controller.apiUrl, controller.httpMethod, controller.selectedLevel, requestOptions)
+        return testRequestService.sendTestRequest(controller.apiUrl, controller.httpMethod, controller.selectedLevel, requestOptions)
             .then(response => {
                 controller.apiTest = response;
             })
@@ -529,6 +531,14 @@ function signatureValidatorController($scope, Notification, testService, $sce, $
             headerString += `${key}: ${headers[key]}\n`;
         }
         return headerString;
+    }
+
+    function getApiTestResponseClass() {        
+        return {
+            'bg-success': controller.apiTest.status < 300,
+            'bg-warning': 300 <= controller.apiTest.status && controller.apiTest.status < 400,
+            'bg-danger': (400 <= controller.apiTest.status && controller.apiTest.status < 600) || controller.apiTest.status === -1
+        };
     }
 }
 

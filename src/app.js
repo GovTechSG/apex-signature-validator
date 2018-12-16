@@ -16,13 +16,13 @@ import signatureValidatorTemplate from './features/signatureValidator.template.h
 import joseValidatorController from './features/joseValidator.controller';
 import joseValidatorTemplate from './features/joseValidator.template.html';
 
-import testService from './service/testService';
+import testRequestService from './service/testRequestService';
 
 import './css/style.css';
 
 angular.module('app', [uiRouter, uiBootstrap, uiNotification])
     .controller('mainController', mainController)
-    .factory('testService', testService)
+    .factory('testRequestService', testRequestService)
     .config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
         $stateProvider
             .state({
