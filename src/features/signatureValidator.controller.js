@@ -57,7 +57,7 @@ function signatureValidatorController($scope, Notification, testRequestService, 
 
         controller.sendingTestRequest = false;
 
-        controller.apiUrl = 'https://reqres.in/api/users/1';
+        controller.apiUrl = '';
 
         controller.httpMethods = config.main.httpMethods;
         controller.httpMethod = controller.httpMethods[0];
@@ -78,7 +78,7 @@ function signatureValidatorController($scope, Notification, testRequestService, 
     }
 
     function generateAuthHeader() {
-        controller.authHeader = 'Authorization: ';        
+        controller.authHeader = '';        
         for (let i = 0; i < controller.signatures.length; i++) {
             let signature = controller.signatures[i];
             try {
@@ -113,7 +113,13 @@ function signatureValidatorController($scope, Notification, testRequestService, 
         }
     }
 
+    /**
+     * @returns {boolean} If no signatures configured or not all base strings have been formed, returns false.
+     */
     function allBaseStringsFormed() {
+        if (controller.signatures.length === 0) {
+            return false;
+        }
         return controller.signatures.reduce(function(accumm, currentSignature) {
             if (isEmpty(currentSignature.baseString)) {
                 accumm = false;
@@ -140,6 +146,7 @@ function signatureValidatorController($scope, Notification, testRequestService, 
 
     function onRequestBodyChange() {
         generateBaseStrings();
+        controller.authHeader = '';
     }
 
     function onAllowCustomSignatureUrlChange(signature) {
@@ -150,12 +157,14 @@ function signatureValidatorController($scope, Notification, testRequestService, 
                 requestBodyType: controller.requestBodyType,
                 requestBody: controller.requestBody
             });
+            controller.authHeader = '';
         }
     }
 
     function onApiUrlChange() {
         formSignatureUrls(); // Generate signature URL for each signature
         generateBaseStrings(); // Generate base string for each signature
+        controller.authHeader = '';
     }
 
     function onHttpMethodChange() {
@@ -166,6 +175,7 @@ function signatureValidatorController($scope, Notification, testRequestService, 
         // Change base string for signatures
         generateBaseStrings();
         // Change auth headers
+        controller.authHeader = '';
     }
 
     function onSignatureParameterChange(signature) {
@@ -174,6 +184,7 @@ function signatureValidatorController($scope, Notification, testRequestService, 
             requestBodyType: controller.requestBodyType,
             requestBody: controller.requestBody
         });
+        controller.authHeader = '';
     }
 
     function addSignature() {
@@ -240,11 +251,11 @@ function signatureValidatorController($scope, Notification, testRequestService, 
     }
 
     function canSendTestRequest() {
-        if (controller.selectedLevel === 0) {
-            return controller.apiUrl && controller.apiUrl.length > 0;
-        } else {
-            return controller.basestring && controller.authHeader;
+        let condition = controller.apiUrl;
+        if (controller.signatures.length > 0) {
+            condition = condition && allBaseStringsFormed();
         }
+        return condition;
     }
 
     /**
@@ -425,10 +436,15 @@ function signatureValidatorController($scope, Notification, testRequestService, 
                 requestOptions.requestBody = JSON.parse(controller.requestBody.json);
             }
         }
-        if (controller.signatures.length > 0) {
-            requestOptions.authHeader = controller.authHeader;
+        if (allBaseStringsFormed()) {
+            generateAuthHeader();
+            if (controller.authHeader) {
+                requestOptions.authHeader = controller.authHeader;
+            } else {
+                return;
+            }
         }
-        return testRequestService.sendTestRequest(controller.apiUrl, controller.httpMethod, controller.selectedLevel, requestOptions)
+        return testRequestService.sendTestRequest(controller.apiUrl, controller.httpMethod, requestOptions)
             .then(response => {
                 controller.apiTest = response;
             })

@@ -32,7 +32,7 @@ function Signature(apiUrl, options) {
     // Initial values
     this.timestamp = (new Date).getTime();
     this.nonce = randomBytes(32).toString('base64');
-    this.showBaseString = false;
+    this.showBaseString = true;
 
     // Need to attach directly to the object, not prototype for angular's model getterSetter
     // variables are getters/setters, hence they return functions
@@ -107,20 +107,22 @@ Signature.prototype.nonceAutoGenChange = function() {
 Signature.prototype.formSignatureUrl = function(apiUrl) {
     let signature = this;
     // Set signature url to an auto-generated one.
-    if (apiUrl === '' || !apiUrl) {
-        signature.signatureUrl = '';
-    } else {
-        let apexDomain = apiUrl.indexOf('.api.gov.sg');
-        if (apexDomain !== -1) {
-            let right = apiUrl.substring(apexDomain);
-            let left = apiUrl.substring(0, apexDomain);
-            let domainIdentifier = signature.gatewayZone === config.constants.gatewayZones.internet ? 'e' : 'i';
-            signature.signatureUrl = `${left}.${domainIdentifier}${right}`;
+    if (!signature.allowCustomSignatureUrl) {
+        if (apiUrl === '' || !apiUrl) {
+            signature.signatureUrl = '';
         } else {
-            signature.signatureUrl = apiUrl;
+            let apexDomain = apiUrl.indexOf('.api.gov.sg');
+            if (apexDomain !== -1) {
+                let right = apiUrl.substring(apexDomain);
+                let left = apiUrl.substring(0, apexDomain);
+                let domainIdentifier = signature.gatewayZone === config.constants.gatewayZones.internet ? 'e' : 'i';
+                signature.signatureUrl = `${left}.${domainIdentifier}${right}`;
+            } else {
+                signature.signatureUrl = apiUrl;
+            }
         }
     }
-    
+
 };
 
 Signature.prototype.loadPkey = function(fileText) {

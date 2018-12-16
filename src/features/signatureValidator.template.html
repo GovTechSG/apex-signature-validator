@@ -414,9 +414,11 @@
                             </div>
 
                             <uib-accordion>
-                                <div uib-accordion-group is-disabled="$ctrl.isEmpty(signature.baseString)">
+                                <div uib-accordion-group is-open="signature.showBaseString">
                                     <uib-accordion-heading>
                                         Base string
+                                        <i class="fas fa-angle-double-up" ng-show="signature.showBaseString"></i>
+                                        <i class="fas fa-angle-double-down" ng-show="!signature.showBaseString"></i>
                                     </uib-accordion-heading>
 
                                     <textarea rows="4" 
