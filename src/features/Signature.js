@@ -1,8 +1,8 @@
 import randomBytes from 'randombytes';
 import isEmpty from 'lodash/isEmpty';
+import qs from 'querystring';
 
 import config from '../service/config';
-import qs from 'querystring';
 
 /**
  * @param {string} apiUrl
@@ -40,11 +40,6 @@ function Signature(apiUrl, options) {
     this.signatureType = signatureType(this); // HMAC or RSA. Renamed from signatureMethod to prevent confusion with HTTP method.
 }
 
-Signature.prototype.formSignature = function() {
-    // this.basestring = '';
-    this.signature = '';
-};
-
 /**
  * @param {object} httpRequestOptions HTTP request is set at the controller and needs to be passed to this function
  * @param {string} httpRequestOptions.httpMethod GET, POST, etc
@@ -55,7 +50,7 @@ Signature.prototype.generateBaseString = function(httpRequestOptions) {
     if (!httpRequestOptions) {
         throw new Error('Error generating base string: http request options required.');
     }
-    if (isEmpty(this.signatureUrl) || isEmpty(this.appId || 
+    if (isEmpty(this.signatureUrl) || isEmpty(this.appId ||
         isEmpty(this.timestamp) || isEmpty(this.nonce))) {
         this.baseString = '';
         return;
@@ -63,13 +58,14 @@ Signature.prototype.generateBaseString = function(httpRequestOptions) {
     let baseStringOptions = {
         signatureUrl: this.signatureUrl,
         authPrefix: this.authPrefix(),
-        signatureMethod: this.signatureType,
+        signatureMethod: this.signatureType(),
         appId: this.appId,
         httpMethod: httpRequestOptions.httpMethod,
         appVersion: this.appVersion,
         nonce: this.nonce,
         timestamp: this.timestamp
     };
+    this.baseStringOptions = baseStringOptions;
     // Process x-www-form-urlencoded body
     if (httpRequestOptions.httpMethod !== 'GET' &&
         httpRequestOptions.requestBodyType === 'application/x-www-form-urlencoded' &&
@@ -110,22 +106,21 @@ Signature.prototype.nonceAutoGenChange = function() {
 
 Signature.prototype.formSignatureUrl = function(apiUrl) {
     let signature = this;
-    if (!signature.allowCustomSignatureUrl) {
-        // Set signature url to an auto-generated one.
-        if (apiUrl === '' || !apiUrl) {
-            signature.signatureUrl = '';
+    // Set signature url to an auto-generated one.
+    if (apiUrl === '' || !apiUrl) {
+        signature.signatureUrl = '';
+    } else {
+        let apexDomain = apiUrl.indexOf('.api.gov.sg');
+        if (apexDomain !== -1) {
+            let right = apiUrl.substring(apexDomain);
+            let left = apiUrl.substring(0, apexDomain);
+            let domainIdentifier = signature.gatewayZone === config.constants.gatewayZones.internet ? 'e' : 'i';
+            signature.signatureUrl = `${left}.${domainIdentifier}${right}`;
         } else {
-            let apexDomain = apiUrl.indexOf('.api.gov.sg');
-            if (apexDomain !== -1) {
-                let right = apiUrl.substring(apexDomain);
-                let left = apiUrl.substring(0, apexDomain);
-                let domainIdentifier = signature.gatewayZone === config.constants.gatewayZones.internet ? 'e' : 'i';
-                signature.signatureUrl = `${left}.${domainIdentifier}${right}`;
-            } else {
-                signature.signatureUrl = apiUrl;
-            }
+            signature.signatureUrl = apiUrl;
         }
     }
+    
 };
 
 Signature.prototype.loadPkey = function(fileText) {
@@ -172,23 +167,23 @@ function authPrefix(signature) {
 /**
  * Formulate Apex Signature base string
  *
- * @param {object} basestringOptions Base string formulation request properties in JSON object
- * @param {string} basestringOptions.signatureUrl API signature URL
- * @param {string} basestringOptions.authPrefix Apex auth prefix
- * @param {string} basestringOptions.signatureMethod If L1 auth, HMACSHA256; if L2 auth, SHA256withRSA
- * @param {string} basestringOptions.appId Apex app ID
- * @param {string} basestringOptions.httpMethod HTTP Verb
- * @param {string} basestringOptions.appVersion Apex app version
- * @param {number} basestringOptions.nonce A nonce. Use once only
- * @param {number} basestringOptions.timestamp Unix timestamp (ms)
- * @param {object} [basestringOptions.queryString] Query string in API
- * @param {object} [basestringOptions.formData] HTTP POST or PUT body in x-www-form-urlencoded format
+ * @param {object} baseStringOptions Base string formulation request properties in JSON object
+ * @param {string} baseStringOptions.signatureUrl API signature URL
+ * @param {string} baseStringOptions.authPrefix Apex auth prefix
+ * @param {string} baseStringOptions.signatureMethod If L1 auth, HMACSHA256; if L2 auth, SHA256withRSA
+ * @param {string} baseStringOptions.appId Apex app ID
+ * @param {string} baseStringOptions.httpMethod HTTP Verb
+ * @param {string} baseStringOptions.appVersion Apex app version
+ * @param {number} baseStringOptions.nonce A nonce. Use once only
+ * @param {number} baseStringOptions.timestamp Unix timestamp (ms)
+ * @param {object} [baseStringOptions.queryString] Query string in API
+ * @param {object} [baseStringOptions.formData] HTTP POST or PUT body in x-www-form-urlencoded format
  *
  * @returns {string} sigBaseString Signature base string for signing
  * @public
  */
-function getBaseString(basestringOptions) {
-    const signatureUrl = new URL(basestringOptions.signatureUrl);
+function getBaseString(baseStringOptions) {
+    const signatureUrl = new URL(baseStringOptions.signatureUrl);
 
     if (signatureUrl.protocol !== 'http:' && signatureUrl.protocol !== 'https:') {
         throw new Error('Only http and https protocols are supported');
@@ -196,21 +191,21 @@ function getBaseString(basestringOptions) {
 
     // Remove port from url
     delete signatureUrl.port;
-    let basestringUrl = signatureUrl.origin + signatureUrl.pathname;
+    let baseStringUrl = signatureUrl.origin + signatureUrl.pathname;
 
     let defaultParams = {};
 
-    let prefixedAppId = basestringOptions.authPrefix.toLowerCase() + '_app_id';
-    let prefixedNonce = basestringOptions.authPrefix.toLowerCase() + '_nonce';
-    let prefixedSignatureMethod = basestringOptions.authPrefix.toLowerCase() + '_signature_method';
-    let prefixedTimestamp = basestringOptions.authPrefix.toLowerCase() + '_timestamp';
-    let prefixedVersion = basestringOptions.authPrefix.toLowerCase() + '_version';
+    let prefixedAppId = baseStringOptions.authPrefix.toLowerCase() + '_app_id';
+    let prefixedNonce = baseStringOptions.authPrefix.toLowerCase() + '_nonce';
+    let prefixedSignatureMethod = baseStringOptions.authPrefix.toLowerCase() + '_signature_method';
+    let prefixedTimestamp = baseStringOptions.authPrefix.toLowerCase() + '_timestamp';
+    let prefixedVersion = baseStringOptions.authPrefix.toLowerCase() + '_version';
 
-    defaultParams[prefixedAppId] = basestringOptions.appId;
-    defaultParams[prefixedNonce] = basestringOptions.nonce;
-    defaultParams[prefixedSignatureMethod] = basestringOptions.signatureMethod;
-    defaultParams[prefixedTimestamp] = basestringOptions.timestamp;
-    defaultParams[prefixedVersion] = basestringOptions.appVersion;
+    defaultParams[prefixedAppId] = baseStringOptions.appId;
+    defaultParams[prefixedNonce] = baseStringOptions.nonce;
+    defaultParams[prefixedSignatureMethod] = baseStringOptions.signatureMethod;
+    defaultParams[prefixedTimestamp] = baseStringOptions.timestamp;
+    defaultParams[prefixedVersion] = baseStringOptions.appVersion;
 
     // Add support to handle array in QueryString and name collision between queryString and formData
     let paramsArray = parseParams(defaultParams);
@@ -221,12 +216,12 @@ function getBaseString(basestringOptions) {
         paramsArray = paramsArray.concat(parseParams(params));
     }
 
-    if (basestringOptions.queryString != null) {
-        paramsArray = paramsArray.concat(parseParams(basestringOptions.queryString));
+    if (baseStringOptions.queryString != null) {
+        paramsArray = paramsArray.concat(parseParams(baseStringOptions.queryString));
     }
 
-    if (basestringOptions.formData != null) {
-        paramsArray = paramsArray.concat(parseParams(basestringOptions.formData));
+    if (baseStringOptions.formData != null) {
+        paramsArray = paramsArray.concat(parseParams(baseStringOptions.formData));
     }
 
     // Join name value pair with = (remove = if value is empty) and combine multiple name value pair with & 
@@ -239,7 +234,7 @@ function getBaseString(basestringOptions) {
         }
     }).join('&');
 
-    return basestringOptions.httpMethod.toUpperCase() + '&' + basestringUrl + '&' + stringParams;
+    return baseStringOptions.httpMethod.toUpperCase() + '&' + baseStringUrl + '&' + stringParams;
 }
 
 /**

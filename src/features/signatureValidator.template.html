@@ -211,7 +211,7 @@
                                                     id="signature-url-{{$index}}-allow-custom"
                                                     type="checkbox" 
                                                     ng-model="signature.allowCustomSignatureUrl"
-                                                    ng-change="signature.formSignatureUrl($ctrl.apiUrl)">
+                                                    ng-change="$ctrl.onAllowCustomSignatureUrlChange(signature)">
                                                     &nbsp;
                                                 <label for="signature-url-{{$index}}-allow-custom"
                                                     style="margin-bottom: 0"> <!-- override bootstrap label's margin-bottom so label stays within input group -->
@@ -414,13 +414,9 @@
                             </div>
 
                             <uib-accordion>
-                                <div uib-accordion-group>
+                                <div uib-accordion-group is-disabled="$ctrl.isEmpty(signature.baseString)">
                                     <uib-accordion-heading>
-                                        <h5 ng-click="signature.showBaseString = !signature.showBaseString">
-                                            Base string
-                                            <i ng-show="signature.showBaseString" class="fas fa-angle-double-up"></i>
-                                            <i ng-show="!signature.showBaseString" class="fas fa-angle-double-down"></i>
-                                        </h5>
+                                        Base string
                                     </uib-accordion-heading>
 
                                     <textarea rows="4" 

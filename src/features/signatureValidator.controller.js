@@ -5,10 +5,11 @@ import isEmpty from 'lodash/isEmpty';
 import Signature from './Signature';
 import paramsModal from './paramsModal';
 import config from '../service/config';
+import utilities from '../service/utilities';
 
-signatureValidatorController.$inject = ['$scope', 'Notification', 'TestService', '$sce', '$uibModal'];
+signatureValidatorController.$inject = ['$scope', 'Notification', 'testService', '$sce', '$uibModal'];
 
-function signatureValidatorController($scope, Notification, TestService, $sce, $uibModal) {
+function signatureValidatorController($scope, Notification, testService, $sce, $uibModal) {
     const controller = this;
 
     init();
@@ -23,8 +24,11 @@ function signatureValidatorController($scope, Notification, TestService, $sce, $
     controller.compareBaseString = compareBaseString;
     controller.changeAuthLevel = changeAuthLevel;
     controller.changeRequestBodyType = changeRequestBodyType;
+    controller.generateAuthHeader = generateAuthHeader;
     controller.getApiTestHeaders = getApiTestHeaders;
+    controller.isEmpty = isEmpty;
     controller.formSignatureUrls = formSignatureUrls;
+    controller.onAllowCustomSignatureUrlChange = onAllowCustomSignatureUrlChange;
     controller.onApiUrlChange = onApiUrlChange;
     controller.onHttpMethodChange = onHttpMethodChange;
     controller.onRequestBodyChange = onRequestBodyChange;
@@ -72,6 +76,42 @@ function signatureValidatorController($scope, Notification, TestService, $sce, $
         controller.signatures = [];
     }
 
+    function generateAuthHeader() {
+        controller.authHeader = 'Authorization: ';        
+        for (let i = 0; i < controller.signatures.length; i++) {
+            let signature = controller.signatures[i];
+            try {
+                let key;
+                if (signature.authLevel === 1) {
+                    key = signature.appSecret;
+                }
+                if (signature.authLevel === 2) {
+                    key = KJUR.KEYUTIL.getKey(signature.pem, signature.pkeySecret);
+                }
+                let signedBaseString = utilities.signBaseString(
+                    signature.authLevel, 
+                    signature.baseString, 
+                    key
+                );
+                let authToken = utilities.generateAuthToken(
+                    signature.baseStringOptions, 
+                    signedBaseString
+                );
+                controller.authHeader += authToken;
+                if (i !== controller.signatures.length - 1) {
+                    controller.authHeader += ', ';
+                }
+            } catch (exception) {
+                controller.authHeader = '';
+                Notification.error({
+                    title: '',
+                    message: config.main.errorMessages.signatureSecretInvalid,
+                    delay: config.notificationShowTime
+                });
+            }
+        }
+    }
+
     function allBaseStringsFormed() {
         return controller.signatures.reduce(function(accumm, currentSignature) {
             if (isEmpty(currentSignature.baseString)) {
@@ -99,6 +139,17 @@ function signatureValidatorController($scope, Notification, TestService, $sce, $
 
     function onRequestBodyChange() {
         generateBaseStrings();
+    }
+
+    function onAllowCustomSignatureUrlChange(signature) {
+        if (!signature.allowCustomSignatureUrl) {
+            signature.formSignatureUrl(controller.apiUrl);
+            signature.generateBaseString({
+                httpMethod: controller.httpMethod,
+                requestBodyType: controller.requestBodyType,
+                requestBody: controller.requestBody
+            });
+        }
     }
 
     function onApiUrlChange() {
@@ -253,7 +304,7 @@ function signatureValidatorController($scope, Notification, TestService, $sce, $
                 }, {});
             }
 
-            controller.basestring = TestService.generateBasestring(basestringOptions);
+            controller.basestring = testService.generateBasestring(basestringOptions);
 
             // 2. Signature generation
             let key;
@@ -274,8 +325,8 @@ function signatureValidatorController($scope, Notification, TestService, $sce, $
                     });
                 }
             }
-            let signature = TestService.signBasestring(controller.selectedLevel, controller.basestring, key);
-            let authHeader = TestService.genAuthHeader(basestringOptions, signature);
+            let signature = testService.signBasestring(controller.selectedLevel, controller.basestring, key);
+            let authHeader = testService.genAuthHeader(basestringOptions, signature);
             controller.authHeader = authHeader;
         } else if (signatureGenerated()) {
             controller.basestring = '';
@@ -375,7 +426,7 @@ function signatureValidatorController($scope, Notification, TestService, $sce, $
         if (controller.selectedLevel !== 0) {
             requestOptions.authHeader = controller.authHeader;
         }
-        return TestService.sendTestRequest(controller.apiUrl, controller.httpMethod, controller.selectedLevel, requestOptions)
+        return testService.sendTestRequest(controller.apiUrl, controller.httpMethod, controller.selectedLevel, requestOptions)
             .then(response => {
                 controller.apiTest = response;
             })
