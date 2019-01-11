@@ -1,5 +1,4 @@
 import KJUR from 'jsrsasign';
-import randomBytes from 'randombytes';
 import isEmpty from 'lodash/isEmpty';
 
 import Signature from './Signature';
@@ -19,15 +18,12 @@ function signatureValidatorController($scope, Notification, testRequestService, 
     controller.addSignature = addSignature;
     controller.addUrlencodedBody = addUrlencodedBody;
     controller.allBaseStringsFormed = allBaseStringsFormed;
-    controller.authPrefix = authPrefix;
     controller.canSendTestRequest = canSendTestRequest;
     controller.compareBaseString = compareBaseString;
-    controller.changeAuthLevel = changeAuthLevel;
     controller.changeRequestBodyType = changeRequestBodyType;
     controller.generateAuthHeader = generateAuthHeader;
     controller.getApiTestHeaders = getApiTestHeaders;
     controller.getApiTestResponseClass = getApiTestResponseClass;
-    controller.isEmpty = isEmpty;
     controller.formSignatureUrls = formSignatureUrls;
     controller.onAllowCustomSignatureUrlChange = onAllowCustomSignatureUrlChange;
     controller.onApiUrlChange = onApiUrlChange;
@@ -37,14 +33,7 @@ function signatureValidatorController($scope, Notification, testRequestService, 
     controller.removeSignature = removeSignature;
     controller.removeUrlencodedBody = removeUrlencodedBody;
     controller.sendTestRequest = sendTestRequest;
-    controller.signatureMethod = signatureMethod;
-    controller.signatureGenerated = signatureGenerated;
     controller.showOptions = showOptions;
-
-    $scope.formSignature = formSignature; // Main signature generation function
-    $scope.nonceGenChange = nonceGenChange;
-    $scope.timestampGenChange = timestampGenChange;
-    $scope.parseInputFile = parseInputFile;
 
     function init() {
         controller.sendingTestRequest = false;
@@ -185,49 +174,10 @@ function signatureValidatorController($scope, Notification, testRequestService, 
         }));
     }
 
-    function signatureMethod() {
-        switch (controller.selectedLevel) {
-        case 0:
-            return '';
-        case 1:
-            return config.main.sigMethod.level1;
-        case 2:
-            return config.main.sigMethod.level2;
-        }
-    }
-
-    function changeAuthLevel(level) {
-        controller.selectedLevel = level;
-        controller.apiTest = null;
-        formSignature();
-    }
-
     function changeRequestBodyType() {
         if (controller.requestBodyType === 'application/x-www-form-urlencoded' &&
             controller.requestBody.urlencoded.length === 0) {
             addUrlencodedBody('', '');
-        }
-    }
-
-    function authPrefix() {
-        if (controller.gatewayZone === config.constants.gatewayZones.internet) {
-            switch (controller.selectedLevel) {
-            case 1:
-                return 'apex_l1_eg';
-            case 2:
-                return 'apex_l2_eg';
-            default:
-                return '';
-            }
-        } else if (controller.gatewayZone === config.constants.gatewayZones.intranet) {
-            switch (controller.selectedLevel) {
-            case 1:
-                return 'apex_l1_ig';
-            case 2:
-                return 'apex_l2_ig';
-            default:
-                return '';
-            }
         }
     }
 
@@ -247,22 +197,6 @@ function signatureValidatorController($scope, Notification, testRequestService, 
     }
 
     /**
-     * Automatically generates signature URL if the API is at api.gov.sg. Only runs when custom signature is unchecked.
-     * @returns {string} Signature URL, with .e or .i optionally injected depending on the API domain and gateway zone.
-     */
-    // function formSignatureUrl() {
-    //     if (controller.apiUrl === '' || !controller.apiUrl) return '';
-
-    //     let apexDomain = controller.apiUrl.indexOf('.api.gov.sg');
-    //     if (apexDomain !== -1) {
-    //         let right = controller.apiUrl.substring(apexDomain);
-    //         let left = controller.apiUrl.substring(0, apexDomain);
-    //         let domainIdentifier = controller.gatewayZone === config.constants.gatewayZones.internet ? 'e' : 'i';
-    //         return `${left}.${domainIdentifier}${right}`;
-    //     } else { return controller.apiUrl; }
-    // }
-
-    /**
      * Removes signature at given position
      * @param {number} index Index for signature in controller.signatures.
      */
@@ -272,94 +206,6 @@ function signatureValidatorController($scope, Notification, testRequestService, 
 
     function removeUrlencodedBody(index) {
         controller.requestBody.urlencoded.splice(index, 1);
-        formSignature();
-    }
-
-    function formSignature() {
-        if (controller.selectedLevel === 0) return;
-        controller.showBasestringComparison = false;
-        let valid = validateForm(controller.selectedLevel);
-        if (valid) {
-            let basestringOptions = {
-                signatureUrl: controller.signatureUrl,
-                authPrefix: authPrefix(),
-                signatureMethod: signatureMethod(),
-                appId: controller.appId,
-                httpMethod: controller.httpMethod,
-                appVersion: config.main.appVersion,
-                // Optional parameters
-                nonce: controller.nonce === 'auto-generated' ? randomBytes(32).toString('base64') : controller.nonce,
-                timestamp: controller.timestamp === 'auto-generated' ? (new Date).getTime() : controller.timestamp,
-                queryString: controller.queryString
-            };
-            // Process x-www-form-urlencoded body
-            if (controller.httpMethod !== 'GET' &&
-                controller.requestBodyType === 'application/x-www-form-urlencoded' &&
-                controller.requestBody.urlencoded.length > 0) {
-                basestringOptions.formData = controller.requestBody.urlencoded.reduce((finalObject, currentObject) => {
-                    if (currentObject.key && currentObject.value) { // false if any of them are empty strings
-                        finalObject[currentObject.key] = currentObject.value;
-                    }
-                    return finalObject;
-                }, {});
-            }
-
-            controller.basestring = testRequestService.generateBasestring(basestringOptions);
-
-            // 2. Signature generation
-            let key;
-            $scope.privateKeyError = false;
-            if (controller.selectedLevel === 1) {
-                key = controller.appSecret;
-            } else if (controller.selectedLevel === 2) {
-                try {
-                    key = KJUR.KEYUTIL.getKey(controller.pem, controller.pkeySecret);
-                } catch (exception) {
-                    $scope.privateKeyError = true;
-                    controller.basestring = '';
-                    controller.authHeader = '';
-                    Notification.error({
-                        title: '',
-                        message: config.main.errorMessages.pkeyInvalid,
-                        delay: config.notificationShowTime
-                    });
-                }
-            }
-            let signature = testRequestService.signBasestring(controller.selectedLevel, controller.basestring, key);
-            let authHeader = testRequestService.genAuthHeader(basestringOptions, signature);
-            controller.authHeader = authHeader;
-        } else if (signatureGenerated()) {
-            controller.basestring = '';
-            controller.authHeader = '';
-        }
-    }
-
-    /**
-     * Checks whether all necessary inputs are present
-     * @param {number} level Apex auth level
-     * @returns {boolean} true if form is valid, false otherwise
-     */
-    function validateForm(level) {
-        switch (level) {
-        case 0:
-            return controller.apiUrl && controller.apiUrl.length > 0;
-        case 1:
-            return controller.apiUrl && controller.apiUrl.length > 0 &&
-                    controller.appId && controller.appId.length > 0 &&
-                    controller.appSecret && controller.appSecret.length > 0 &&
-                    controller.nonce && controller.nonce.length > 0 &&
-                    controller.timestamp && controller.timestamp.length > 0;
-        case 2:
-            return controller.apiUrl && controller.apiUrl.length > 0 &&
-                    controller.appId && controller.appId.length > 0 &&
-                    controller.pem && controller.pem.length > 0 &&
-                    controller.nonce && controller.nonce.length > 0 &&
-                    controller.timestamp && controller.timestamp.length > 0;
-        }
-    }
-
-    function signatureGenerated() {
-        return controller.basestring && controller.basestring.length > 0 && controller.authHeader && controller.authHeader.length > 0;
     }
 
     function compareBaseString(signature, generated, input) {
@@ -446,34 +292,8 @@ function signatureValidatorController($scope, Notification, testRequestService, 
                 }
             })
             .finally(() => {
-                formSignature();
                 controller.sendingTestRequest = false;
             });
-    }
-
-    function nonceGenChange() {
-        $scope.nonceDisabled = !$scope.nonceDisabled;
-        if ($scope.nonceDisabled) {
-            controller.nonce = 'auto-generated';
-        } else {
-            controller.nonce = '';
-        }
-        formSignature();
-    }
-
-    function timestampGenChange() {
-        $scope.timestampDisabled = !$scope.timestampDisabled;
-        if ($scope.timestampDisabled) {
-            controller.timestamp = 'auto-generated';
-        } else {
-            controller.timestamp = '';
-        }
-        formSignature();
-    }
-
-    function parseInputFile(fileText) {
-        controller.pem = fileText;
-        formSignature();
     }
 
     function showOptions() {
