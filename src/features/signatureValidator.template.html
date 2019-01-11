@@ -505,73 +505,7 @@
                                 Generate
                             </button>
                         </div>
-                    </div>
-                    
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12" ng-if="$ctrl.selectedLevel === 1 || $ctrl.selectedLevel === 2">
-                    <div ng-if="!$ctrl.signatureGenerated()" style="text-align:center">
-                        <strong>
-                            Fill in all fields to generate base string and authorization header.
-                        </strong>
-                    </div>
-                    
-                    <div class="jumbotron" ng-if="$ctrl.signatureGenerated()">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label for="basestring">Generated base string</label>
-                                <textarea rows="4" disabled class="form-control immutable code" ng-model="$ctrl.basestring" name="basestring" id="basestring"></textarea>
-                            </div>
-                        </div>                
-    
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label for="basestringToCompare">Base string to Compare</label>
-                                <textarea rows="4" class="form-control code" ng-model="$ctrl.basestringToCompare" name="basestringToCompare" id="basestringToCompare"></textarea>
-                            </div>
-                        </div>
-                    
-                        <div class="row" ng-if="$ctrl.showBasestringComparison">
-                            <br>
-                            <div class="col-md-12">
-                                <label>Comparison Results</label>
-                                <pre ng-bind-html="$ctrl.basestringComparison"></pre>
-                            </div>
-                        </div>
-    
-                        <div class="row">
-                            <div class="col-md-12">
-                                <span style="float:right; margin-top:5px">
-                                    <button type="button"                                
-                                        class="btn btn-secondary" 
-                                        ng-click="$ctrl.compareBasestring($ctrl.basestring, $ctrl.basestringToCompare)">
-                                        Compare Base Strings
-                                    </button>
-                                </span>
-                            </div>
-                        </div>
-                
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label for="authHeader">Request Authorization Header</label>
-                                <textarea rows="6" class="form-control immutable code" name="authHeader" id="authHeader"
-                                    ng-model="$ctrl.authHeader" disabled></textarea>
-                            </div>
-                        </div>
-    
-                        <div class="row">
-                            <div class="col-md-12">
-                                <span style="float:right; margin-top:5px">
-                                    <button type="button" 
-                                        class="btn btn-secondary" 
-                                        ng-click="formSignature()">
-                                        Regenerate Base String And Signature
-                                    </button>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
+                    </div>                    
                 </div>
             </div>
         </div>
@@ -612,7 +546,9 @@
             <div class="row">
                 <div class="col-sm-12 test-response">
                     <label for="apiTestConfig">API Test Request Config </label> 
-                    <textarea rows="4" name=apiTestConfig" id="apiTestConfig" class="form-control code" disabled>{{ $ctrl.apiTest.config.method }} {{ $ctrl.apiTest.config.url }}
+                    <!-- whitespace must be preserved within the textarea below -->
+                    <textarea rows="4" name="apiTestConfig" id="apiTestConfig" class="form-control code" disabled>{{ $ctrl.apiTest.config.method }} {{ $ctrl.apiTest.config.url }}
+
 {{ $ctrl.getApiTestHeaders($ctrl.apiTest.config.headers) }}
                     </textarea>
     

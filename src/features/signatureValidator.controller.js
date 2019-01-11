@@ -58,7 +58,7 @@ function signatureValidatorController($scope, Notification, testRequestService, 
         controller.sendingTestRequest = false;
 
         controller.apiUrl = '';
-
+        controller.authHeader = '';
         controller.httpMethods = config.main.httpMethods;
         controller.httpMethod = controller.httpMethods[0];
         controller.requestBodyType = config.constants.requestBodyTypes[0];
