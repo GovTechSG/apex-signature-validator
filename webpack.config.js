@@ -52,6 +52,16 @@ module.exports = (env = {}) => { // set env as empty object if unset from cli
                 {
                     test: /\.css$/,
                     use: ['style-loader', 'css-loader']
+                },
+                {
+                    test: /\.html$/,
+                    use: {
+                        loader: 'html-loader',
+                        options: {
+                            removeComments: true,
+                            collapseWhitespace: true
+                        }
+                    }
                 }
             ]
         },
