@@ -80,58 +80,7 @@ $ npm install
 $ npm run devserver
 ```
 
-This spins up a [Webpack Dev Server](https://github.com/webpack/webpack-dev-server) instance that serves the bundled signature validator app (in memory). This server supports live reloading when changes are detected in the code base.
-
-#### Using the development server through a browser
-
-You can then access the development build on your browser at `http://localhost:8080` by default.
-
-## Application Structure
-```
-- src
-    - controllers
-    - css
-    - service
-    - app.js 
-    - package.json
-    - webpack.config.js
-- index.ejs
-```
-
-### package.json
-Tracks library dependencies, notably Webpack that will be used to build the application. The build command in the script block 
-instructs Webpack to look for the file webpack.config.js and displays the compilation progress. Refer to 
-https://webpack.github.io/docs/cli.html for more information on Webpack cli commands.
-
-### webpack.config.js
-Specify the entry the point app.js and the output of the bundled files. Plugins and module loaders are used to uglify and 
-bundle css as Webpack does not come with css bundling capabilities by default.
-
-### app.js
-The main angular module of the application and the entry point for Webpack. Controllers, factories and services are imported 
-by Webpack with variable names and injected.
-
-## Code Base
-### controllers
-Application code resides within the src folder, separated into the controllers and service sub directories. 
- - navbarController.js manages the navigation bar
- - paramsModalController.js manages the modal triggered by the options button on the navbar that allows user to save/load their parameters 
- through a json formatted file. 
- - mainController.js manages the application form where users input their parameters, calls functions in service to generate 
- basestrings and test their requests. 
-
-The controllers are hooked onto the index.html page through ng-controller attributes. The modal template also resides
- within index.html.
-### service
-- config.js stores constant variables
-- modalService.js is a singleton that stores parameters inputs to be fetched and share across both mainController and paramsModalController.
-- testService.js functions that handle the process of generating basestring, signing basestring, creating auth header with the generated signature and sending the
-test requests
-- utilityService utility functions that convert between formats e.g hex to base64
-
-## JSRSASIGN
-The JSRSASIGN library is the opensource free pure JavaScript cryptographic library used by the application to perform all digest and RSA related 
-operations. Refer to http://kjur.github.io/jsrsasign/ for more information including the api documentation.
+This spins up a [Webpack Dev Server](https://github.com/webpack/webpack-dev-server) instance that serves the bundled signature validator app (in memory). This server supports live reloading when changes are detected in the code base. You can then access the development build on your browser at `http://localhost:8080` by default.
 
 ## Sending test requests with the signature validator
 When sending test requests to Apex's gateways, eg. to `api.gov.sg` endpoints, the signature validator's **Send Test Request** function would need to make cross-origin requests. For security reasons, browsers restrict cross-origin HTTP requests initiated using Javascript.
