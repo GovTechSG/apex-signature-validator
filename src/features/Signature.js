@@ -1,5 +1,6 @@
 import randomBytes from 'randombytes';
 import isEmpty from 'lodash/isEmpty';
+import pick from 'lodash/pick';
 import qs from 'querystring';
 
 import config from '../service/config';
@@ -12,6 +13,8 @@ import config from '../service/config';
  * @param {string} options.appVersion
  * @param {number} options.authLevel
  * @param {string} options.gatewayZone
+ * @param {number} [options.timestamp]
+ * @param {string} [options.nonce]
  */
 function Signature(apiUrl, options) {
     // Initialization
@@ -21,17 +24,13 @@ function Signature(apiUrl, options) {
     this.formSignatureUrl(apiUrl); // Initialize signature URL
     this.allowCustomSignatureUrl = options.allowCustomSignatureUrl;
     this.appId = options.appId;
-    this.appVersion = options.appVersion;
+    this.appVersion = options.appVersion || config.main.appVersion;
     this.authLevel = options.authLevel;
     this.gatewayZone = options.gatewayZone;
 
-    // Checkbox for timestamp and nonce auto-generation
-    this.timestampAutoGen = true;
-    this.nonceAutoGen = true;
-
     // Initial values
-    this.timestamp = (new Date).getTime();
-    this.nonce = randomBytes(32).toString('base64');
+    this.timestamp = options.timestamp || (new Date).getTime();
+    this.nonce = options.nonce || randomBytes(32).toString('base64');
     this.showBaseString = true;
 
     // Need to attach directly to the object, not prototype for angular's model getterSetter
@@ -88,22 +87,6 @@ Signature.prototype.generateNonce = function() {
     this.nonce = randomBytes(32).toString('base64');
 };
 
-Signature.prototype.timestampAutoGenChange = function() {
-    if (this.timestampAutoGen) {
-        this.timestamp = (new Date).getTime();
-    } else {
-        this.timestamp = '';
-    }
-};
-
-Signature.prototype.nonceAutoGenChange = function() {
-    if (this.nonceAutoGen) {
-        this.nonce = randomBytes(32).toString('base64');
-    } else {
-        this.nonce = '';
-    }
-};
-
 Signature.prototype.formSignatureUrl = function(apiUrl) {
     let signature = this;
     // Set signature url to an auto-generated one.
@@ -127,6 +110,20 @@ Signature.prototype.formSignatureUrl = function(apiUrl) {
 
 Signature.prototype.loadPkey = function(fileText) {
     this.pem = fileText;
+};
+
+Signature.prototype.getConfig = function() {
+    return pick(this, [
+        'signatureUrl', 
+        'allowCustomSignatureUrl',
+        'appId',
+        'appVersion',
+        'authLevel',
+        // 'authPrefix', prefix is set based on authLevel and gatewayZone
+        'gatewayZone',
+        'timestamp',
+        'nonce',
+    ]);
 };
 
 function signatureType(signature) {

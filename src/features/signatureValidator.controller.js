@@ -47,38 +47,26 @@ function signatureValidatorController($scope, Notification, testRequestService, 
     $scope.parseInputFile = parseInputFile;
 
     function init() {
-        $scope.nonceDisabled = true;
-        $scope.timestampDisabled = true;
-
-        controller.timestamp = 'auto-generated';
-        controller.nonce = 'auto-generated';
-
-        controller.selectedLevel = 0;
-
         controller.sendingTestRequest = false;
+        controller.authHeader = '';
 
         controller.apiUrl = '';
-        controller.authHeader = '';
         controller.httpMethods = config.main.httpMethods;
         controller.httpMethod = controller.httpMethods[0];
         controller.requestBodyType = config.constants.requestBodyTypes[0];
         controller.requestBody = {
             json: '',
             urlencoded: []
-        };        
+        };
 
         controller.gatewayZoneOptions = config.main.providerGateway;
-        controller.gatewayZone = controller.gatewayZoneOptions[0];
-
         controller.authLevels = config.main.authLevels;
-
-        controller.appVersion = config.main.appVersion;
 
         controller.signatures = [];
     }
 
     function generateAuthHeader() {
-        controller.authHeader = '';        
+        controller.authHeader = '';
         for (let i = 0; i < controller.signatures.length; i++) {
             let signature = controller.signatures[i];
             try {
@@ -90,12 +78,12 @@ function signatureValidatorController($scope, Notification, testRequestService, 
                     key = KJUR.KEYUTIL.getKey(signature.pem, signature.pkeySecret);
                 }
                 let signedBaseString = utilities.signBaseString(
-                    signature.authLevel, 
-                    signature.baseString, 
+                    signature.authLevel,
+                    signature.baseString,
                     key
                 );
                 let authToken = utilities.generateAuthToken(
-                    signature.baseStringOptions, 
+                    signature.baseStringOptions,
                     signedBaseString
                 );
                 controller.authHeader += authToken;
@@ -506,15 +494,9 @@ function signatureValidatorController($scope, Notification, testRequestService, 
 
     function getCurrentConfig() {
         let currentConfig = {
-            gatewayZone: controller.gatewayZone,
             httpMethod: controller.httpMethod,
             apiUrl: controller.apiUrl,
-            signatureUrl: controller.signatureUrl,
-            allowCustomSignatureUrl: controller.allowCustomSignatureUrl,
-            selectedLevel: controller.selectedLevel,
-            appId: controller.appId,
-            nonce: controller.nonce,
-            timestamp: controller.timestamp
+            signatures: controller.signatures.map(signature => signature.getConfig())
         };
         if (controller.httpMethod !== 'GET') {
             currentConfig.requestBodyType = controller.requestBodyType;
@@ -535,9 +517,22 @@ function signatureValidatorController($scope, Notification, testRequestService, 
     function setCurrentConfig(config) {
         let newConfigParams = Object.keys(config);
         newConfigParams.forEach(function(param) {
-            controller[param] = config[param];
+            if (param !== 'signatures') {
+                controller[param] = config[param];
+            }
         });
-        formSignature();
+        controller.signatures = [];
+        if (config.signatures) {
+            for (let signatureOptions of config.signatures) {
+                let newSignature = new Signature(controller.apiUrl, signatureOptions);
+                newSignature.generateBaseString({
+                    httpMethod: controller.httpMethod,
+                    requestBodyType: controller.requestBodyType,
+                    requestBody: controller.requestBody
+                });
+                controller.signatures.push(newSignature);
+            }
+        }
     }
 
     function getApiTestHeaders(headers) {
@@ -549,7 +544,7 @@ function signatureValidatorController($scope, Notification, testRequestService, 
         return headerString;
     }
 
-    function getApiTestResponseClass() {        
+    function getApiTestResponseClass() {
         return {
             'bg-success': controller.apiTest.status < 300,
             'bg-warning': 300 <= controller.apiTest.status && controller.apiTest.status < 400,
