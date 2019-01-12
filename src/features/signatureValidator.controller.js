@@ -156,6 +156,7 @@ function signatureValidatorController($scope, Notification, testRequestService, 
     }
 
     function onSignatureParameterChange(signature) {
+        signature.formSignatureUrl(controller.apiUrl);
         signature.generateBaseString({
             httpMethod: controller.httpMethod,
             requestBodyType: controller.requestBodyType,
