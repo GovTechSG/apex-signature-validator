@@ -12,7 +12,7 @@ function testRequestService($http, $httpParamSerializerJQLike) {
                 method: method,
                 url: url,
                 headers: {},
-                timeout: 10000
+                timeout: 15000 // 15s
             };
             if (method !== 'GET' && options.requestBody) {
                 if (options.requestBodyType === 'application/x-www-form-urlencoded') {
